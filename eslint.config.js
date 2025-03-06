@@ -49,6 +49,7 @@ export default [
       },
     },
     rules: {
+      ...security.configs.recommended,
       ...prettierConfig.rules, // ✅ Prettier 설정 적용
       "react/no-unknown-property": ["error", { ignore: ["css"] }],
       "react/jsx-curly-brace-presence": [
@@ -77,6 +78,12 @@ export default [
           argsIgnorePattern: "^_",
         },
       ],
+      "security/detect-object-injection": "warn", // 객체 프로퍼티 인젝션 감지
+      "security/detect-unsafe-regex": "warn", // 위험한 정규식 감지
+      "security/detect-eval-with-expression": "warn", // eval() 내부 표현식 감지
+      "security/detect-child-process": "warn", // child_process 모듈 감지
+      "security/detect-non-literal-fs-filename": "warn", // 파일 시스템 접근 감지
+      "security/detect-hardcoded-credentials": "warn", // ✅ 하드코딩된 비밀번호/API 키 감지 (기본 설정엔 없음)
     },
   },
 ];
