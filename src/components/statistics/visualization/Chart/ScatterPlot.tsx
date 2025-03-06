@@ -1,3 +1,3 @@
 export function SimpleScatterPlotChart() {
-    return <></>
+  return <></>;
 }
