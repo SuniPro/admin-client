@@ -6,6 +6,7 @@ function App() {
 
   const googleAPISecretsKey = "sadfaksdmiiidfngkermasdfd";
 
+  console.log(googleAPISecretsKey);
   return (
     <>
       <div>
