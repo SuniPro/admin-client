@@ -5,6 +5,7 @@ import pluginReactHooks from "eslint-plugin-react-hooks";
 import pluginImport from "eslint-plugin-import";
 import prettierConfig from "eslint-config-prettier";
 import { createTypeScriptImportResolver } from "eslint-import-resolver-typescript";
+import security from "eslint-plugin-security";
 
 export default [
   {
@@ -22,6 +23,7 @@ export default [
       react: pluginReact,
       "react-hooks": pluginReactHooks,
       import: pluginImport,
+      security
     },
     settings: {
       "import-x/resolver-next": [
