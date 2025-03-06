@@ -1,0 +1,35 @@
+name: Build Client Prd
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 🟢 PR에서만 실행: Node.js 설치 (npm 사용)
+      - name: Install Node.js
+        if: github.event_name == 'pull_request'
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20  # 안정적인 최신 LTS 버전
+          cache: 'npm'       # npm 캐싱
+
+      # 🟢 PR에서만 실행: npm 캐시 활용
+      - name: Cache npm dependencies
+        if: github.event_name == 'pull_request'
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      # 🟢 PR에서만 실행: npm 의존성 설치
+      - name: Install dependencies
+        if: github.event_name == 'pull_request'
+        run: npm ci  # npm install 대신 npm ci 사용

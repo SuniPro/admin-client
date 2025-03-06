@@ -1,8 +1,5 @@
-import {ResourcePageContainer} from "../components/layouts/Frames/FrameLayouts";
+import { ResourcePageContainer } from "../components/layouts/Frames/FrameLayouts";
 
 export function EmployeeResource() {
-
-    return <ResourcePageContainer>
-
-    </ResourcePageContainer>
+  return <ResourcePageContainer></ResourcePageContainer>;
 }

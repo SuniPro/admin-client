@@ -9,6 +9,7 @@ import { createTypeScriptImportResolver } from "eslint-import-resolver-typescrip
 export default [
   {
     files: ["**/*.ts", "**/*.tsx"],
+    ignores: ["vite.config.ts", "dist/", "node_modules/"],
     languageOptions: {
       parser: tsParser,
       parserOptions: {
@@ -63,6 +64,17 @@ export default [
       "import/no-unresolved": "error",
       "import/no-default-export": "off",
       "arrow-body-style": ["error", "as-needed"],
+      "@typescript-eslint/no-explicit-any": "error",
+      "no-console": "error",
+      "no-unused-vars": [
+        "error",
+        {
+          vars: "all",
+          args: "all",
+          caughtErrors: "all",
+          argsIgnorePattern: "^_",
+        },
+      ],
     },
   },
 ];

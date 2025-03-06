@@ -1,0 +1,65 @@
+name: Eslint
+
+on: pull_request
+
+permissions:
+  contents: read
+  pull-requests: write  # ✅ PR 코멘트 작성 권한 추가
+
+jobs:
+  eslint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install reviewdog
+        run: |
+          curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh | sh -s -- -b /usr/local/bin
+
+      - name: Debug ESLint Execution
+        run: |
+          echo "📌 Checking ESLint Config File..."
+          ls -la eslint.config.js || echo "eslint.config.js 파일이 없음"
+          
+          echo "📌 Checking TypeScript Config File..."
+          ls -la tsconfig.app.json || echo "tsconfig.app.json 파일이 없음"
+          
+          echo "📌 Running ESLint with Debug Mode..."
+          npx eslint . --config eslint.config.js --debug || echo "❌ ESLint 실행 실패"
+
+
+      - name: Run ESLint and report with reviewdog
+        run: |
+          npx eslint . --config eslint.config.js --format=json > eslint-report.json || true
+          echo "📌 ESLint JSON Output:"
+          cat eslint-report.json  # ✅ JSON 결과 출력
+          
+          cat eslint-report.json | jq -c '.[] | select(.messages != []) | {filePath, messages}' > eslint-compact.json
+          
+          echo "📌 Processed ESLint Output:"
+          cat eslint-compact.json  # ✅ 변환된 JSON 결과 출력
+
+          # reviewdog 실행
+          cat eslint-compact.json | reviewdog -efm="%f: %l:%c: %m" -name="ESLint" -reporter=github-pr-review -level=error
+
+          # ❌ ESLint 오류가 있는 경우만 CI 실패
+          if [ -s eslint-compact.json ]; then
+            echo "❌ ESLint 오류가 발견되었습니다. CI 실패"
+            exit 1
+          fi
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
