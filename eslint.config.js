@@ -23,7 +23,7 @@ export default [
       react: pluginReact,
       "react-hooks": pluginReactHooks,
       import: pluginImport,
-      security
+      security,
     },
     settings: {
       "import-x/resolver-next": [
