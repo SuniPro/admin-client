@@ -4,15 +4,16 @@ import "./App.css";
 function App() {
   const [count, setCount] = useState(0);
 
-  const googleAPISecretsKey = "sadfaksdmiiidfngkermasdfd";
+  // const password = "mypassword123"; // ✅ 감지될 가능성 높음
+  const API_KEY = "sadfaksdmiiidfngkermasdfd"; // ✅ 감지될 가능성 높음
 
   return (
     <>
+      <p>{API_KEY}</p>
       <div>
         <a href="https://vite.dev" target="_blank"></a>
         <a href="https://react.dev" target="_blank"></a>
       </div>
-      <h1>{googleAPISecretsKey}</h1>
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
