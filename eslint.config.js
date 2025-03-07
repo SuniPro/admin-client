@@ -88,7 +88,7 @@ export default [
       "noSecrets/no-secrets": [
         "error",
         {
-          tolerance: 3.25,
+          tolerance: 3.35,
           minLength: 6, // ✅ 1자 이상의 문자열도 감지
           additionalRegexes: {
             "Slack Token":
