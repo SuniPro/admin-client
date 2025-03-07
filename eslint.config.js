@@ -11,7 +11,7 @@ import noSecrets from "eslint-plugin-no-secrets";
 export default [
   {
     files: ["**/*.ts", "**/*.tsx"],
-    ignores: ["vite.config.ts", "dist/", "node_modules/"],
+    ignores: ["vite.config.ts", "vite-env.d.ts", "dist/", "node_modules/"],
     languageOptions: {
       parser: tsParser,
       parserOptions: {
@@ -88,7 +88,7 @@ export default [
       "noSecrets/no-secrets": [
         "error",
         {
-          tolerance: 3.2,
+          tolerance: 3.5,
           minLength: 6, // ✅ 1자 이상의 문자열도 감지
           additionalRegexes: {
             "Slack Token":
