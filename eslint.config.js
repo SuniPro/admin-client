@@ -6,6 +6,7 @@ import pluginImport from "eslint-plugin-import";
 import prettierConfig from "eslint-config-prettier";
 import { createTypeScriptImportResolver } from "eslint-import-resolver-typescript";
 import security from "eslint-plugin-security";
+import noSecrets from "eslint-plugin-no-secrets";
 
 export default [
   {
@@ -24,6 +25,7 @@ export default [
       "react-hooks": pluginReactHooks,
       import: pluginImport,
       security,
+      noSecrets,
     },
     settings: {
       "import-x/resolver-next": [
@@ -49,7 +51,7 @@ export default [
       },
     },
     rules: {
-      ...security.configs.recommended,
+      ...security.configs.recommended.rules,
       ...prettierConfig.rules, // ✅ Prettier 설정 적용
       "react/no-unknown-property": ["error", { ignore: ["css"] }],
       "react/jsx-curly-brace-presence": [
@@ -83,7 +85,14 @@ export default [
       "security/detect-eval-with-expression": "warn", // eval() 내부 표현식 감지
       "security/detect-child-process": "warn", // child_process 모듈 감지
       "security/detect-non-literal-fs-filename": "warn", // 파일 시스템 접근 감지
-      "security/detect-hardcoded-credentials": "warn", // ✅ 하드코딩된 비밀번호/API 키 감지 (기본 설정엔 없음)
+      "noSecrets/no-secrets": [
+        "error",
+        {
+          additionalRegexes: {
+            "Basic Auth": "Authorization: Basic [A-Za-z0-9+/=]*",
+          },
+        },
+      ],
     },
   },
 ];
