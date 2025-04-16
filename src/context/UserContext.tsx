@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useContext } from "react";
-import { EmployeeType } from "../model/employee.ts";
+import { EmployeeType } from "../model/employee";
 import { useQuery } from "@tanstack/react-query";
 import { me } from "../api/sign";
 

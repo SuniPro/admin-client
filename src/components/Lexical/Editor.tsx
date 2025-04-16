@@ -19,7 +19,6 @@ import { ToolbarPlugin } from "./plugIn/ToolbarPlugin";
 import { CodeHighlightPlugin } from "./plugIn/CodeHighlightPlugin";
 import { PlaygroundAutoLinkPlugin } from "./plugIn/AutoLinkPlugin";
 import { ListMaxIndentLevelPlugin } from "./plugIn/ListMaxIndentLevelPlugin";
-import { useState } from "react";
 
 function Placeholder() {
   return <div className="editor-placeholder">Enter some rich text...</div>;
@@ -50,8 +49,6 @@ const editorConfig = {
 };
 
 export function Editor() {
-  const [title, setTitle] = useState<string>("");
-
   return (
     <LexicalComposer initialConfig={editorConfig}>
       <div className="editor-container">

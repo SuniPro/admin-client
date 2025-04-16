@@ -1,4 +1,4 @@
-import { EmployeeType } from "../model/employee.ts";
+import { EmployeeType } from "../model/employee";
 import { SignInType } from "../model/sign";
 import { getFromEmployeeServer, postToEmployeeServer } from "./base";
 
