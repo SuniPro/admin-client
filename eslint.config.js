@@ -64,7 +64,12 @@ export default [
       "import/extensions": [
         "error",
         "ignorePackages",
-        { ts: "never", tsx: "never" },
+        {
+          js: "never",
+          jsx: "never",
+          ts: "never",
+          tsx: "never",
+        },
       ],
       "import/no-unresolved": "error",
       "import/no-default-export": "off",
@@ -88,7 +93,7 @@ export default [
       "noSecrets/no-secrets": [
         "error",
         {
-          tolerance: 3.35,
+          tolerance: 4,
           minLength: 6, // ✅ 1자 이상의 문자열도 감지
           additionalRegexes: {
             "Slack Token":

@@ -1,11 +1,18 @@
 /** labels 배열 개수와 data의 배열 개수는 항상 동일해야합니다.
  * 만약, backgroundColor, borderColor 를 반영한다면 이 또한 labels의 개수와 동일해야합니다. */
 export interface SimpleBarChartType {
-  labels: string[];
-  data: number[];
-  backgroundColor?: string[];
-  borderColor?: string[];
-  borderWidth?: number;
+  label: string;
+  legendA: string;
+  dataA: number;
+  legendB?: number;
+  dataB?: number;
+}
+
+export interface SimpleRadarChartType {
+  subject: string;
+  A: number;
+  B: number;
+  fullMark: number;
 }
 
 /** labels, barData, lineData 배열의 개수는 항상 동일해야합니다. */
@@ -31,3 +38,9 @@ export const ChartDefaultOptions = {
     },
   },
 };
+
+export interface DoughnutChartTypes {
+  name: string;
+  value: number;
+  fill: string;
+}

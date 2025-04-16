@@ -1,42 +1,242 @@
+@font-face {
+  font-family: "Apple SD Gothic Neo Bold";
+  src: url("./assets/font/fonnts.com-Apple_SD_Gothic_Neo_Bold.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'S-CORE-Dream thin';
+  src: url('./assets/font/s-core-dream/SCDream1.otf') format('opentype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'S-CORE-Dream extra light';
+  src: url('./assets/font/s-core-dream/SCDream2.otf') format('opentype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'S-CORE-Dream light';
+  src: url('./assets/font/s-core-dream/SCDream3.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'S-CORE-Dream regular';
+  src: url('./assets/font/s-core-dream/SCDream4.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'S-CORE-Dream medium';
+  src: url('./assets/font/s-core-dream/SCDream5.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'S-CORE-Dream bold';
+  src: url('./assets/font/s-core-dream/SCDream6.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'S-CORE-Dream extra bold';
+  src: url('./assets/font/s-core-dream/SCDream7.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'S-CORE-Dream heavy';
+  src: url('./assets/font/s-core-dream/SCDream8.otf') format('opentype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'S-CORE-Dream black';
+  src: url('./assets/font/s-core-dream/SCDream9.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'KOPUB Batang light';
+  src: url('assets/font/koPub/KoPubBatang_ProLight.otf') format('opentype');
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'KOPUB Batang medium';
+  src: url('assets/font/koPub/KoPubBatang_ProMedium.otf') format('opentype');
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'KOPUB Batang bold';
+  src: url('assets/font/koPub/KoPubBatang_ProBold.otf') format('opentype');
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'KOPUB Dotum light';
+  src: url('assets/font/koPub/KoPubDotum_ProLight.otf') format('opentype');
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'KOPUB Dotum medium';
+  src: url('assets/font/koPub/KoPubDotum_ProMedium.otf') format('opentype');
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'KOPUB Dotum bold';
+  src: url('assets/font/koPub/KoPubDotum_ProBold.otf') format('opentype');
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'YES Gothic bold';
+  src: url("./assets/font/yesGothic/YES24GothicB.otf") format("opentype");
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'YES Gothic extra bold';
+  src: url("./assets/font/yesGothic/YES24GothicEB.otf") format("opentype");
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'YES Gothic medium';
+  src: url("./assets/font/yesGothic/YES24GothicM.otf") format("opentype");
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'YES Gothic regular';
+  src: url("./assets/font/yesGothic/YES24GothicM.otf") format("opentype");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'YES Gothic light';
+  src: url("./assets/font/yesGothic/YES24GothicM.otf") format("opentype");
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Futura Display';
+  src: url("./assets/font/FuturaDisplay.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'iBrand';
+  src: url("./assets/font/ibrand.otf") format("opentype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GothamMedium';
+  src: url("./assets/font/Gotham-Medium.otf") format("opentype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'PicoBl';
+  src: url("./assets/font/pico/PICOBL__.TTF") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'PicoW';
+  src: url("./assets/font/pico/PICOW___.TTF") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Trade Gothic LT Std Regular';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Trade Gothic LT Std Regular'), url('./assets/font/trade/trade-gothic-lt-std-58a78e64434a9.woff') format('woff');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Trade Gothic LT Std Bold Condensed No. 20';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Trade Gothic LT Std Bold Condensed No. 20'), url('./assets/font/trade/trade-gothic-lt-std-bold-condensed-no-20-5872def1d27d8.woff') format('woff');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Catallina';
+  font-style: normal;
+  font-weight: normal;
+  src: url('./assets/font/CatallinaRostype/Catallina.otf') format('opentype');
+  font-display: swap;
+}
+
+
+@font-face {
+  font-family: 'Han Arum';
+  src: url("./assets/font/MapoPeacefull.otf") format("opentype");
+  font-display: swap;
+}
+
+html {
+  ::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+html {
+  width: 100%;
+  height: 100%;
+
+  scrollbar-width: none;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+
+  body::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 #root {
-  max-width: 1280px;
+  width: 100%;
   margin: 0 auto;
-  padding: 2rem;
   text-align: center;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+  position: absolute;
+  top: 0;
 }
