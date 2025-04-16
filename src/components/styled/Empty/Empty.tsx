@@ -1,4 +1,3 @@
-import { LogoIcon } from "../../Logo/LogoIcon";
 import styled from "@emotion/styled";
 import { css, Theme, useTheme } from "@emotion/react";
 
@@ -7,11 +6,10 @@ export function EmptyPage(props: { title?: string; message?: string }) {
   const theme = useTheme();
   return (
     <Container theme={theme}>
-      <LogoIcon width={100 * 1.3} height={100} />
       <EmptyTitle>
-        {title ? title : "현재 라이브 되는 방송이 없습니다."}
+        {title ? title : "현재 보여줄 데이터가 없습니다."}
       </EmptyTitle>
-      <h3>{message ? message : "방송 스케줄을 확인해주세요 !"}</h3>
+      <h3>{message ? message : "서버를 확인해주세요."}</h3>
     </Container>
   );
 }
