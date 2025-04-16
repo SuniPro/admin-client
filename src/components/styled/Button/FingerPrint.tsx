@@ -243,8 +243,7 @@ const FingerPrintButton = styled.button`
     inset: 0;
     border-radius: inherit;
     filter: blur(0.025em);
-    background:
-      ${darken(0.0866, BASE_COLOR)},
+    background: ${darken(0.0866, BASE_COLOR)},
       radial-gradient(
         160% 160% at 57.5% 60%,
         ${rgba(lighten(0.06, BASE_COLOR), 0)} 30%,
