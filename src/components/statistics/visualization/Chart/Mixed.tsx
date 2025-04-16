@@ -1,14 +1,14 @@
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
   BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  ChartType,
+  Legend,
+  LinearScale,
   LineElement,
   PointElement,
   Title,
   Tooltip,
-  Legend,
-  ChartType,
 } from "chart.js";
 import { ChartDefaultOptions, SimpleMixedChartType } from "./ChartType";
 import { Chart } from "react-chartjs-2";

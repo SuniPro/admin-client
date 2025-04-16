@@ -1,50 +1,66 @@
+import { useTheme } from "@emotion/react";
 import { SimpleBarChartType } from "./ChartType";
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
+  Bar,
+  BarChart,
+  CartesianGrid,
   Legend,
-} from "chart.js";
-import { Bar } from "react-chartjs-2";
-
-/** ChartJs 는 기본적으로 트리셰이킹이기 때문에 사용할 컴포넌트들을 미리 등록해서 사용해야합니다. */
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
   Tooltip,
-  Legend,
-);
+  XAxis,
+  YAxis,
+} from "recharts";
 
-export function SimpleBarChart(props: SimpleBarChartType) {
-  const getChartDataSet = (chartData: SimpleBarChartType) => ({
-    labels: chartData.labels,
-    datasets: [
-      {
-        label: "데이터 값",
-        data: chartData.data,
-        backgroundColor: chartData.backgroundColor ?? ["rgb(56,97,195)"],
-        borderColor: chartData.borderColor ?? ["rgb(132,168,255)"],
-        borderWidth: chartData.borderWidth ?? 1,
-      },
-    ],
-  });
+export function SimpleBarChart(props: {
+  data: SimpleBarChartType[];
+  width: number;
+  height: number;
+  fontSizeX?: number;
+  fontSizeY?: number;
+  barSize?: number;
+  legendView?: boolean;
+}) {
+  const {
+    data,
+    height,
+    barSize = 30,
+    fontSizeX = 12,
+    fontSizeY = 12,
+    legendView = false,
+  } = props;
+  const theme = useTheme();
+
+  const width = data.length * 70;
+
+  const chartData = data.map((item) => ({
+    label: item.label,
+    ...(item.legendA && { [item.legendA]: item.dataA }),
+    ...(item.legendB && { [item.legendB]: item.dataB }),
+  }));
+
+  // 📦 모든 legend 추출
+  const legends = Array.from(
+    new Set(
+      data.flatMap((d) => [d.legendA, d.legendB].filter(Boolean) as string[]),
+    ),
+  );
+
+  const colors = [theme.mode.textAccent, "#82ca9d", "#ffc658", "#ff7300"];
 
   return (
-    <Bar
-      data={getChartDataSet(props)}
-      options={{
-        responsive: true,
-        plugins: {
-          legend: {
-            display: true,
-          },
-        },
-      }}
-    />
+    <BarChart width={width} height={height} data={chartData}>
+      <CartesianGrid strokeDasharray="1 1" />
+      <XAxis dataKey="label" fontSize={fontSizeX} />
+      <YAxis fontSize={fontSizeY} />
+      <Tooltip />
+      {legendView ? <Legend /> : null}
+      {legends.map((legend, index) => (
+        <Bar
+          barSize={barSize}
+          key={legend}
+          dataKey={legend}
+          fill={colors[index % colors.length]}
+        />
+      ))}
+    </BarChart>
   );
 }
