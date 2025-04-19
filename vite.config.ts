@@ -12,18 +12,18 @@ export default defineConfig({
   ],
   server: {
     host: true,
-    port: 5130,
+    port: 5010,
     proxy: {
       // 첫 번째 프록시 설정
       "/admin": {
-        target: "http://localhost:8010",
+        target: "http://192.168.9.173:8010",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/admin/, ""),
         secure: false,
         ws: true,
       },
       "/user": {
-        target: "http://13.214.147.245:8070",
+        target: "http://13.212.255.35:8020",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/user/, ""),
         secure: false,
