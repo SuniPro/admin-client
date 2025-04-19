@@ -203,7 +203,7 @@ export function Financial(props: { user: EmployeeType }) {
         cell: ({ row }) => <AcceptControl depositInfo={row.original} />,
       },
     ],
-    [],
+    [exchangeRate],
   );
 
   const table = useReactTable<TetherDepositType>({
