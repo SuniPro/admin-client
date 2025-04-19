@@ -4,7 +4,15 @@ export interface SimpleBarChartType {
   label: string;
   legendA: string;
   dataA: number;
-  legendB?: number;
+  legendB?: string;
+  dataB?: number;
+}
+
+export interface SimpleLineChartType {
+  label: string;
+  legendA: string;
+  dataA: number;
+  legendB?: string;
   dataB?: number;
 }
 
@@ -13,6 +21,12 @@ export interface SimpleRadarChartType {
   A: number;
   B: number;
   fullMark: number;
+}
+
+export interface SimpleFunnerChartType {
+  value: number;
+  name: string;
+  fill: string;
 }
 
 /** labels, barData, lineData 배열의 개수는 항상 동일해야합니다. */
