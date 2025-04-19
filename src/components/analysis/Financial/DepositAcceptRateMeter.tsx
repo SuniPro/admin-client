@@ -1,21 +1,26 @@
 /** @jsxImportSource @emotion/react */
 import { css, useTheme } from "@emotion/react";
+import { OutLine } from "../../layouts/Layouts";
+import AnalogMeter from "../../AnalogMeter";
 import styled from "@emotion/styled";
-import { OutLine } from "../layouts/Layouts";
-import AnalogMeter from "../AnalogMeter/AnalogMeter";
-import { Star } from "../AnalogMeter/AlalogMeterImage";
 
-export function MemberSolvingMeter(props: {
-  starValue: number | null;
-  circleValue: number | null;
+export function DepositAcceptRateMeter(props: {
+  starValue?: number | null;
+  circleValue?: number | null;
 }) {
   const theme = useTheme();
   const { starValue, circleValue } = props;
-  const star = starValue === null ? 0 : Math.round(starValue * 100) / 10;
-  const circle = circleValue === null ? 0 : Math.round(circleValue * 100) / 10;
+  const star =
+    starValue === null || starValue === undefined
+      ? 0
+      : Math.round(starValue * 100) / 10;
+  const circle =
+    circleValue === null || circleValue === undefined
+      ? 0
+      : Math.round(circleValue * 100) / 10;
   return (
     <OutLine
-      title="업무 수행률"
+      title="입금 승인 진행율"
       css={css`
         gap: 14px;
       `}
@@ -52,15 +57,11 @@ export function MemberSolvingMeter(props: {
               />
               {circle}%
             </CircleData>
-            <StarData>
-              <Star />
-              소속 직원 평균 {star}%
-            </StarData>
           </Data>
           <Description>
-            이 구성원과 소속 직원들의
+            요청된 입금에 대한
             <br />
-            평가를 분석할 수 있는 지표입니다.
+            승인 진행율입니다.
           </Description>
         </div>
       </div>
@@ -86,25 +87,6 @@ const CircleData = styled.div(
     font-style: normal;
     font-weight: 400;
     line-height: 32px; /* 133.333% */
-  `,
-);
-
-const StarData = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    gap: 4px;
-    align-items: center;
-    color: ${theme.mode.textPrimary};
-    /* Default/Label/12px-Eb */
-    font-family: ${theme.mode.font.component.itemDescription};
-    font-size: 12px;
-    font-style: normal;
-    font-weight: 800;
-    line-height: 16px; /* 133.333% */
-
-    path {
-      fill: ${theme.mode.textPrimary};
-    }
   `,
 );
 

@@ -158,12 +158,13 @@ const defaultMode = {
   textSecondary: colors.ashGray,
   textAccent: colors.azure, // ✅ 여기
   textDisable: colors.steelGray,
+  textRevers: colors.white,
 
   error: colors.warningRed,
 
   // 버튼
   buttonBackground: colors.white,
-  buttonHoverBackground: colors.trueBlue,
+  buttonHoverBackground: colors.azure,
   buttonText: colors.black,
 
   // 링크
@@ -240,10 +241,11 @@ const darkMode = {
   cardBackground: colors.black,
 
   // 텍스트
-  textPrimary: colors.black,
+  textPrimary: colors.white,
   textSecondary: colors.graniteGray,
   textAccent: colors.azure, // ✅ 여기
   textDisable: colors.steelGray,
+  textRevers: colors.black,
 
   error: colors.warningRed,
 

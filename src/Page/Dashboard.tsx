@@ -13,6 +13,7 @@ import Modal from "@mui/material/Modal";
 import { ContentsContainer } from "../components/layouts/Layouts";
 import { DashboardMenuType } from "../model/menu";
 import { Notice } from "./Notice";
+import { Financial } from "./manage/Financial";
 
 export function Dashboard(props: { activeMenu: DashboardMenuType }) {
   const { activeMenu } = props;
@@ -38,7 +39,7 @@ export function Dashboard(props: { activeMenu: DashboardMenuType }) {
         return <Notice user={user} />;
 
       case "workTable":
-        return <Employee user={user} />;
+        return <Financial user={user} />;
     }
   };
 
@@ -67,7 +68,6 @@ const NotifyContainer = styled.div<{ theme: Theme }>(
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
     width: 100%;
     background-color: ${theme.mode.cardBackground};
     box-sizing: border-box;
@@ -86,7 +86,7 @@ const NotifyArea = styled.div`
   gap: 10px;
 
   i {
-    transform: translateY(6%);
+    transform: translateY(10%);
   }
 `;
 

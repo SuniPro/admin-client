@@ -31,6 +31,8 @@ export type departmentType = (typeof departmentList)[number];
 
 export const levelList = [
   "STAFF",
+  "ASSOCIATE",
+  "SENIORMANAGER",
   "OFFICEMANAGER",
   "MANAGER",
   "COO",
@@ -52,6 +54,8 @@ export const departmentLabelMap: Record<departmentType, string> = {
 
 export const levelLabelMap: Record<levelType, string> = {
   STAFF: "사원",
+  ASSOCIATE: "주임",
+  SENIORMANAGER: "차장",
   OFFICEMANAGER: "팀장",
   MANAGER: "총괄팀장",
   COO: "운영책임자",

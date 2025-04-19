@@ -4,10 +4,10 @@ import styled from "@emotion/styled";
 import { OutLine } from "../layouts/Layouts";
 import WarningIcon from "@mui/icons-material/Warning";
 
-export function MemberSolvingMeterEmpty() {
+export function AnalysisEmptyState() {
   return (
     <OutLine
-      title="평가 결과"
+      title="분석 결과"
       css={css`
         gap: 8px;
       `}

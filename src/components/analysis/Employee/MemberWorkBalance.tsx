@@ -1,10 +1,10 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { OutLine } from "../layouts/Layouts";
+import { OutLine } from "../../layouts/Layouts";
 import {
   SimpleBarChart,
   SimpleBarChartType,
-} from "../statistics/visualization/Chart";
+} from "../../statistics/visualization/Chart";
 
 export function MemberWorkBalance(props: { data: SimpleBarChartType[] }) {
   const { data } = props;

@@ -31,7 +31,7 @@ export function Header(props: {
       <MenuLine>
         {DashboardMenu.map((menu) => (
           <li>
-            <StyeldFuncItem
+            <StyledFuncItem
               label={menu.label}
               func={() => setActiveMenu(menu.type)}
               isActive={activeMenu === menu.type}
@@ -102,11 +102,13 @@ const HeaderWrapper = styled.div<{ theme: Theme }>(
   `,
 );
 
-const StyeldFuncItem = styled(FuncItem)<{ theme: Theme }>(
+const StyledFuncItem = styled(FuncItem)<{ theme: Theme }>(
   ({ theme }) => css`
     background-color: ${theme.mode.cardBackground};
     font-family: ${theme.mode.font.header.menuItem};
     font-weight: 600;
+
+    color: ${theme.mode.textPrimary};
 
     &:hover {
       border-color: ${theme.mode.cardBackground};

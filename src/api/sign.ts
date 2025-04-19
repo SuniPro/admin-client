@@ -7,7 +7,7 @@ export async function me(): Promise<EmployeeType> {
   return response.data;
 }
 
-export async function login(loginInfo: SignInType): Promise<number> {
+export async function login(loginInfo: SignInType): Promise<string> {
   const response = await postToEmployeeServer("/login", loginInfo);
 
   return response.data;

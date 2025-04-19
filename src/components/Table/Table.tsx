@@ -159,10 +159,6 @@ export function Pagination(props: {
               </PageList>
             ))}
           </PageListArea>
-          {/*<strong>*/}
-          {/*  {table.getState().pagination.pageIndex + 1} of{" "}*/}
-          {/*  {table.getPageCount().toLocaleString()}*/}
-          {/*</strong>*/}
         </span>
         <PaginationButtonCase className="not-drag">
           <PaginationButton
@@ -187,21 +183,6 @@ export function Pagination(props: {
           />
         </PaginationButtonCase>
       </PageNationContainer>
-      {/*<span className="flex items-center gap-1">*/}
-      {/*  <input*/}
-      {/*    css={css`*/}
-      {/*      color: white;*/}
-      {/*      border-radius: 6px;*/}
-      {/*      background-color: rgba(0, 0, 0, 0);*/}
-      {/*      border: 1px solid ${theme.colors.gold};*/}
-      {/*    `}*/}
-      {/*    max={table.getPageCount()}*/}
-      {/*    defaultValue={table.getState().pagination.pageIndex + 1}*/}
-      {/*    className="border p-1 rounded w-16"*/}
-      {/*    onChange={(e) => setPageIndex(parseInt(e.target.value))}*/}
-      {/*  />*/}
-      {/*  <button onClick={() => table.setPageIndex(pageIndex)}>이동</button>*/}
-      {/*</span>*/}
       {viewMoveBox && (
         <PageViewSelector
           value={table.getState().pagination.pageSize}

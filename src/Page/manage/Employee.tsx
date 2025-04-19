@@ -34,8 +34,9 @@ import { HorizontalDivider } from "../../components/layouts/Layouts";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { SignUp } from "../Sign";
-import { EmployAnalysisPanel } from "../../components/Analysis/EmployAnalysisPanel";
+import { EmployeeAnalysisPanel } from "../../components/analysis/Employee";
 import { CustomModal } from "../../components/Modal/Modal";
+import { PaginationResponse } from "../../model/pagination";
 
 export function Employee(props: { user: EmployeeType }) {
   const { user } = props;
@@ -45,13 +46,18 @@ export function Employee(props: { user: EmployeeType }) {
   const [open, setOpen] = useState<boolean>(false);
   const close = () => setOpen(false);
 
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+
   const [selectedId, setSelectedId] = useState<number>(2);
 
-  const { data: employeeList } = useQuery({
+  const { data } = useQuery<PaginationResponse<EmployeeType>>({
     queryKey: ["getAllEmployeeList"],
-    queryFn: () => getAllEmployeeList(),
+    queryFn: () => getAllEmployeeList(pageIndex, pageSize),
     refetchInterval: 10000,
   });
+
+  const employeeList = data?.content;
 
   const columns = useMemo<ColumnDef<EmployeeType>[]>(
     () => [
@@ -126,9 +132,22 @@ export function Employee(props: { user: EmployeeType }) {
     columns,
     state: {
       columnFilters,
+      pagination: {
+        pageIndex,
+        pageSize,
+      },
     },
-    onColumnFiltersChange: setColumnFilters,
+    manualPagination: true,
+    onPaginationChange: (updater) => {
+      const next =
+        typeof updater === "function"
+          ? updater({ pageIndex, pageSize })
+          : updater;
+      setPageIndex(next.pageIndex);
+      setPageSize(next.pageSize);
+    },
     getPaginationRowModel: getPaginationRowModel(),
+    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(), //client side filtering
     getSortedRowModel: getSortedRowModel(),
@@ -141,13 +160,12 @@ export function Employee(props: { user: EmployeeType }) {
   const safeGetColumn = (value: string) => {
     if (table.getColumn(value)) {
       return table.getColumn(value);
-    } else {
     }
   };
 
   return (
     <>
-      <EmployAnalysisPanel user={user} employeeId={selectedId} />
+      <EmployeeAnalysisPanel user={user} employeeId={selectedId} />
       <StyledContainer theme={theme}>
         <HeaderLine theme={theme}>
           <div
@@ -259,5 +277,7 @@ const HeaderLine = styled.div<{ theme: Theme }>(
 const AddEmployeeButton = styled(FuncItem)<{ theme: Theme }>(
   ({ theme }) => css`
     font-family: ${theme.mode.font.button.default};
+
+    color: ${theme.mode.textPrimary};
   `,
 );
