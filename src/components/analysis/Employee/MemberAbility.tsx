@@ -1,8 +1,8 @@
-import { OutLine } from "../layouts/Layouts";
-import { SimpleRadarChart } from "../statistics/visualization/Chart/Radar";
+import { OutLine } from "../../layouts/Layouts";
+import { SimpleRadarChart } from "../../statistics/visualization/Chart/Radar";
 import styled from "@emotion/styled";
 import { Theme } from "@emotion/react";
-import { SimpleRadarChartType } from "../statistics/visualization/Chart";
+import { SimpleRadarChartType } from "../../statistics/visualization/Chart";
 
 export function MemberAbility(props: {
   windowWidth: number;

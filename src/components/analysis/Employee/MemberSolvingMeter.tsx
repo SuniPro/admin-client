@@ -1,9 +1,9 @@
 /** @jsxImportSource @emotion/react */
 import { css, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-import { OutLine } from "../layouts/Layouts";
-import AnalogMeter from "../AnalogMeter/AnalogMeter";
-import { Star } from "../AnalogMeter/AlalogMeterImage";
+import { OutLine } from "../../layouts/Layouts";
+import AnalogMeter from "../../AnalogMeter/AnalogMeter";
+import { Star } from "../../AnalogMeter/AlalogMeterImage";
 
 export function MemberSolvingMeter(props: {
   starValue: number | null;

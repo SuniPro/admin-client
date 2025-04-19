@@ -1,26 +1,28 @@
-import styled from "@emotion/styled";
-import { Container } from "../layouts/Frames/FrameLayouts";
-import { css, Theme, useTheme } from "@emotion/react";
+import { useTheme } from "@emotion/react";
 import {
   SimpleBarChartType,
   SimpleRadarChartType,
-} from "../statistics/visualization/Chart";
+} from "../../statistics/visualization/Chart";
 import { MemberWorkBalance } from "./MemberWorkBalance";
 import { MemberAbility } from "./MemberAbility";
 import { MemberSolvingMeter } from "./MemberSolvingMeter";
-import { MemberSolvingMeterEmpty } from "./MemberSolvingMeterEmpty";
-import { useWindowContext } from "../../context/WindowContext";
-import { EmployeeType } from "../../model/employee";
-import { getAbilitySet, getCommutes } from "../../api/review";
+import { useWindowContext } from "../../../context/WindowContext";
+import { EmployeeType } from "../../../model/employee";
+import { getAbilitySet, getCommutes } from "../../../api/review";
 import { useQuery } from "@tanstack/react-query";
-import { iso8601ToSummaryString } from "../styled/Date/DateFomatter";
+import { iso8601ToSummaryString } from "../../styled/Date/DateFomatter";
 import {
   abilityLabelMap,
   abilityList,
   abilityType,
   EmployeeAbilityType,
-} from "../../model/review";
+} from "../../../model/review";
 import { sumBy } from "lodash";
+import {
+  AnalysisContainer,
+  AnalysisContentsContainer,
+} from "../../layouts/Layouts";
+import { AnalysisEmptyState } from "../AnalysisEmptyState";
 
 export function convertToRadarData(
   ability: EmployeeAbilityType,
@@ -40,7 +42,7 @@ export function convertToRadarData(
   });
 }
 
-export function EmployAnalysisPanel(props: {
+export function EmployeeAnalysisPanel(props: {
   user: EmployeeType;
   employeeId: number;
 }) {
@@ -65,7 +67,7 @@ export function EmployAnalysisPanel(props: {
   if (!abilityList || !commuteList) {
     return (
       <AnalysisContainer isWide={isWide}>
-        <MemberSolvingMeterEmpty />
+        <AnalysisEmptyState />
       </AnalysisContainer>
     );
   }
@@ -92,61 +94,32 @@ export function EmployAnalysisPanel(props: {
 
   return (
     <AnalysisContainer isWide={isWide}>
-      {user.level === "OFFICEMANAGER" || user.level === "STAFF" ? (
+      {user.level === "OFFICEMANAGER" ||
+      user.level === "STAFF" ||
+      commuteList.length !== 0 ? (
         <>
-          <ContentsContainer theme={theme} width={28} isWide={isWide}>
+          <AnalysisContentsContainer theme={theme} width={28} isWide={isWide}>
             <MemberSolvingMeter
               starValue={anotherPerformance}
               circleValue={performance}
             />
-          </ContentsContainer>
-          <ContentsContainer theme={theme} width={16} isWide={isWide}>
+          </AnalysisContentsContainer>
+          <AnalysisContentsContainer theme={theme} width={16} isWide={isWide}>
             <MemberAbility
               windowWidth={windowWidth}
               theme={theme}
               data={convertToRadarData(abilityList)}
             />
-          </ContentsContainer>
-          <ContentsContainer theme={theme} width={56} isWide={isWide}>
+          </AnalysisContentsContainer>
+          <AnalysisContentsContainer theme={theme} width={56} isWide={isWide}>
             <MemberWorkBalance data={workDateList}></MemberWorkBalance>
-          </ContentsContainer>
+          </AnalysisContentsContainer>
         </>
       ) : (
-        <ContentsContainer width={100} theme={theme} isWide={isWide}>
-          <MemberSolvingMeterEmpty />
-        </ContentsContainer>
+        <AnalysisContentsContainer width={100} theme={theme} isWide={isWide}>
+          <AnalysisEmptyState />
+        </AnalysisContentsContainer>
       )}
     </AnalysisContainer>
   );
 }
-
-const AnalysisContainer = styled(Container)<{ isWide: boolean }>(
-  ({ isWide }) => css`
-    width: 100%;
-    flex-direction: row;
-    flex-wrap: ${isWide ? "nowrap" : "wrap"};
-    align-items: center;
-    justify-content: ${isWide ? "space-between" : "center"};
-    gap: 10px;
-  `,
-);
-
-const ContentsContainer = styled(Container)<{
-  theme: Theme;
-  width: number;
-  isWide: boolean;
-}>(
-  ({ theme, width, isWide }) => css`
-    width: ${isWide ? width : 100}%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: ${theme.mode.cardBackground};
-    border-radius: ${theme.borderRadius.softBox};
-
-    padding: 4px;
-    box-sizing: border-box;
-  `,
-);
