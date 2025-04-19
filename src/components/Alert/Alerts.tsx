@@ -17,6 +17,7 @@ export function ConfirmAlert(message: string, func: () => void): void {
       <ConfirmFuncBox>
         <Button
           variant="outlined"
+          color="error"
           size="small"
           onClick={() => toast.dismiss(t.id)}
         >
@@ -24,7 +25,7 @@ export function ConfirmAlert(message: string, func: () => void): void {
         </Button>
         <Button
           variant="contained"
-          color="error"
+          color="primary"
           size="small"
           onClick={() => {
             toast.dismiss(t.id);

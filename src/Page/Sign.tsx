@@ -112,9 +112,10 @@ export function SignUp(props: { close: () => void }) {
   };
 
   const register = () => {
-    createEmployee(employee)
-      .then(() => SuccessAlert("가입되었습니다."))
-      .then(() => setTimeout(() => close, 200));
+    createEmployee(employee).then(() => {
+      close();
+      SuccessAlert("가입되었습니다.");
+    });
   };
 
   return (

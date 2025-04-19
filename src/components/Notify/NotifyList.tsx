@@ -11,28 +11,137 @@ import {
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 import { NotifyType } from "../../model/notify";
-import { levelLabelMap, levelList, levelType } from "../../model/employee";
+import {
+  EmployeeType,
+  levelLabelMap,
+  levelList,
+  levelType,
+} from "../../model/employee";
 import { iso8601ToYYMMDDHHMM } from "../styled/Date/DateFomatter";
 import { Container } from "../layouts/Frames/FrameLayouts";
 import { css, Theme, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-import { FuncItem } from "../styled/Button/Button";
-import { HorizontalDivider } from "../layouts/Layouts";
+import { FuncItem, PlusButton } from "../styled/Button/Button";
+import { EllipsisCase, HorizontalDivider } from "../layouts/Layouts";
 import { Pagination, TableBody, TableHeader } from "../Table/Table";
 import { CustomModal } from "../Modal/Modal";
+import { Editor, Viewer } from "../Lexical/Editor";
+import { createNotify } from "../../api/notify";
+import { ErrorAlert, SuccessAlert } from "../Alert/Alerts";
 
-function NotifyView(props: { notify: NotifyType }) {
+export function ViewNotify(props: { notify: NotifyType; close: () => void }) {
   const { notify } = props;
-  return <>{notify}</>;
+  const theme = useTheme();
+
+  return (
+    <NotifyModalContainer>
+      <ModalHeaderLine>
+        <StyledInput
+          theme={theme}
+          placeholder="제목을 입력해주세요."
+          value={notify.title}
+          readOnly
+        />
+      </ModalHeaderLine>
+      <Viewer contents={notify.contents}></Viewer>
+    </NotifyModalContainer>
+  );
 }
 
-export function NotifyList(props: { notifyList: NotifyType[] }) {
-  const { notifyList } = props;
+function WriteNotify(props: { user: EmployeeType; close: () => void }) {
+  const { user, close } = props;
+  const [title, setTitle] = useState<string>("");
+  const [contents, setContents] = useState<string>("");
+  const theme = useTheme();
+
+  const saveNotify = () => {
+    const notify: NotifyType = {
+      id: 0,
+      level: user.level,
+      writer: user.name,
+      title,
+      contents,
+    };
+
+    createNotify(notify)
+      .then(() => {
+        SuccessAlert("저장 완료");
+        close();
+      })
+      .catch((e) => ErrorAlert(e.message));
+  };
+
+  return (
+    <NotifyModalContainer>
+      <ModalHeaderLine>
+        <StyledInput
+          theme={theme}
+          placeholder="제목을 입력해주세요."
+          onChange={(e) => setTitle(e.target.value)}
+        />
+        <StyledPlusButton func={saveNotify} theme={theme} />
+      </ModalHeaderLine>
+      <Editor setContents={setContents} />
+    </NotifyModalContainer>
+  );
+}
+
+const StyledPlusButton = styled(PlusButton)<{ theme: Theme }>(
+  ({ theme }) => css`
+    position: relative;
+    right: 10px;
+
+    circle {
+      fill: ${theme.mode.textSecondary} !important;
+    }
+  `,
+);
+
+const ModalHeaderLine = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+`;
+
+const NotifyModalContainer = styled(Container)`
+  width: 100%;
+  flex-direction: column;
+  justify-content: center;
+`;
+
+const StyledInput = styled.input<{
+  theme: Theme;
+}>(
+  ({ theme }) => css`
+    width: 100%;
+    border: none;
+    font-size: 18px;
+    color: ${theme.mode.textPrimary};
+    box-sizing: border-box;
+    padding: 0 15px;
+    font-family: ${theme.mode.font.component.itemTitle};
+    font-weight: 600;
+
+    &:focus-visible {
+      outline: none;
+    }
+  `,
+);
+
+export function NotifyList(props: {
+  user: EmployeeType;
+  notifyList: NotifyType[];
+}) {
+  const { user, notifyList } = props;
   const theme = useTheme();
   const [selectedNotify, setSelectedNotify] = useState<NotifyType>(
     notifyList[0],
   );
-  const [open, setOpen] = useState<boolean>(false);
+
+  const [writeOpen, setWriteOpen] = useState<boolean>(false);
+  const [viewerOpen, setViewerOpen] = useState<boolean>(false);
   const [columnResizeMode] = useState<ColumnResizeMode>("onChange");
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
@@ -53,13 +162,34 @@ export function NotifyList(props: { notifyList: NotifyType[] }) {
         ),
       },
       {
-        id: "name",
+        id: "writer",
         header: "작성자",
-        accessorKey: "name",
+        accessorKey: "writer",
         cell: ({ row }) => (
-          <span onClick={() => setSelectedNotify(row.getValue("id"))}>
-            {row.getValue("name")}
+          <span
+            onClick={() => {
+              setSelectedNotify(row.getValue("id"));
+            }}
+          >
+            {row.getValue("writer")}
           </span>
+        ),
+      },
+      {
+        id: "title",
+        header: "제목",
+        accessorKey: "title",
+        size: 350,
+        cell: ({ row }) => (
+          <EllipsisCase
+            func={() => {
+              setSelectedNotify(row.original);
+              setViewerOpen(true);
+            }}
+            text={row.getValue("title")}
+            testAlign="center"
+            width={350}
+          />
         ),
       },
       {
@@ -137,18 +267,18 @@ export function NotifyList(props: { notifyList: NotifyType[] }) {
                 font-size: 16px;
               `}
               placeholder="이름 검색"
-              value={table.getColumn("name")?.getFilterValue() as string}
+              value={table.getColumn("writer")?.getFilterValue() as string}
               onChange={(e) =>
-                table.getColumn("name")?.setFilterValue(e.target.value)
+                table.getColumn("writer")?.setFilterValue(e.target.value)
               }
             />
           </div>
-          <WriteButton
-            label="직원 추가"
+          <AddNotifyButton
+            label="공지 작성"
             isActive={true}
             activeBackgroundColor={theme.mode.cardBackground}
             inActiveBackgroundColor={theme.mode.cardBackground}
-            func={() => setOpen(true)}
+            func={() => setWriteOpen(true)}
             theme={theme}
           />
         </HeaderLine>
@@ -162,10 +292,22 @@ export function NotifyList(props: { notifyList: NotifyType[] }) {
           <TableBody table={table} />
         </TableContainer>
         <Pagination table={table} />
-        <CustomModal
-          open={open}
-          close={() => setOpen(false)}
-          children={<NotifyView notify={selectedNotify} />}
+        <StyledModal
+          open={viewerOpen}
+          close={() => setViewerOpen(false)}
+          children={
+            <ViewNotify
+              notify={selectedNotify}
+              close={() => setWriteOpen(false)}
+            />
+          }
+        />
+        <StyledModal
+          open={writeOpen}
+          close={() => setWriteOpen(false)}
+          children={
+            <WriteNotify user={user} close={() => setWriteOpen(false)} />
+          }
         />
       </StyledContainer>
     </>
@@ -200,12 +342,6 @@ const HeaderLine = styled.div<{ theme: Theme }>(
   `,
 );
 
-const WriteButton = styled(FuncItem)<{ theme: Theme }>(
-  ({ theme }) => css`
-    font-family: ${theme.mode.font.button.default};
-  `,
-);
-
 const TableContainer = styled.table`
   border-spacing: 0;
   width: 100%;
@@ -213,4 +349,21 @@ const TableContainer = styled.table`
   thead {
     border: none;
   }
+`;
+
+const AddNotifyButton = styled(FuncItem)<{ theme: Theme }>(
+  ({ theme }) => css`
+    cursor: pointer;
+    font-family: ${theme.mode.font.button.default};
+    color: ${theme.mode.textPrimary};
+
+    &:hover {
+      color: ${theme.mode.textPrimary};
+    }
+  `,
+);
+
+const StyledModal = styled(CustomModal)`
+  justify-content: flex-start;
+  align-items: center;
 `;

@@ -276,8 +276,12 @@ const HeaderLine = styled.div<{ theme: Theme }>(
 
 const AddEmployeeButton = styled(FuncItem)<{ theme: Theme }>(
   ({ theme }) => css`
+    cursor: pointer;
     font-family: ${theme.mode.font.button.default};
-
     color: ${theme.mode.textPrimary};
+
+    &:hover {
+      color: ${theme.mode.textPrimary};
+    }
   `,
 );

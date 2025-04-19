@@ -34,6 +34,12 @@ export async function getNotifyByLevel(
   return response.data;
 }
 
+export async function getLatestNotify(): Promise<NotifyType> {
+  const response = await getFromEmployeeServer("/notify/get/latest");
+
+  return response.data;
+}
+
 export async function getNotifyWithRead(
   id: number,
   level: levelType,

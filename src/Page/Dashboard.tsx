@@ -1,5 +1,4 @@
 /** @jsxImportSource @emotion/react */
-import { ModalContainer } from "../components/layouts/Frames/FrameLayouts";
 import styled from "@emotion/styled";
 import { Employee } from "./manage/Employee";
 import CampaignIcon from "@mui/icons-material/Campaign";
@@ -7,13 +6,14 @@ import { css, Theme, useTheme } from "@emotion/react";
 import { useUserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useWindowContext } from "../context/WindowContext";
-import { useProportionHook } from "../hooks/useWindowHooks";
-import Modal from "@mui/material/Modal";
 import { ContentsContainer } from "../components/layouts/Layouts";
 import { DashboardMenuType } from "../model/menu";
-import { Notice } from "./Notice";
 import { Financial } from "./manage/Financial";
+import { Notify } from "./Notify";
+import { useQuery } from "@tanstack/react-query";
+import { getLatestNotify } from "../api/notify";
+import { CustomModal } from "../components/Modal/Modal";
+import { ViewNotify } from "../components/Notify/NotifyList";
 
 export function Dashboard(props: { activeMenu: DashboardMenuType }) {
   const { activeMenu } = props;
@@ -21,6 +21,12 @@ export function Dashboard(props: { activeMenu: DashboardMenuType }) {
   const { user } = useUserContext();
   const navigate = useNavigate();
   const theme = useTheme();
+
+  const { data: lastNotify } = useQuery({
+    queryKey: ["getLatestNotify"],
+    queryFn: () => getLatestNotify(),
+    refetchInterval: 10000,
+  });
 
   useEffect(() => {
     if (!user) {
@@ -36,7 +42,7 @@ export function Dashboard(props: { activeMenu: DashboardMenuType }) {
         return <Employee user={user} />;
 
       case "notice":
-        return <Notice user={user} />;
+        return <Notify user={user} />;
 
       case "workTable":
         return <Financial user={user} />;
@@ -51,13 +57,24 @@ export function Dashboard(props: { activeMenu: DashboardMenuType }) {
             <i>
               <CampaignIcon color="error" />
             </i>
-            <span>공지사항 테스트</span>
+            <span>{lastNotify?.title}</span>
           </NotifyArea>
           <div>24.01.01</div>
         </NotifyContainer>
       </ContentsContainer>
       <ContentsContainer>{menuMatcher()}</ContentsContainer>
-      <FirstNotifyModal open={notifyOpen} close={() => setNotifyOpen(false)} />
+      {lastNotify && (
+        <StyledModal
+          open={notifyOpen}
+          close={() => setNotifyOpen(false)}
+          children={
+            <ViewNotify
+              notify={lastNotify}
+              close={() => setNotifyOpen(false)}
+            />
+          }
+        />
+      )}
     </DashboardContainer>
   );
 }
@@ -103,32 +120,7 @@ const DashboardContainer = styled.main`
   box-sizing: border-box;
 `;
 
-function FirstNotifyModal(props: { open: boolean; close: () => void }) {
-  const { open, close } = props;
-  const { windowWidth } = useWindowContext();
-  const theme = useTheme();
-
-  const { size } = useProportionHook(windowWidth, 600, theme.windowSize.tablet);
-
-  return (
-    <Modal
-      open={open}
-      onClose={close}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <>
-        <div id="date-area"></div>
-        <ModalContainer width={size} theme={theme}>
-          <div
-            css={css`
-              height: 40vh;
-            `}
-          >
-            공지사항 테스트
-          </div>
-        </ModalContainer>
-      </>
-    </Modal>
-  );
-}
+const StyledModal = styled(CustomModal)`
+  justify-content: flex-start;
+  align-items: center;
+`;
