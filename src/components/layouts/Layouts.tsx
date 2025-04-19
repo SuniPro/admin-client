@@ -91,3 +91,34 @@ const OutLineTitle = styled.div(
     line-height: 16px; /* 133.333% */
   `,
 );
+
+export const AnalysisContainer = styled(Container)<{ isWide: boolean }>(
+  ({ isWide }) => css`
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: ${isWide ? "nowrap" : "wrap"};
+    align-items: center;
+    justify-content: ${isWide ? "space-between" : "center"};
+    gap: 10px;
+  `,
+);
+
+export const AnalysisContentsContainer = styled(Container)<{
+  theme: Theme;
+  width: number;
+  isWide: boolean;
+}>(
+  ({ theme, width, isWide }) => css`
+    width: ${isWide ? width : 100}%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: ${theme.mode.cardBackground};
+    border-radius: ${theme.borderRadius.softBox};
+
+    padding: 4px;
+    box-sizing: border-box;
+  `,
+);

@@ -52,7 +52,7 @@ export const StyledFuncButton = styled.button<{
       ? activeBackgroundColor
       : inActiveBackgroundColor};
 
-    color: ${theme.mode.buttonText};
+    color: ${isActive ? theme.mode.textRevers : theme.mode.textPrimary};
 
     margin: 0;
     padding: 0.6em 1.2em;
@@ -66,10 +66,12 @@ export const StyledFuncButton = styled.button<{
       background: ${activeBackgroundColor
         ? activeBackgroundColor
         : theme.mode.buttonHoverBackground};
+      color: ${theme.mode.textRevers};
     }
 
     &:active {
       background-color: ${theme.mode.hoverEffect};
+      color: ${isActive ? theme.mode.textRevers : theme.mode.textPrimary};
       background-size: 100%;
       transition: background 0s;
     }
