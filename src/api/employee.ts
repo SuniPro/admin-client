@@ -4,6 +4,7 @@ import {
   levelType,
   SignUpFormType,
 } from "../model/employee";
+import { PaginationResponse } from "../model/pagination";
 import {
   deleteToEmployeeServer,
   getFromEmployeeServer,
@@ -19,8 +20,13 @@ export async function createEmployee(
   return response.data;
 }
 
-export async function getAllEmployeeList(): Promise<EmployeeType[]> {
-  const response = await getFromEmployeeServer("/employee/get/all");
+export async function getAllEmployeeList(
+  page: number,
+  size: number,
+): Promise<PaginationResponse<EmployeeType>> {
+  const response = await getFromEmployeeServer(
+    `/employee/get/all?page=${page}&size=${size}&sort=insertDateTime,desc`,
+  );
 
   return response.data;
 }
