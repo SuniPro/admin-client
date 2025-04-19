@@ -122,3 +122,41 @@ export const AnalysisContentsContainer = styled(Container)<{
     box-sizing: border-box;
   `,
 );
+
+export function EllipsisCase(props: {
+  text: ReactNode;
+  testAlign: "center" | "left" | "right";
+  className?: string;
+  width: number;
+  func?: () => void;
+}) {
+  const { text, className, width, testAlign, func } = props;
+
+  return (
+    <TextCase className={className} onClick={func}>
+      <Text textAlign={testAlign} width={width}>
+        {text}
+      </Text>
+    </TextCase>
+  );
+}
+
+export const TextCase = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const Text = styled.span<{ width?: number; textAlign: string }>(
+  ({ width, textAlign }) => css`
+    text-align: ${textAlign};
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: block;
+    overflow: hidden;
+    width: ${width}px;
+  `,
+);

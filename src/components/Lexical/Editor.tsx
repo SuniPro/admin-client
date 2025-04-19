@@ -1,5 +1,8 @@
 import "./theme/editor.css";
-import { LexicalComposer } from "@lexical/react/LexicalComposer";
+import {
+  InitialConfigType,
+  LexicalComposer,
+} from "@lexical/react/LexicalComposer";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
@@ -19,20 +22,18 @@ import { ToolbarPlugin } from "./plugIn/ToolbarPlugin";
 import { CodeHighlightPlugin } from "./plugIn/CodeHighlightPlugin";
 import { PlaygroundAutoLinkPlugin } from "./plugIn/AutoLinkPlugin";
 import { ListMaxIndentLevelPlugin } from "./plugIn/ListMaxIndentLevelPlugin";
+import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
+import { Dispatch, SetStateAction } from "react";
 
 function Placeholder() {
   return <div className="editor-placeholder">Enter some rich text...</div>;
 }
 
-const editorConfig = {
-  // The editor theme
+const lexicalCommonConfig = {
   theme: EDITOR_THEME,
-  // Handling of errors during update
   onError(error: Error) {
     throw error;
   },
-  namespace: "editor",
-  // Any custom nodes go here
   nodes: [
     HeadingNode,
     ListNode,
@@ -48,7 +49,16 @@ const editorConfig = {
   ],
 };
 
-export function Editor() {
+const editorConfig: InitialConfigType = {
+  // The editor theme
+  namespace: "editor",
+  ...lexicalCommonConfig,
+  // Any custom nodes go here
+};
+
+export function Editor(props: {
+  setContents: Dispatch<SetStateAction<string>>;
+}) {
   return (
     <LexicalComposer initialConfig={editorConfig}>
       <div className="editor-container">
@@ -59,6 +69,12 @@ export function Editor() {
             placeholder={<Placeholder />}
             ErrorBoundary={LexicalErrorBoundary}
           />
+          <OnChangePlugin
+            onChange={(editorState) => {
+              const editorStateJson = editorState.toJSON();
+              props.setContents(JSON.stringify(editorStateJson));
+            }}
+          />
           <HistoryPlugin />
           <AutoFocusPlugin />
           <CodeHighlightPlugin />
@@ -67,6 +83,30 @@ export function Editor() {
           <PlaygroundAutoLinkPlugin />
           <ListMaxIndentLevelPlugin maxDepth={7} />
           <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
+        </div>
+      </div>
+    </LexicalComposer>
+  );
+}
+
+export function Viewer(props: { contents: string }) {
+  const { contents } = props;
+
+  const viewerConfig: InitialConfigType = {
+    namespace: "viewer",
+    editable: false,
+    editorState: contents,
+    ...lexicalCommonConfig,
+  };
+  return (
+    <LexicalComposer initialConfig={viewerConfig}>
+      <div className="editor-container">
+        <div className="editor-inner">
+          <RichTextPlugin
+            contentEditable={<ContentEditable className="editor-input" />}
+            ErrorBoundary={LexicalErrorBoundary}
+            placeholder={null}
+          />
         </div>
       </div>
     </LexicalComposer>

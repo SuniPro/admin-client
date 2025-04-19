@@ -10,6 +10,8 @@ import { levelLabelMap } from "../../model/employee";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { IconButton } from "@mui/material";
 import { StyledBadge } from "./Layouts";
+import { useQuery } from "@tanstack/react-query";
+import { getCountUnReadAboutNotify } from "../../api/notify";
 
 export function Header(props: {
   activeMenu: DashboardMenuType;
@@ -18,6 +20,13 @@ export function Header(props: {
   const { activeMenu, setActiveMenu } = props;
   const { user } = useUserContext();
   const navigate = useNavigate();
+
+  const { data: notifyCount } = useQuery({
+    queryKey: ["getCountUnReadAboutNotify"],
+    queryFn: () => getCountUnReadAboutNotify(user!.id, user!.level),
+    refetchInterval: 10000,
+    enabled: Boolean(user),
+  });
 
   const theme = useTheme();
 
@@ -46,7 +55,11 @@ export function Header(props: {
         </UserProfile>
         <IconButton>
           <StyledNotifyIcon fontSize="medium" color="success" theme={theme} />
-          <StyledBadge badgeContent={2} color="error" overlap="circular" />
+          <StyledBadge
+            badgeContent={notifyCount ? notifyCount : 0}
+            color="error"
+            overlap="circular"
+          />
         </IconButton>
       </UserLine>
     </HeaderWrapper>

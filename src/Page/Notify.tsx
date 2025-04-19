@@ -1,34 +1,21 @@
-import styled from "@emotion/styled";
-import { Editor } from "../components/Lexical/Editor";
-import { Container } from "../components/layouts/Frames/FrameLayouts";
+import { EmployeeType } from "../model/employee";
+import { useQuery } from "@tanstack/react-query";
+import { getNotifyByLevel } from "../api/notify";
+import { NotifyList } from "../components/Notify/NotifyList";
 
-export function Notify() {
-  // useQuery({
-  //     queryKey:
-  // });
+export function Notify(props: { user: EmployeeType }) {
+  const { user } = props;
+  const { data: notifyListByLevel } = useQuery({
+    queryKey: ["getNotifyByLevel"],
+    queryFn: () => getNotifyByLevel(user.level),
+    refetchInterval: 10000,
+  });
+
+  if (!notifyListByLevel) return;
+
   return (
-    <NotifyContainer>
-      <ContentsContainer></ContentsContainer>
-      <Editor />
-    </NotifyContainer>
+    <>
+      <NotifyList user={user} notifyList={notifyListByLevel}></NotifyList>
+    </>
   );
 }
-
-const NotifyContainer = styled(Container)`
-  width: 100%;
-  margin-top: 5.2rem;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-`;
-
-const ContentsContainer = styled(Container)`
-  width: 90%;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-`;

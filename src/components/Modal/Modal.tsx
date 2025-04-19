@@ -12,8 +12,9 @@ export function CustomModal(props: {
   open: boolean;
   close: () => void;
   children: ReactNode;
+  className?: string;
 }) {
-  const { open, close, children } = props;
+  const { open, close, children, className } = props;
   const { windowWidth } = useWindowContext();
   const theme = useTheme();
 
@@ -28,7 +29,7 @@ export function CustomModal(props: {
     >
       <>
         <div id="date-area"></div>
-        <ModalContainer width={size} theme={theme}>
+        <ModalContainer width={size} theme={theme} className={className}>
           {children}
         </ModalContainer>
       </>
@@ -48,7 +49,7 @@ export const ModalContainer = styled.div<{ width: number; theme: Theme }>(
     border-radius: ${theme.borderRadius.softBox};
     color: ${theme.mode.textPrimary};
     background-color: ${theme.mode.cardBackground};
-    overflow-x: visible;
+    overflow-x: hidden;
     overflow-y: scroll;
     box-sizing: border-box;
     padding: 20px;

@@ -16,7 +16,7 @@ export default defineConfig({
     proxy: {
       // 첫 번째 프록시 설정
       "/admin": {
-        target: "http://192.168.9.173:8010",
+        target: "http://localhost:8010",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/admin/, ""),
         secure: false,
