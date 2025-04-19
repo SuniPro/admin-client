@@ -38,8 +38,11 @@ export function SignIn() {
 
   const signIn = () => {
     login(signInInfo)
-      .then(() => SuccessAlert("로그인 되었습니다."))
-      .then(() => navigate("/"))
+      .then((response) => {
+        navigate("/");
+        localStorage.setItem("access-token", response);
+        SuccessAlert("로그인 되었습니다.");
+      })
       .catch(() => ErrorAlert("로그인 실패"));
   };
 
@@ -229,6 +232,7 @@ const StyledSelect = styled.select<{ theme: Theme }>(
     font-size: 18px;
     width: 300px;
     background: ${theme.mode.cardBackground};
+
     &:focus-visible {
       outline: none;
     }
