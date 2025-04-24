@@ -78,8 +78,8 @@ export function TableHeader(props: {
 }
 
 // eslint-disable-next-line
-export function TableBody(props: { table: any }) {
-  const { table } = props;
+export function TableBody(props: { table: any; fontSize?: string }) {
+  const { table, fontSize } = props;
 
   return (
     <tbody>
@@ -97,6 +97,7 @@ export function TableBody(props: { table: any }) {
                 {...{
                   style: {
                     width: cell.column.getSize(),
+                    fontSize: fontSize,
                   },
                 }}
               >
