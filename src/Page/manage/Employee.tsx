@@ -37,6 +37,7 @@ import { SignUp } from "../Sign";
 import { EmployeeAnalysisPanel } from "../../components/analysis/Employee";
 import { CustomModal } from "../../components/Modal/Modal";
 import { PaginationResponse } from "../../model/pagination";
+import { useWindowContext } from "../../context/WindowContext";
 
 export function Employee(props: { user: EmployeeType }) {
   const { user } = props;
@@ -46,12 +47,14 @@ export function Employee(props: { user: EmployeeType }) {
   const [open, setOpen] = useState<boolean>(false);
   const close = () => setOpen(false);
 
+  const { windowWidth } = useWindowContext();
+
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
 
   const [selectedId, setSelectedId] = useState<number>(2);
 
-  const { data } = useQuery<PaginationResponse<EmployeeType>>({
+  const { data, refetch } = useQuery<PaginationResponse<EmployeeType>>({
     queryKey: ["getAllEmployeeList"],
     queryFn: () => getAllEmployeeList(pageIndex, pageSize),
     refetchInterval: 10000,
@@ -218,7 +221,7 @@ export function Employee(props: { user: EmployeeType }) {
           />
         </HeaderLine>
         <HorizontalDivider width={95} />
-        <TableContainer>
+        <TableContainer width={(windowWidth / 100) * 95}>
           <TableHeader
             table={table}
             headerBorder="none"
@@ -230,7 +233,7 @@ export function Employee(props: { user: EmployeeType }) {
         <CustomModal
           open={open}
           close={close}
-          children={<SignUp close={close} />}
+          children={<SignUp close={close} refetch={refetch} />}
         />
       </StyledContainer>
     </>
@@ -251,14 +254,17 @@ const StyledContainer = styled(Container)<{ theme: Theme }>(
   `,
 );
 
-const TableContainer = styled.table`
-  border-spacing: 0;
-  width: 100%;
+const TableContainer = styled.table<{ width: number }>(
+  ({ width }) => css`
+    border-spacing: 0;
+    width: ${width}px;
+    overflow-x: scroll;
 
-  thead {
-    border: none;
-  }
-`;
+    thead {
+      border: none;
+    }
+  `,
+);
 
 const HeaderLine = styled.div<{ theme: Theme }>(
   ({ theme }) => css`
