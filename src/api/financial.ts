@@ -1,14 +1,16 @@
-import { ErrorAlert } from "../components/Alert/Alerts";
 import {
-  ExchangeInfoType,
   TetherAccountType,
   TetherDepositAcceptType,
   TetherDepositType,
   TransactionStatusType,
 } from "../model/financial";
 import { PaginationResponse } from "../model/pagination";
-import { getFromEmployeeServer, patchToEmployeeServer } from "./base";
-import axios from "axios";
+import {
+  deleteToEmployeeServer,
+  getFromEmployeeServer,
+  getFromUserServer,
+  patchToEmployeeServer,
+} from "./base";
 
 export async function updateTetherWallet(
   tetherWallet: string,
@@ -140,18 +142,14 @@ export async function getTotalDepositAmountByStatusAndWallet(
   return response.data;
 }
 
-export async function getUsdToKrwRate(): Promise<ExchangeInfoType> {
-  try {
-    const response = await axios.get("https://api.frankfurter.app/latest", {
-      params: {
-        from: "USD",
-        to: "KRW",
-      },
-    });
+export async function deleteDepositById(depositId: number): Promise<void> {
+  await deleteToEmployeeServer(
+    `/financial/tether/delete/deposit/by/id/${depositId}`,
+  );
+}
 
-    return response.data;
-  } catch {
-    ErrorAlert("환율 조회에 실패하였습니다.");
-    return null as unknown as ExchangeInfoType;
-  }
+export async function getExchangeInfo(): Promise<number> {
+  const response = await getFromUserServer("/financial/exchange");
+
+  return response.data;
 }
