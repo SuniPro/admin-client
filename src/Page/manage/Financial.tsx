@@ -16,8 +16,8 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import {
   approveDeposit,
+  deleteDepositById,
   getDepositsByStatus,
-  getUsdToKrwRate,
 } from "../../api/financial";
 import {
   statusNavigationMenu,
@@ -47,8 +47,7 @@ import { ContentsEmptyState } from "../../components/Empty/ContentsEmptyState";
 import { Tooltip } from "@mui/material";
 import { PaginationResponse } from "../../model/pagination";
 import { useNavigate } from "react-router-dom";
-
-const formatNumber = (value: number): number => parseFloat(value.toFixed(2));
+import DeleteIcon from "@mui/icons-material/Delete";
 
 export function Financial(props: { user: EmployeeType }) {
   const { user } = props;
@@ -61,6 +60,8 @@ export function Financial(props: { user: EmployeeType }) {
 
   const theme = useTheme();
   const { windowWidth } = useWindowContext();
+
+  const isTablet = windowWidth <= 960;
 
   const [columnResizeMode] = useState<ColumnResizeMode>("onChange");
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -77,19 +78,13 @@ export function Financial(props: { user: EmployeeType }) {
   //   refetchInterval: 10000,
   // });
 
-  const { data } = useQuery<PaginationResponse<TetherDepositType>>({
+  const { data, refetch } = useQuery<PaginationResponse<TetherDepositType>>({
     queryKey: ["getDepositsByStatus", depositStatus, pageIndex, pageSize],
     queryFn: () => getDepositsByStatus(depositStatus, pageIndex, pageSize),
     placeholderData: (previousData) => previousData,
   });
 
   const depositList = data?.content;
-
-  const { data: exchangeData } = useQuery({
-    queryKey: ["getUsdToKrwRate"],
-    queryFn: () => getUsdToKrwRate(),
-    refetchInterval: 300000,
-  });
 
   useEffect(() => {
     if (depositList && depositList.length > 0) {
@@ -98,8 +93,6 @@ export function Financial(props: { user: EmployeeType }) {
   }, [depositList]);
 
   const [selectedWallet, setSelectedWallet] = useState<string>("");
-
-  const exchangeRate = exchangeData ? exchangeData.rates.KRW + 0.4 : 0;
 
   const columns = useMemo<ColumnDef<TetherDepositType>[]>(
     () => [
@@ -110,10 +103,10 @@ export function Financial(props: { user: EmployeeType }) {
         accessorKey: "id",
       },
       {
-        id: "username",
-        header: "유저이름",
-        accessorKey: "username",
-        size: 100,
+        id: "email",
+        header: "이메일",
+        accessorKey: "email",
+        size: 120,
       },
       {
         id: "tetherWallet",
@@ -146,18 +139,20 @@ export function Financial(props: { user: EmployeeType }) {
         header: "요청금액",
         accessorKey: "amount",
         size: 100,
-        cell: ({ row }) => <span>{row.getValue("amount")} 원</span>,
+        cell: ({ row }) => (
+          <span>
+            {parseFloat(row.getValue("amount")).toLocaleString("ko-KR")} 원
+          </span>
+        ),
       },
       {
-        id: "amount",
-        header: "입금 예정 테더",
-        accessorKey: "amount",
+        id: "usdtAmount",
+        header: "입금할 테더",
+        accessorKey: "usdtAmount",
         size: 100,
         cell: ({ row }) => (
           <span>
-            {formatNumber(
-              formatNumber(parseFloat(row.getValue("amount"))) / exchangeRate,
-            )}{" "}
+            {parseFloat(row.getValue("usdtAmount")).toLocaleString("en-US")}{" "}
             USDT
           </span>
         ),
@@ -177,7 +172,11 @@ export function Financial(props: { user: EmployeeType }) {
         accessorKey: "acceptedAt",
         size: 100,
         cell: ({ row }) => (
-          <span>{iso8601ToYYMMDDHHMM(row.getValue("acceptedAt"))}</span>
+          <span>
+            {row.getValue("acceptedAt") !== null
+              ? iso8601ToYYMMDDHHMM(row.getValue("acceptedAt"))
+              : "승인대기"}
+          </span>
         ),
       },
       {
@@ -202,8 +201,36 @@ export function Financial(props: { user: EmployeeType }) {
         size: 50,
         cell: ({ row }) => <AcceptControl depositInfo={row.original} />,
       },
+      {
+        id: "func",
+        header: "기능",
+        size: 50,
+        cell: ({ row }) => (
+          <div
+            css={css`
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+              justify-content: center;
+              gap: 10px;
+
+              cursor: pointer;
+            `}
+          >
+            <DeleteIcon
+              onClick={() =>
+                ConfirmAlert("삭제하시겠습니까 ?", () =>
+                  deleteDepositById(row.original.id)
+                    .then(() => refetch().then(() => SuccessAlert("삭제 완료")))
+                    .catch((e) => ErrorAlert(e.message)),
+                )
+              }
+            />
+          </div>
+        ),
+      },
     ],
-    [exchangeRate],
+    [refetch],
   );
 
   const table = useReactTable<TetherDepositType>({
@@ -260,7 +287,7 @@ export function Financial(props: { user: EmployeeType }) {
         setActiveStatus={setDepositStatus}
         justifyContent="center"
       />
-      <StyledContainer theme={theme}>
+      <StyledContainer width={(windowWidth / 100) * 95} theme={theme}>
         {depositList.length === 0 ? (
           <>
             <StyledContainer theme={theme}>
@@ -275,7 +302,10 @@ export function Financial(props: { user: EmployeeType }) {
                 headerBorder="none"
                 columnResizeMode={columnResizeMode}
               />
-              <TableBody table={table} />
+              <TableBody
+                table={table}
+                fontSize={isTablet ? "10px" : undefined}
+              />
             </TableContainer>
             <Pagination table={table} />
           </>
@@ -288,6 +318,7 @@ export function Financial(props: { user: EmployeeType }) {
 const TableContainer = styled.table`
   border-spacing: 0;
   width: 100%;
+  overflow-x: scroll;
 
   thead {
     border: none;
@@ -308,13 +339,15 @@ const TableContainer = styled.table`
 //   `,
 // );
 
-const StyledContainer = styled(Container)<{ theme: Theme }>(
-  ({ theme }) => css`
+const StyledContainer = styled(Container)<{ theme: Theme; width?: number }>(
+  ({ theme, width }) => css`
     flex-direction: column;
-    width: 100%;
+    width: ${width ? `${width}px` : "100%"};
     height: 100%;
     align-items: center;
     justify-content: center;
+
+    overflow-x: scroll;
 
     border-radius: ${theme.borderRadius.softBox};
 

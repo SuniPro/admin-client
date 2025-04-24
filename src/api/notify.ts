@@ -70,7 +70,7 @@ export async function isNotifyRead(
   employeeId: number,
 ): Promise<boolean> {
   const response = await getFromEmployeeServer(
-    `read/about/notify/${id}/${employeeId}`,
+    `/notify/read/about/notify/${id}/${employeeId}`,
   );
 
   return response.data;
@@ -81,7 +81,7 @@ export async function getCountUnReadAboutNotify(
   level: levelType,
 ): Promise<number> {
   const response = await getFromEmployeeServer(
-    `read/count/notify/${id}/${level}`,
+    `/notify/count/notify/${id}/${level}`,
   );
   return response.data;
 }
