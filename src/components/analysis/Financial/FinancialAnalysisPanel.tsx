@@ -41,7 +41,7 @@ export function FinancialAnalysisPanel(props: {
   const amountShareRateData: SimpleFunnerChartType[] = sortedAmount.map(
     (deposit, index) => ({
       value: deposit.amount,
-      name: deposit.username,
+      name: deposit.email.split("@")[0],
       fill: colors[index as number],
     }),
   );

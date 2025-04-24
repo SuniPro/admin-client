@@ -142,29 +142,122 @@ export async function deleteToEmployeeServer(
     .catch(errorHandler);
 }
 
-export async function postToTravelServerMultiPleFile(
+export async function getFromUserServer(
   url: string,
-  id: string,
-  type: string,
-  param: Blob,
+  init: InitOptions = { skipError: false },
+): Promise<AxiosResponse> {
+  const token = localStorage.getItem("access-token");
+  const server = import.meta.env.VITE_USER_SERVER_PREFIX;
+  const serverUrl = server + url;
+  return axios
+    .get(serverUrl, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then((response) => responseHandler(response, serverUrl, init))
+    .catch(errorHandler);
+}
+
+export async function postToUserServer(
+  url: string,
+  // eslint-disable-next-line
+  param: any,
   init: RequestInit & { skipError?: boolean } = {},
 ): Promise<AxiosResponse> {
-  // @ts-ignore
-  const server = import.meta.env.VITE_TRAVEL_SERVER_PREFIX;
+  const token = localStorage.getItem("access-token");
+  const server = import.meta.env.VITE_EMPLOYEE_SERVER_PREFIX;
   const serverUrl = server + url;
-  let formData = new FormData();
-
-  formData.append("id", id);
-  formData.append("file", param);
-  formData.append("type", type);
-
   return axios
-    .post(serverUrl, formData, {
-      headers: { "content-type": "multipart/form-data" },
-      withCredentials: true,
+    .post(serverUrl, param, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     })
     .catch(errorHandler)
     .then((response) => responseHandler(response, serverUrl, init));
+}
+
+export async function putToUserServer(
+  url: string,
+  // eslint-disable-next-line
+  param: any,
+  init: RequestInit & { skipError?: boolean } = {},
+): Promise<AxiosResponse> {
+  const token = localStorage.getItem("access-token");
+  const server = import.meta.env.VITE_EMPLOYEE_SERVER_PREFIX;
+  const serverUrl = server + url;
+  return axios
+    .put(serverUrl, param, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .catch(errorHandler)
+    .then((response) => responseHandler(response, serverUrl, init));
+}
+
+export async function patchToUserServer(
+  url: string,
+  // eslint-disable-next-line
+  param: any,
+  init: RequestInit & { skipError?: boolean } = {},
+): Promise<AxiosResponse> {
+  const token = localStorage.getItem("access-token");
+  const server = import.meta.env.VITE_EMPLOYEE_SERVER_PREFIX;
+  const serverUrl = server + url;
+  return axios
+    .patch(serverUrl, param, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .catch(errorHandler)
+    .then((response) => responseHandler(response, serverUrl, init));
+}
+
+export async function updateToUserServer(
+  url: string,
+  // eslint-disable-next-line
+  param: any,
+  init: RequestInit & {
+    skipError?: boolean;
+  } = {},
+): Promise<AxiosResponse> {
+  const token = localStorage.getItem("access-token");
+  const server = import.meta.env.VITE_EMPLOYEE_SERVER_PREFIX;
+  const serverUrl = server + url;
+  return axios
+    .put(serverUrl, param, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .catch(errorHandler)
+    .then((response) => responseHandler(response, serverUrl, init));
+}
+
+export async function deleteToUserServer(
+  url: string,
+  init: InitOptions = { skipError: false },
+): Promise<AxiosResponse> {
+  const token = localStorage.getItem("access-token");
+  const server = import.meta.env.VITE_EMPLOYEE_SERVER_PREFIX;
+  const serverUrl = server + url;
+  return axios
+    .delete(serverUrl, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then((response) => responseHandler(response, serverUrl, init))
+    .catch(errorHandler);
 }
 
 async function responseHandler(

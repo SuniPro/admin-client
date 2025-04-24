@@ -6,6 +6,7 @@ import {
   departmentLabelMap,
   departmentList,
   departmentType,
+  EmployeeType,
   levelLabelMap,
   levelList,
   levelType,
@@ -19,6 +20,8 @@ import { login } from "../api/sign";
 import { LogoText } from "../components/Logo/Logo";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../context/UserContext";
+import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
+import { PaginationResponse } from "../model/pagination";
 
 export function SignIn() {
   const { user } = useUserContext();
@@ -89,8 +92,13 @@ export function SignIn() {
   );
 }
 
-export function SignUp(props: { close: () => void }) {
-  const { close } = props;
+export function SignUp(props: {
+  close: () => void;
+  refetch: (
+    _options?: RefetchOptions,
+  ) => Promise<QueryObserverResult<PaginationResponse<EmployeeType>, Error>>;
+}) {
+  const { close, refetch } = props;
   const theme = useTheme();
   const [employee, setEmployee] = useState<SignUpFormType>({
     name: "",
@@ -114,7 +122,7 @@ export function SignUp(props: { close: () => void }) {
   const register = () => {
     createEmployee(employee).then(() => {
       close();
-      SuccessAlert("가입되었습니다.");
+      refetch().then(() => SuccessAlert("가입되었습니다."));
     });
   };
 
