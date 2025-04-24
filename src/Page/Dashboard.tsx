@@ -108,6 +108,7 @@ const NotifyArea = styled.div`
 `;
 
 const DashboardContainer = styled.main`
+  overflow: hidden;
   width: 100%;
   margin-top: 5.2rem;
 
