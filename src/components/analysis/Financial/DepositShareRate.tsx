@@ -13,7 +13,7 @@ export function DepositShareRate(props: { data: SimpleFunnerChartType[] }) {
     <OutLine title="입금 점유율 비교">
       <SimpleFunnelChart
         data={data}
-        width={isWide ? 220 : 240}
+        width={isWide ? 300 : 400}
         height={isWide ? 134 : 200}
       />
     </OutLine>

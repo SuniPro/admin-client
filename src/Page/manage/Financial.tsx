@@ -13,7 +13,11 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useQuery } from "@tanstack/react-query";
+import {
+  QueryObserverResult,
+  RefetchOptions,
+  useQuery,
+} from "@tanstack/react-query";
 import {
   approveDeposit,
   deleteDepositById,
@@ -199,7 +203,9 @@ export function Financial(props: { user: EmployeeType }) {
         header: "승인",
         accessorKey: "accepted",
         size: 50,
-        cell: ({ row }) => <AcceptControl depositInfo={row.original} />,
+        cell: ({ row }) => (
+          <AcceptControl refetch={refetch} depositInfo={row.original} />
+        ),
       },
       {
         id: "func",
@@ -355,8 +361,15 @@ const StyledContainer = styled(Container)<{ theme: Theme; width?: number }>(
   `,
 );
 
-function AcceptControl(props: { depositInfo: TetherDepositType }) {
-  const { depositInfo } = props;
+function AcceptControl(props: {
+  refetch: (
+    _options?: RefetchOptions,
+  ) => Promise<
+    QueryObserverResult<PaginationResponse<TetherDepositType>, Error>
+  >;
+  depositInfo: TetherDepositType;
+}) {
+  const { refetch, depositInfo } = props;
   const [isAccept, setIsAccept] = useState<boolean>(depositInfo.accepted);
 
   const accept = () => {
@@ -366,7 +379,7 @@ function AcceptControl(props: { depositInfo: TetherDepositType }) {
       amount: depositInfo.amount,
     };
     approveDeposit(requestDeposit)
-      .then(() => SuccessAlert("변경 완료"))
+      .then(() => refetch().then(() => SuccessAlert("변경 완료")))
       .then(() => setIsAccept((prev) => !prev));
   };
 

@@ -4,6 +4,7 @@ import { SendIcon } from "../styled/icons";
 import { badgeClasses } from "@mui/material";
 import { StyledBadge } from "../layouts/Layouts";
 import { Container } from "../layouts/Frames/FrameLayouts";
+import Button from "@mui/material/Button";
 
 export function Chat() {
   const theme = useTheme();
@@ -37,10 +38,12 @@ const NotifyBadge = styled(StyledBadge)`
   }
 `;
 
-const DMButton = styled.div<{ theme: Theme }>(
+const DMButton = styled(Button)<{ theme: Theme }>(
   ({ theme }) => css`
     width: 50px;
+    min-width: 50px;
     height: 50px;
+    min-height: 50px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -54,4 +57,6 @@ const ChatContainer = styled(Container)`
   position: fixed;
   bottom: 20px;
   right: 20px;
+  width: 50px;
+  height: 50px;
 `;
