@@ -67,7 +67,9 @@ export function EmployeeAnalysisPanel(props: {
   if (!abilityList || !commuteList) {
     return (
       <AnalysisContainer isWide={isWide}>
-        <AnalysisEmptyState />
+        <AnalysisContentsContainer width={100} theme={theme} isWide={isWide}>
+          <AnalysisEmptyState />
+        </AnalysisContentsContainer>
       </AnalysisContainer>
     );
   }
