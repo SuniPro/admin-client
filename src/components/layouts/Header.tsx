@@ -39,7 +39,7 @@ export function Header(props: {
       </LogoContainer>
       <MenuLine>
         {DashboardMenu.map((menu) => (
-          <li>
+          <li key={menu.label}>
             <StyledFuncItem
               label={menu.label}
               func={() => setActiveMenu(menu.type)}
