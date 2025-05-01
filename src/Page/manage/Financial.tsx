@@ -2,7 +2,7 @@
 import { EmployeeType } from "../../model/employee";
 import { FinancialAnalysisPanel } from "../../components/analysis/Financial";
 import { css, Theme, useTheme } from "@emotion/react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -11,6 +11,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  Row,
   useReactTable,
 } from "@tanstack/react-table";
 import {
@@ -52,6 +53,8 @@ import { Tooltip } from "@mui/material";
 import { PaginationResponse } from "../../model/pagination";
 import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
+import useSound from "use-sound";
+import alertSound from "../../assets/sound/alert/alert.mp3";
 
 export function Financial(props: { user: EmployeeType }) {
   const { user } = props;
@@ -63,6 +66,8 @@ export function Financial(props: { user: EmployeeType }) {
   }
 
   const theme = useTheme();
+  const [play] = useSound(alertSound);
+
   const { windowWidth } = useWindowContext();
 
   const isTablet = windowWidth <= 960;
@@ -76,12 +81,6 @@ export function Financial(props: { user: EmployeeType }) {
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
 
-  // const { data: depositList } = useQuery({
-  //   queryKey: ["getDepositsByStatus", depositStatus],
-  //   queryFn: () => getDepositsByStatus(depositStatus),
-  //   refetchInterval: 10000,
-  // });
-
   const { data, refetch } = useQuery<PaginationResponse<TetherDepositType>>({
     queryKey: ["getDepositsByStatus", depositStatus, pageIndex, pageSize],
     queryFn: () => getDepositsByStatus(depositStatus, pageIndex, pageSize),
@@ -90,11 +89,23 @@ export function Financial(props: { user: EmployeeType }) {
 
   const depositList = data?.content;
 
+  const previousLengthRef = useRef<number>(depositList?.length || 0);
+
   useEffect(() => {
+    const currentLength = depositList?.length || 0;
+
     if (depositList && depositList.length > 0) {
       setSelectedWallet(depositList[0].tetherWallet);
+      if (
+        depositStatus === "PENDING" &&
+        currentLength > previousLengthRef.current
+      ) {
+        play();
+      }
     }
-  }, [depositList]);
+
+    previousLengthRef.current = currentLength;
+  }, [depositList, depositStatus, play]);
 
   const [selectedWallet, setSelectedWallet] = useState<string>("");
 
@@ -198,15 +209,19 @@ export function Financial(props: { user: EmployeeType }) {
           </span>
         ),
       },
-      {
-        id: "accepted",
-        header: "승인",
-        accessorKey: "accepted",
-        size: 50,
-        cell: ({ row }) => (
-          <AcceptControl refetch={refetch} depositInfo={row.original} />
-        ),
-      },
+      ...(depositStatus === "PENDING"
+        ? [
+            {
+              id: "accepted",
+              header: "승인",
+              accessorKey: "accepted",
+              size: 50,
+              cell: ({ row }: { row: Row<TetherDepositType> }) => (
+                <AcceptControl refetch={refetch} depositInfo={row.original} />
+              ),
+            },
+          ]
+        : []),
       {
         id: "func",
         header: "기능",
@@ -236,7 +251,7 @@ export function Financial(props: { user: EmployeeType }) {
         ),
       },
     ],
-    [refetch],
+    [depositStatus, refetch],
   );
 
   const table = useReactTable<TetherDepositType>({
@@ -302,6 +317,7 @@ export function Financial(props: { user: EmployeeType }) {
           </>
         ) : (
           <>
+            {depositStatus === "PENDING" ? <></> : null}
             <TableContainer>
               <TableHeader
                 table={table}
@@ -395,7 +411,7 @@ function AcceptControl(props: {
     <div>
       <Switch
         onChange={(e) => importantChange(e.target.checked)}
-        checked={isAccept}
+        defaultChecked={isAccept}
       />
     </div>
   );
