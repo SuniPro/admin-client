@@ -5,10 +5,11 @@ import { css, Theme, useTheme } from "@emotion/react";
 import { uid } from "uid";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
-import { FuncIconItem } from "../styled/Button/Button";
+import { FuncIconItem, FuncItem } from "../styled/Button";
 import { useHorizontalScroll } from "../../hooks/useWheel";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
+import { Container } from "../layouts/Frames/FrameLayouts";
 
 export function generateNumberArray(upTo: number): number[] {
   if (upTo < 1) {
@@ -114,9 +115,9 @@ export function TableBody(props: { table: any; fontSize?: string }) {
 export function Pagination(props: {
   // eslint-disable-next-line
   table: Table<any>;
-  viewMoveBox?: boolean;
+  viewSizeBox?: boolean;
 }) {
-  const { table, viewMoveBox = false } = props;
+  const { table, viewSizeBox = false } = props;
   const theme = useTheme();
   const pageListAreaRef = useRef<HTMLDivElement>(null);
   useHorizontalScroll(pageListAreaRef);
@@ -132,6 +133,7 @@ export function Pagination(props: {
             activeBackgroundColor={theme.mode.cardBackground}
             icon={<KeyboardDoubleArrowLeftIcon />}
             label={undefined}
+            theme={theme}
           />
           <PaginationButton
             func={() => table.previousPage()}
@@ -140,6 +142,7 @@ export function Pagination(props: {
             activeBackgroundColor={theme.mode.cardBackground}
             icon={<KeyboardArrowLeftIcon />}
             label={undefined}
+            theme={theme}
           />
         </PaginationButtonCase>
         <span>
@@ -172,6 +175,7 @@ export function Pagination(props: {
             inActiveBackgroundColor={theme.mode.cardBackground}
             activeBackgroundColor={theme.mode.cardBackground}
             icon={<KeyboardArrowRightIcon />}
+            theme={theme}
             label={undefined}
           />
           <PaginationButton
@@ -180,11 +184,12 @@ export function Pagination(props: {
             inActiveBackgroundColor={theme.mode.cardBackground}
             activeBackgroundColor={theme.mode.cardBackground}
             icon={<KeyboardDoubleArrowRightIcon />}
+            theme={theme}
             label={undefined}
           />
         </PaginationButtonCase>
       </PageNationContainer>
-      {viewMoveBox && (
+      {viewSizeBox && (
         <PageViewSelector
           value={table.getState().pagination.pageSize}
           onChange={(e) => {
@@ -306,6 +311,72 @@ export const PageViewSelector = styled.select<{ theme: Theme }>(
   `,
 );
 
-const PaginationButton = styled(FuncIconItem)`
-  padding: 4px 10px;
+const PaginationButton = styled(FuncIconItem)<{ theme: Theme }>(
+  ({ theme }) => css`
+    padding: 4px 10px;
+
+    svg {
+      fill: ${theme.mode.textPrimary};
+    }
+  `,
+);
+
+export const StyledContainer = styled(Container)<{ theme: Theme }>(
+  ({ theme }) => css`
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: ${theme.borderRadius.softBox};
+
+    background-color: ${theme.mode.cardBackground};
+  `,
+);
+
+export const TableContainer = styled.table<{ width: number }>(
+  ({ width }) => css`
+    border-spacing: 0;
+    width: ${width}px;
+    overflow-x: scroll;
+
+    thead {
+      border: none;
+    }
+  `,
+);
+
+export const HeaderLine = styled.div<{ theme: Theme }>(
+  ({ theme }) => css`
+    width: 95%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 16px;
+
+    padding: 14px 0 8px 0;
+
+    font-family: ${theme.mode.font.component.itemTitle};
+  `,
+);
+
+export const AddButton = styled(FuncItem)<{ theme: Theme }>(
+  ({ theme }) => css`
+    cursor: pointer;
+    font-family: ${theme.mode.font.button.default};
+    color: ${theme.mode.textPrimary};
+
+    &:hover {
+      color: ${theme.mode.textPrimary};
+    }
+  `,
+);
+
+export const TableFunctionLine = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 `;

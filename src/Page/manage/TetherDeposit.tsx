@@ -33,18 +33,14 @@ import {
 } from "../../model/financial";
 import { Container } from "../../components/layouts/Frames/FrameLayouts";
 import styled from "@emotion/styled";
-import {
-  Pagination,
-  TableBody,
-  TableHeader,
-} from "../../components/Table/Table";
+import { Pagination, TableBody, TableHeader } from "../../components/Table";
 import {
   ConfirmAlert,
   ErrorAlert,
   SuccessAlert,
 } from "../../components/Alert/Alerts";
 import Switch from "@mui/material/Switch";
-import { Navigation } from "../../components/Navigation/Navigation";
+import { Navigation } from "../../components/Navigation";
 import { useWindowContext } from "../../context/WindowContext";
 import { iso8601ToYYMMDDHHMM } from "../../components/styled/Date/DateFomatter";
 import { Spinner } from "../../components/Empty/Spinner";
@@ -56,7 +52,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import useSound from "use-sound";
 import alertSound from "../../assets/sound/alert/alert.mp3";
 
-export function Financial(props: { user: EmployeeType }) {
+export function TetherDeposit(props: { user: EmployeeType }) {
   const { user } = props;
   const navigate = useNavigate();
 
@@ -257,6 +253,7 @@ export function Financial(props: { user: EmployeeType }) {
   const table = useReactTable<TetherDepositType>({
     data: depositList ?? [],
     columns,
+    pageCount: data?.totalPages ?? 0,
     state: {
       columnFilters,
       pagination: {

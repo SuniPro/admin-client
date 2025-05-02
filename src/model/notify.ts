@@ -1,8 +1,8 @@
-import { levelType } from "./employee";
+import { LevelType } from "./employee";
 
 export interface NotifyType {
   id: number;
-  level: levelType;
+  level: LevelType;
   writer: string;
   title: string;
   contents: string;

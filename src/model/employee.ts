@@ -1,7 +1,7 @@
 export interface EmployeeType {
   id: number;
-  department: departmentType;
-  level: levelType;
+  department: DepartmentType;
+  level: LevelType;
   name: string;
   insertName: string;
   insertDateTime: Date;
@@ -14,8 +14,8 @@ export interface EmployeeType {
 export interface SignUpFormType {
   name: string;
   password: string;
-  department: departmentType;
-  level: levelType;
+  department: DepartmentType;
+  level: LevelType;
   insertName: string;
 }
 
@@ -27,7 +27,7 @@ export const departmentList = [
   "ACCOUNTING",
 ] as const;
 
-export type departmentType = (typeof departmentList)[number];
+export type DepartmentType = (typeof departmentList)[number];
 
 export const levelList = [
   "STAFF",
@@ -42,9 +42,9 @@ export const levelList = [
   "CEO",
 ] as const;
 
-export type levelType = (typeof levelList)[number];
+export type LevelType = (typeof levelList)[number];
 
-export const departmentLabelMap: Record<departmentType, string> = {
+export const departmentLabelMap: Record<DepartmentType, string> = {
   OFFICE: "영업",
   HEAD: "임원",
   ADMIN: "운영관리",
@@ -52,7 +52,7 @@ export const departmentLabelMap: Record<departmentType, string> = {
   ACCOUNTING: "재무",
 };
 
-export const levelLabelMap: Record<levelType, string> = {
+export const levelLabelMap: Record<LevelType, string> = {
   STAFF: "사원",
   ASSOCIATE: "주임",
   SENIORMANAGER: "차장",

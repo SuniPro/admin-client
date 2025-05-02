@@ -1,4 +1,4 @@
-import { levelType } from "../model/employee";
+import { LevelType } from "../model/employee";
 import { NotifyType, NotifyWithReadType } from "../model/notify";
 import {
   deleteToEmployeeServer,
@@ -28,7 +28,7 @@ export async function getNotifyById(id: number): Promise<NotifyType> {
 }
 
 export async function getNotifyByLevel(
-  level: levelType,
+  level: LevelType,
 ): Promise<NotifyType[]> {
   const response = await getFromEmployeeServer(`/notify/get/by/level/${level}`);
   return response.data;
@@ -42,7 +42,7 @@ export async function getLatestNotify(): Promise<NotifyType> {
 
 export async function getNotifyWithRead(
   id: number,
-  level: levelType,
+  level: LevelType,
 ): Promise<NotifyWithReadType> {
   const response = await getFromEmployeeServer(
     `/notify/get/all/with/read/${id}/${level}`,
@@ -78,7 +78,7 @@ export async function isNotifyRead(
 
 export async function getCountUnReadAboutNotify(
   id: number,
-  level: levelType,
+  level: LevelType,
 ): Promise<number> {
   const response = await getFromEmployeeServer(
     `/notify/count/notify/${id}/${level}`,

@@ -17,6 +17,8 @@ export interface FuncIconItemProps {
   func: () => void;
   inActiveBackgroundColor?: string;
   activeBackgroundColor?: string;
+  startIcon?: ReactNode;
+  endIcon?: ReactNode;
 }
 
 export interface AppProps {
