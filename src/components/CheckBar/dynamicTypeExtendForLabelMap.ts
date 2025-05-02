@@ -6,8 +6,8 @@ export type LabelMapType = "WorkMenuLabelMap" | "AnotherLabelMap"; // ✨ 추후
 export type LabelMapData<T extends LabelMapType> = T extends "WorkMenuLabelMap"
   ? Record<WorkMenuListType, string>
   : T extends "AnotherLabelMap"
-    ? Record<string, string>
-    : never;
+  ? Record<string, string>
+  : never;
 
 export type LabelMapKeyType<T extends LabelMapType> =
   T extends "WorkMenuLabelMap" ? WorkMenuListType : string;
