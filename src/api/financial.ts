@@ -12,12 +12,24 @@ import {
   patchToEmployeeServer,
 } from "./base";
 
+export async function getAllTetherAccounts(
+  page: number,
+  size: number,
+): Promise<PaginationResponse<TetherAccountType>> {
+  const response = await getFromEmployeeServer(
+    `/financial/tether/get/account/all?page=${page}&size=${size}&sort=insertDateTime,desc`,
+  );
+
+  return response.data;
+}
+
 export async function updateTetherWallet(
+  id: number,
   tetherWallet: string,
 ): Promise<TetherAccountType> {
   const response = await patchToEmployeeServer(
     "/financial/tether/update/wallet",
-    tetherWallet,
+    { id, tetherWallet },
   );
   return response.data;
 }

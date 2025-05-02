@@ -5,14 +5,14 @@ import { css, Theme, useTheme } from "@emotion/react";
 import {
   departmentLabelMap,
   departmentList,
-  departmentType,
+  DepartmentType,
   EmployeeType,
   levelLabelMap,
   levelList,
-  levelType,
+  LevelType,
   SignUpFormType,
 } from "../model/employee";
-import { FingerPrint } from "../components/styled/Button/FingerPrint";
+import { FingerPrint } from "../components/styled/Button";
 import { ErrorAlert, SuccessAlert } from "../components/Alert/Alerts";
 import { createEmployee } from "../api/employee";
 import { SignInType } from "../model/sign";
@@ -169,13 +169,13 @@ export function SignUp(props: {
           onChange={(e) =>
             setEmployee((prev) => ({
               ...prev,
-              department: e.target.value as departmentType,
+              department: e.target.value as DepartmentType,
             }))
           }
         >
           {departmentList.map((value) => (
             <option value={value}>
-              {departmentLabelMap[value as departmentType]}
+              {departmentLabelMap[value as DepartmentType]}
             </option>
           ))}
         </StyledSelect>
@@ -187,12 +187,12 @@ export function SignUp(props: {
           onChange={(e) =>
             setEmployee((prev) => ({
               ...prev,
-              level: e.target.value as levelType,
+              level: e.target.value as LevelType,
             }))
           }
         >
           {levelList.map((value) => (
-            <option value={value}>{levelLabelMap[value as levelType]}</option>
+            <option value={value}>{levelLabelMap[value as LevelType]}</option>
           ))}
         </StyledSelect>
       </InputLine>

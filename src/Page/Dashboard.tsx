@@ -8,12 +8,12 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ContentsContainer } from "../components/layouts/Layouts";
 import { DashboardMenuType } from "../model/menu";
-import { Financial } from "./manage/Financial";
 import { Notify } from "./Notify";
 import { useQuery } from "@tanstack/react-query";
 import { getLatestNotify } from "../api/notify";
 import { CustomModal } from "../components/Modal/Modal";
 import { ViewNotify } from "../components/Notify/NotifyList";
+import { WorkTable } from "./WorkTable";
 
 export function Dashboard(props: { activeMenu: DashboardMenuType }) {
   const { activeMenu } = props;
@@ -39,13 +39,13 @@ export function Dashboard(props: { activeMenu: DashboardMenuType }) {
   const menuMatcher = () => {
     switch (activeMenu) {
       case "employeeList":
-        return <Employee user={user} />;
+        return <Employee />;
 
       case "notice":
-        return <Notify user={user} />;
+        return <Notify />;
 
       case "workTable":
-        return <Financial user={user} />;
+        return <WorkTable user={user} />;
     }
   };
 

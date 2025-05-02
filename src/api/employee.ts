@@ -1,7 +1,7 @@
 import {
-  departmentType,
+  DepartmentType,
   EmployeeType,
-  levelType,
+  LevelType,
   SignUpFormType,
 } from "../model/employee";
 import { PaginationResponse } from "../model/pagination";
@@ -44,7 +44,7 @@ export async function getEmployeeByName(name: string): Promise<EmployeeType[]> {
 }
 
 export async function getEmployeeListByDepartment(
-  department: departmentType,
+  department: DepartmentType,
 ): Promise<EmployeeType[]> {
   const response = await getFromEmployeeServer(
     "/employee/get/by?department=" + department,
@@ -54,7 +54,7 @@ export async function getEmployeeListByDepartment(
 }
 
 export async function getEmployeeListByLevel(
-  level: levelType,
+  level: LevelType,
 ): Promise<EmployeeType[]> {
   const response = await getFromEmployeeServer(`/employee/get/by/${level}`);
 

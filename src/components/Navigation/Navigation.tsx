@@ -2,10 +2,8 @@ import _ from "lodash";
 import React, { useRef } from "react";
 import styled from "@emotion/styled";
 import { useHorizontalScroll } from "../../hooks/useWheel";
-import { FuncItem } from "../styled/Button/Button";
+import { FuncItem } from "../styled/Button";
 import { css, Theme, useTheme } from "@emotion/react";
-import { useParams } from "react-router-dom";
-import { miniGames, sportsMenu } from "./navigationMenuList";
 import { TransactionStatusType } from "../../model/financial";
 
 const NAVIGATION_SUMMARY_WIDTH = 0;
@@ -14,17 +12,6 @@ const SUMMARY_PADDING_LEFT = 10;
 const SUMMARY_PADDING_RIGHT = 20;
 const CONTAINER_PADDING = 10;
 const ITEM_GAP = 20;
-
-const MENU_LIST = (path: string) => {
-  switch (path) {
-    case "sports":
-      return sportsMenu;
-    case "mini":
-      return miniGames;
-    default:
-      return sportsMenu;
-  }
-};
 
 // index에 해당하는 item이 화면 중앙에 위치할 수 있는 scrollX 값을 얻어냅니다.
 const calculateScrollX = (
@@ -68,7 +55,6 @@ export function Navigation(props: NavigationPropsType) {
     setActiveStatus,
     justifyContent,
   } = props;
-  const { lastPath } = useParams();
 
   const theme = useTheme();
 
@@ -77,9 +63,7 @@ export function Navigation(props: NavigationPropsType) {
 
   const itemWidthList = [
     NAVIGATION_SUMMARY_WIDTH + 1 + SUMMARY_PADDING_LEFT + SUMMARY_PADDING_RIGHT,
-    ...MENU_LIST(lastPath ? lastPath : "sports").map(
-      () => navigationItemWidth + ITEM_GAP,
-    ),
+    ...menuList.map(() => navigationItemWidth + ITEM_GAP),
   ];
 
   const scrollXValue = calculateScrollX(

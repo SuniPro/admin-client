@@ -100,6 +100,7 @@ export function PlusButton(props: { className?: string; func: () => void }) {
   return (
     <PlusButtonWrapper
       className={className}
+      onMouseLeave={() => setToggle(false)}
       onClick={() => {
         func();
         setToggle((prev) => !prev);

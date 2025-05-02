@@ -15,15 +15,15 @@ import {
   EmployeeType,
   levelLabelMap,
   levelList,
-  levelType,
+  LevelType,
 } from "../../model/employee";
 import { iso8601ToYYMMDDHHMM } from "../styled/Date/DateFomatter";
 import { Container } from "../layouts/Frames/FrameLayouts";
 import { css, Theme, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-import { FuncItem, PlusButton } from "../styled/Button/Button";
+import { FuncItem, PlusButton } from "../styled/Button";
 import { EllipsisCase, HorizontalDivider } from "../layouts/Layouts";
-import { Pagination, TableBody, TableHeader } from "../Table/Table";
+import { Pagination, TableBody, TableHeader } from "../Table";
 import { CustomModal } from "../Modal/Modal";
 import { Editor, Viewer } from "../Lexical/Editor";
 import { createNotify } from "../../api/notify";
@@ -158,7 +158,7 @@ export function NotifyList(props: {
         header: "직급",
         accessorKey: "level",
         cell: ({ row }) => (
-          <span>{levelLabelMap[row.getValue("level") as levelType]}</span>
+          <span>{levelLabelMap[row.getValue("level") as LevelType]}</span>
         ),
       },
       {
@@ -257,7 +257,7 @@ export function NotifyList(props: {
               <option value="">전체 부서</option>
               {levelList.map((value) => (
                 <option key={value} value={value}>
-                  {levelLabelMap[value as levelType]}
+                  {levelLabelMap[value as LevelType]}
                 </option>
               ))}
             </select>
