@@ -40,14 +40,16 @@ export function WorkTable(props: { user: EmployeeType }) {
 
   useEffect(() => {
     getById(user!.id).then((r) => {
-      setWorkTableCheckList((prev) =>
-        prev.map((work) => ({
-          ...work,
-          checked: (r.workMenuList as unknown as WorkMenuListType).includes(
-            work.label,
-          ), // ✅ 간결한 체크 로직
-        })),
-      );
+      if (r.workMenuList.length > 0) {
+        setWorkTableCheckList((prev) =>
+          prev.map((work) => ({
+            ...work,
+            checked: (r.workMenuList as unknown as WorkMenuListType).includes(
+              work.label,
+            ), // ✅ 간결한 체크 로직
+          })),
+        );
+      }
     });
   }, [user]);
 
