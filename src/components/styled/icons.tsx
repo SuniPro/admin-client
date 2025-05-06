@@ -1,3 +1,6 @@
+import { EditNote } from "@mui/icons-material";
+import { ComponentProps } from "react";
+
 export function MessageCircleIcon(props: { className?: string }) {
   return (
     <svg
@@ -215,4 +218,12 @@ export function SendIcon(props: { className?: string }) {
       />
     </svg>
   );
+}
+
+type EditNoteIconProps = ComponentProps<typeof EditNote> & {
+  // 추가할 커스텀 props가 있다면 여기에 (예: customProp?: string)
+};
+
+export function EditNoteIcon(props: EditNoteIconProps) {
+  return <EditNote {...props} />;
 }

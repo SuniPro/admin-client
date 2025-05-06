@@ -49,16 +49,20 @@ const lexicalCommonConfig = {
   ],
 };
 
-const editorConfig: InitialConfigType = {
-  // The editor theme
-  namespace: "editor",
-  ...lexicalCommonConfig,
-  // Any custom nodes go here
-};
-
 export function Editor(props: {
+  prevContents?: string | null;
   setContents: Dispatch<SetStateAction<string>>;
 }) {
+  const { prevContents, setContents } = props;
+
+  const editorConfig: InitialConfigType = {
+    // The editor theme
+    namespace: "editor",
+    editorState: prevContents ?? "",
+    ...lexicalCommonConfig,
+    // Any custom nodes go here
+  };
+
   return (
     <LexicalComposer initialConfig={editorConfig}>
       <div className="editor-container">
@@ -72,7 +76,7 @@ export function Editor(props: {
           <OnChangePlugin
             onChange={(editorState) => {
               const editorStateJson = editorState.toJSON();
-              props.setContents(JSON.stringify(editorStateJson));
+              setContents(JSON.stringify(editorStateJson));
             }}
           />
           <HistoryPlugin />

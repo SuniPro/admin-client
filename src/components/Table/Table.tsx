@@ -78,12 +78,16 @@ export function TableHeader(props: {
   );
 }
 
-// eslint-disable-next-line
-export function TableBody(props: { table: any; fontSize?: string }) {
-  const { table, fontSize } = props;
+export function TableBody(props: {
+  className?: string;
+  //eslint-disable-next-line
+  table: any;
+  fontSize?: string;
+}) {
+  const { className, table, fontSize } = props;
 
   return (
-    <tbody>
+    <tbody className={className}>
       {/*eslint-disable-next-line*/}
       {table.getRowModel().rows.map((row: any) => (
         <TableBodyTr key={row.id}>
@@ -335,17 +339,51 @@ export const StyledContainer = styled(Container)<{ theme: Theme }>(
   `,
 );
 
-export const TableContainer = styled.table<{ width: number }>(
-  ({ width }) => css`
-    border-spacing: 0;
+export const TableWrapper = styled.section<{ theme: Theme; width: number }>(
+  ({ theme, width }) => css`
     width: ${width}px;
     overflow-x: scroll;
 
-    thead {
-      border: none;
+    tr {
+      white-space: nowrap;
+    }
+
+    td {
+      white-space: nowrap;
+    }
+
+    @media ${theme.deviceSize.tablet} {
+      tr {
+        font-size: 12px;
+      }
+      tbody {
+        td {
+          font-size: 12px;
+        }
+      }
+    }
+
+    @media ${theme.deviceSize.phone} {
+      tr {
+        font-size: 12px;
+      }
+      tbody {
+        td {
+          font-size: 12px;
+        }
+      }
     }
   `,
 );
+
+export const TableContainer = styled.table`
+  width: 100%;
+  border-spacing: 0;
+
+  thead {
+    border: none;
+  }
+`;
 
 export const HeaderLine = styled.div<{ theme: Theme }>(
   ({ theme }) => css`
@@ -361,7 +399,7 @@ export const HeaderLine = styled.div<{ theme: Theme }>(
   `,
 );
 
-export const AddButton = styled(FuncItem)<{ theme: Theme }>(
+export const TableHeaderFuncButton = styled(FuncItem)<{ theme: Theme }>(
   ({ theme }) => css`
     cursor: pointer;
     font-family: ${theme.mode.font.button.default};

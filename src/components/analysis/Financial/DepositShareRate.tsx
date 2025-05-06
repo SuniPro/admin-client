@@ -5,10 +5,10 @@ import { SimpleFunnelChart } from "../../statistics/visualization/Chart/Funnel";
 import { OutLine } from "../../layouts/Layouts";
 
 export function DepositShareRate(props: { data: SimpleFunnerChartType[] }) {
-  const { windowWidth } = useWindowContext();
   const theme = useTheme();
-  const { data } = props;
+  const { windowWidth } = useWindowContext();
   const isWide = windowWidth >= theme.windowSize.HD;
+  const { data } = props;
   return (
     <OutLine title="입금 점유율 비교">
       <SimpleFunnelChart

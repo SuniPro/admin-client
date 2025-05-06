@@ -1,6 +1,9 @@
 import { useTheme } from "@emotion/react";
 import { EmployeeType } from "../../../model/employee";
-import { TetherDepositType } from "../../../model/financial";
+import {
+  TetherDepositType,
+  TransactionStatusType,
+} from "../../../model/financial";
 import {
   AnalysisContainer,
   AnalysisContentsContainer,
@@ -13,17 +16,20 @@ import {
 } from "../../statistics/visualization/Chart";
 import { iso8601ToSummaryString } from "../../styled/Date/DateFomatter";
 import { AnalysisEmptyState } from "../AnalysisEmptyState";
-import { DepositAcceptRateMeter } from "./DepositAcceptRateMeter";
+import { DepositAmountAnalysis } from "./DepositAmountAnalysis";
 import { useQuery } from "@tanstack/react-query";
-import { getNonApprovedDepositsByTetherWallet } from "../../../api/financial";
+import { getTotalDepositAmountByStatus } from "../../../api/financial";
 import { DepositShareRate } from "./DepositShareRate";
+import { Decimal } from "decimal.js";
 
 export function FinancialAnalysisPanel(props: {
   user: EmployeeType;
+  depositStatus: TransactionStatusType;
   depositList: TetherDepositType[];
   selectedWallet: string;
 }) {
-  const { depositList, selectedWallet } = props;
+  const { depositStatus, depositList, selectedWallet } = props;
+
   const theme = useTheme();
   const { windowWidth } = useWindowContext();
   const isWide = windowWidth >= theme.windowSize.HD;
@@ -36,11 +42,11 @@ export function FinancialAnalysisPanel(props: {
     theme.colors.azureishWhite,
   ];
   const sortedAmount = depositList
-    .sort((a, b) => b.amount - a.amount)
+    .sort((a, b) => new Decimal(b.amount).cmp(a.amount))
     .slice(0, 5);
   const amountShareRateData: SimpleFunnerChartType[] = sortedAmount.map(
     (deposit, index) => ({
-      value: deposit.amount,
+      value: parseFloat(deposit.amount.toString()),
       name: deposit.email.split("@")[0],
       fill: colors[index as number],
     }),
@@ -63,42 +69,42 @@ export function FinancialAnalysisPanel(props: {
       );
 
       const totalAmount = sameDateOtherDeposits.reduce(
-        (acc, d) => acc + d.amount,
-        0,
+        (acc, d) => acc.plus(new Decimal(d.amount)), // plus() 메서드 사용
+        new Decimal(0), // 초기값도 Decimal로
       );
 
       const average = sameDateOtherDeposits.length
-        ? totalAmount / sameDateOtherDeposits.length
+        ? parseFloat(totalAmount.toString()) / sameDateOtherDeposits.length
         : 0;
 
       return {
         label: date,
         legendA: "선택지갑",
         legendB: "평균치",
-        dataA: deposit.amount,
+        dataA: parseFloat(deposit.amount.toString()),
         dataB: average,
       };
     },
   );
 
-  const { data: nonApprovedList } = useQuery({
-    queryKey: ["getNonApproved"],
-    queryFn: () => getNonApprovedDepositsByTetherWallet(selectedWallet),
-    refetchInterval: 10000,
-    enabled: selectedWallet !== "",
+  const { data: totalDepositsCost } = useQuery({
+    queryKey: ["totalDepositsCost", depositStatus, depositList],
+    queryFn: () => getTotalDepositAmountByStatus(depositStatus),
+    refetchInterval: 60000,
   });
-
-  const inverseRate = 10 / (nonApprovedList ? nonApprovedList.length + 1 : 0);
 
   return (
     <AnalysisContainer isWide={isWide}>
       {depositList.length !== 0 ? (
         <>
           <AnalysisContentsContainer theme={theme} width={26} isWide={isWide}>
-            <DepositAcceptRateMeter
-              starValue={null}
-              circleValue={inverseRate}
-            />
+            {totalDepositsCost ? (
+              <DepositAmountAnalysis
+                totalDepositsCost={totalDepositsCost}
+                depositList={depositList}
+                amountShare={amountShareRateData[0]}
+              />
+            ) : null}
           </AnalysisContentsContainer>
           <AnalysisContentsContainer theme={theme} width={24} isWide={isWide}>
             <DepositShareRate data={amountShareRateData}></DepositShareRate>

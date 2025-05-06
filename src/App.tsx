@@ -14,6 +14,7 @@ import { Toaster } from "react-hot-toast";
 import { UserContextProvider } from "./context/UserContext";
 import { WindowContextProvider } from "./context/WindowContext";
 import { Chat } from "./components/Chat/Chat";
+import { EmployeeReview } from "./Page/manage/EmployeeReview";
 
 const QUERY_CLIENT = new QueryClient();
 
@@ -41,11 +42,13 @@ function App() {
                 />
                 <Route path="/login" element={<SignIn />} />
                 <Route path="/write/:type" element={<></>} />
+                <Route path="test" element={<EmployeeReview />}></Route>
               </Routes>
               <Chat />
             </BrowserRouter>
             <GlobalStyled />
             <Toaster />
+            <footer style={{ height: "20px" }}></footer>
           </UserContextProvider>
         </WindowContextProvider>
       </QueryClientProvider>

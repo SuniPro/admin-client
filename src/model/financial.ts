@@ -1,10 +1,20 @@
+import { Decimal } from "decimal.js";
+
 export interface TetherAccountType {
   id: number;
   tetherWallet: string;
   email: string;
+  site?: string | null;
+  memo?: string | null;
   insertDateTime: string;
   updateDateTime?: string;
   deleteDateTime?: string;
+}
+
+export interface TetherAccountUpdateType {
+  id: number;
+  site?: string | null;
+  memo?: string | null;
 }
 
 export interface TetherCreateRequestType {
@@ -21,9 +31,11 @@ export interface TetherDepositType {
   id: number;
   tetherWallet: string;
   email: string;
+  site?: string | null;
+  memo?: string | null;
   insertDateTime: string;
-  amount: number;
-  usdtAmount: number;
+  amount: Decimal;
+  usdtAmount: Decimal;
   accepted: boolean;
   acceptedAt: string;
   requestedAt: string;
@@ -37,10 +49,10 @@ export interface ExchangeInfoType {
   rates: ExchangeRatesType;
 }
 
-export interface TetherDepositAcceptType {
+export interface TetherDepositChangeStatusType {
   depositId: number;
   tetherWallet: string;
-  amount: number;
+  amount: string;
 }
 
 interface ExchangeRatesType {
@@ -51,8 +63,8 @@ export const TransactionStatus = [
   "PENDING", // 요청
   "PROCESSING", // 지갑 처리 중
   "CONFIRMED", // 블록에 포함됨
-  "FAILED", // 블록 전송 실패
   "CANCELLED", // 관리자 취소
+  "FAILED", // 블록 전송 실패
   "TIMEOUT", // 시간 초과
 ];
 
@@ -70,9 +82,9 @@ export const transactionStatusLabelMap: Record<TransactionStatusType, string> =
 
 export const statusNavigationMenu = [
   { status: "PENDING", label: "요청" },
-  { status: "PROCESSING", label: "처리 중" },
   { status: "CONFIRMED", label: "승인" },
-  { status: "FAILED", label: "실패" },
   { status: "CANCELLED", label: "반려" },
+  { status: "PROCESSING", label: "처리 중" },
+  { status: "FAILED", label: "실패" },
   { status: "TIMEOUT", label: "시간초과" },
 ];

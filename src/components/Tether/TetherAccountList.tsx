@@ -22,7 +22,7 @@ import {
 } from "@tanstack/react-query";
 import { PaginationResponse } from "../../model/pagination";
 import { TetherAccountType } from "../../model/financial";
-import { getAllTetherAccounts, updateTetherWallet } from "../../api/financial";
+import { getTetherAccount, updateTetherWallet } from "../../api/financial";
 import { iso8601ToYYMMDDHHMM } from "../styled/Date/DateFomatter";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
@@ -33,22 +33,27 @@ import {
   TableContainer,
   TableFunctionLine,
   TableHeader,
+  TableHeaderFuncButton,
+  TableWrapper,
 } from "../Table";
 import { HorizontalDivider } from "../layouts/Layouts";
 import { CustomModal } from "../Modal/Modal";
 import styled from "@emotion/styled";
 import { Container } from "../layouts/Frames/FrameLayouts";
 import { PlusButton } from "../styled/Button";
+import { useDebounceCallback } from "usehooks-ts";
+import { WriteTetherMemo } from "../financial/Memo";
+import { EditNoteIcon } from "../styled/icons";
 
 export function TetherAccountList(props: {
   user: EmployeeType;
-  selectedIdState: {
-    selectedId: number;
-    setSelectedId: Dispatch<SetStateAction<number>>;
+  selectedAccountState: {
+    selectedAccount: TetherAccountType;
+    setSelectedAccount: Dispatch<SetStateAction<TetherAccountType>>;
   };
 }) {
-  const { user, selectedIdState } = props;
-  const { selectedId, setSelectedId } = selectedIdState;
+  const { user, selectedAccountState } = props;
+  const { selectedAccount, setSelectedAccount } = selectedAccountState;
   const navigate = useNavigate();
 
   if (user.level === "STAFF" || user.level === "ASSOCIATE") {
@@ -60,8 +65,13 @@ export function TetherAccountList(props: {
 
   const { windowWidth } = useWindowContext();
 
+  const [searchEmail, setSearchEmail] = useState<string | undefined>();
+  const debounced = useDebounceCallback(setSearchEmail, 80);
+
   const [open, setOpen] = useState<boolean>(false);
   const close = () => setOpen(false);
+
+  const [writeOpen, setWriteOpen] = useState<boolean>(false);
 
   const [columnResizeMode] = useState<ColumnResizeMode>("onChange");
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -70,9 +80,10 @@ export function TetherAccountList(props: {
   const [pageSize, setPageSize] = useState(10);
 
   const { data, refetch } = useQuery<PaginationResponse<TetherAccountType>>({
-    queryKey: ["getAllTetherAccounts", pageIndex, pageSize],
-    queryFn: () => getAllTetherAccounts(pageIndex, pageSize),
+    queryKey: ["getAllTetherAccounts", searchEmail, pageIndex, pageSize],
+    queryFn: () => getTetherAccount(pageIndex, pageSize, searchEmail),
     placeholderData: (previousData) => previousData,
+    refetchInterval: 60000,
   });
 
   const tetherAccountList = data?.content;
@@ -86,6 +97,12 @@ export function TetherAccountList(props: {
         accessorKey: "id",
       },
       {
+        id: "site",
+        header: "사이트",
+        size: 50,
+        accessorKey: "site",
+      },
+      {
         id: "email",
         header: "이메일",
         accessorKey: "email",
@@ -97,7 +114,7 @@ export function TetherAccountList(props: {
         cell: ({ row }) => (
           <span
             onClick={() => {
-              setSelectedId(row.original.id);
+              setSelectedAccount(row.original);
               setOpen(true);
             }}
           >
@@ -131,14 +148,20 @@ export function TetherAccountList(props: {
         id: "func",
         header: "기능",
         size: 50,
-        cell: () => (
+        cell: ({ row }) => (
           <TableFunctionLine>
+            <EditNoteIcon
+              onClick={() => {
+                setSelectedAccount(row.original);
+                setWriteOpen(true);
+              }}
+            />
             <DeleteIcon />
           </TableFunctionLine>
         ),
       },
     ],
-    [setSelectedId],
+    [setSelectedAccount],
   );
 
   const table = useReactTable<TetherAccountType>({
@@ -181,31 +204,47 @@ export function TetherAccountList(props: {
               display: flex;
               flex-direction: row;
               align-items: center;
-              justify-content: flex-start;
+              justify-content: space-between;
             `}
           >
             <input
               css={css`
                 border: none;
                 font-size: 16px;
+                width: 400px;
               `}
+              value={searchEmail}
               placeholder="이메일 검색"
-              value={table.getColumn("email")?.getFilterValue() as string}
-              onChange={(e) =>
-                table.getColumn("email")?.setFilterValue(e.target.value)
-              }
+              onChange={(e) => debounced(e.target.value)}
             />
           </div>
+          <TableHeaderFuncButton
+            label="초기화"
+            func={() => {
+              setSearchEmail(undefined);
+            }}
+            theme={theme}
+            css={css`
+              font-size: 12px;
+              border: 1px solid ${theme.mode.textSecondary};
+
+              &:hover {
+                color: ${theme.mode.textRevers};
+              }
+            `}
+          />
         </HeaderLine>
         <HorizontalDivider width={95} />
-        <TableContainer width={(windowWidth / 100) * 95}>
-          <TableHeader
-            table={table}
-            headerBorder="none"
-            columnResizeMode={columnResizeMode}
-          />
-          <TableBody table={table} />
-        </TableContainer>
+        <TableWrapper width={(windowWidth / 100) * 92} theme={theme}>
+          <TableContainer>
+            <TableHeader
+              table={table}
+              headerBorder="none"
+              columnResizeMode={columnResizeMode}
+            />
+            <TableBody table={table} />
+          </TableContainer>
+        </TableWrapper>
         <Pagination table={table} />
         <CustomModal
           open={open}
@@ -218,7 +257,19 @@ export function TetherAccountList(props: {
             <ChangeTetherWallet
               close={close}
               refetch={refetch}
-              accountId={selectedId}
+              accountId={selectedAccount.id}
+            />
+          }
+        />
+        <StyledModal
+          open={writeOpen}
+          close={() => setWriteOpen(false)}
+          children={
+            <WriteTetherMemo
+              accountId={selectedAccount.id}
+              close={() => setWriteOpen(false)}
+              prevContents={selectedAccount.memo}
+              refetch={refetch}
             />
           }
         />
@@ -244,7 +295,7 @@ function ChangeTetherWallet(props: {
   return (
     <ChangeTetherWalletContainer theme={theme}>
       <InputLine>
-        <Label>이름</Label>
+        <Label>주소</Label>
         <ChangeWalletInput
           maxLength={100}
           onChange={(e) => setNewWallet(e.target.value)}
@@ -330,3 +381,8 @@ const StyledPlusButton = styled(PlusButton)<{ theme: Theme }>(
     }
   `,
 );
+
+const StyledModal = styled(CustomModal)`
+  justify-content: flex-start;
+  align-items: center;
+`;
