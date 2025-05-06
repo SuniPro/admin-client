@@ -39,3 +39,12 @@ export const abilityLabelMap: Record<abilityType, string> = {
   teamwork: "협동심",
   knowledgeLevel: "지식",
 };
+
+export interface AbilityReviewType {
+  employeeId: number;
+  employeeName: string;
+  creativity: number;
+  workPerformance: number;
+  teamwork: number;
+  knowledgeLevel: number;
+}

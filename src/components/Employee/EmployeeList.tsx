@@ -211,7 +211,7 @@ export function EmployeeList(props: {
           />
         </HeaderLine>
         <HorizontalDivider width={95} />
-        <TableContainer width={(windowWidth / 100) * 95}>
+        <TableContainer width={(windowWidth / 100) * 92}>
           <TableHeader
             table={table}
             headerBorder="none"
