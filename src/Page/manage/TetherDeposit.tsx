@@ -1,7 +1,8 @@
 /** @jsxImportSource @emotion/react */
+import "rsuite/dist/rsuite.css";
 import { EmployeeType } from "../../model/employee";
 import { FinancialAnalysisPanel } from "../../components/analysis/Financial";
-import { css, Theme, useTheme } from "@emotion/react";
+import { css, useTheme } from "@emotion/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ColumnDef,
@@ -21,19 +22,28 @@ import {
 } from "@tanstack/react-query";
 import {
   approveDeposit,
+  cancelDeposit,
   deleteDepositById,
-  getDepositsByStatus,
+  getDepositsByStatusOrEmailOrRange,
 } from "../../api/financial";
 import {
   statusNavigationMenu,
-  TetherDepositAcceptType,
+  TetherAccountType,
+  TetherDepositChangeStatusType,
   TetherDepositType,
   transactionStatusLabelMap,
   TransactionStatusType,
 } from "../../model/financial";
-import { Container } from "../../components/layouts/Frames/FrameLayouts";
-import styled from "@emotion/styled";
-import { Pagination, TableBody, TableHeader } from "../../components/Table";
+import {
+  HeaderLine,
+  Pagination,
+  StyledContainer,
+  TableBody,
+  TableContainer,
+  TableHeader,
+  TableHeaderFuncButton,
+  TableWrapper,
+} from "../../components/Table";
 import {
   ConfirmAlert,
   ErrorAlert,
@@ -51,6 +61,14 @@ import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useSound from "use-sound";
 import alertSound from "../../assets/sound/alert/alert.mp3";
+import DateRangePicker, { ValueType } from "rsuite/DateRangePicker";
+import { HorizontalDivider } from "../../components/layouts/Layouts";
+import { useDebounceCallback } from "usehooks-ts";
+import { CustomModal } from "../../components/Modal/Modal";
+import styled from "@emotion/styled";
+import { Decimal } from "decimal.js";
+import { WriteTetherMemo } from "../../components/financial/Memo";
+import { EditNoteIcon } from "../../components/styled/icons";
 
 export function TetherDeposit(props: { user: EmployeeType }) {
   const { user } = props;
@@ -66,7 +84,21 @@ export function TetherDeposit(props: { user: EmployeeType }) {
 
   const { windowWidth } = useWindowContext();
 
-  const isTablet = windowWidth <= 960;
+  const [memoViewOpen, setWriteOpen] = useState(false);
+
+  const [searchEmail, setSearchEmail] = useState<string | undefined>();
+
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // 검색 실행 함수
+  const handleSearch = useDebounceCallback((email: string) => {
+    setSearchEmail(email); // 실제 검색 상태 업데이트
+  }, 800);
+
+  const [dateRange, setDateRange] = useState<ValueType>([
+    new Date(),
+    new Date(),
+  ]);
 
   const [columnResizeMode] = useState<ColumnResizeMode>("onChange");
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -78,8 +110,22 @@ export function TetherDeposit(props: { user: EmployeeType }) {
   const [pageSize, setPageSize] = useState(10);
 
   const { data, refetch } = useQuery<PaginationResponse<TetherDepositType>>({
-    queryKey: ["getDepositsByStatus", depositStatus, pageIndex, pageSize],
-    queryFn: () => getDepositsByStatus(depositStatus, pageIndex, pageSize),
+    queryKey: [
+      "getDepositsByStatus",
+      searchEmail,
+      depositStatus,
+      pageIndex,
+      pageSize,
+      dateRange,
+    ],
+    queryFn: () =>
+      getDepositsByStatusOrEmailOrRange(
+        depositStatus,
+        pageIndex,
+        pageSize,
+        dateRange,
+        searchEmail,
+      ),
     placeholderData: (previousData) => previousData,
   });
 
@@ -104,6 +150,12 @@ export function TetherDeposit(props: { user: EmployeeType }) {
   }, [depositList, depositStatus, play]);
 
   const [selectedWallet, setSelectedWallet] = useState<string>("");
+  const [selectedAccount, setSelectedAccount] = useState<TetherAccountType>({
+    id: 0,
+    tetherWallet: "",
+    email: "",
+    insertDateTime: "",
+  });
 
   const columns = useMemo<ColumnDef<TetherDepositType>[]>(
     () => [
@@ -112,6 +164,12 @@ export function TetherDeposit(props: { user: EmployeeType }) {
         header: "번호",
         size: 50,
         accessorKey: "id",
+      },
+      {
+        id: "site",
+        header: "사이트",
+        size: 50,
+        accessorKey: "site",
       },
       {
         id: "email",
@@ -177,19 +235,25 @@ export function TetherDeposit(props: { user: EmployeeType }) {
           <span>{iso8601ToYYMMDDHHMM(row.getValue("requestedAt"))}</span>
         ),
       },
-      {
-        id: "acceptedAt",
-        header: "승인일시",
-        accessorKey: "acceptedAt",
-        size: 100,
-        cell: ({ row }) => (
-          <span>
-            {row.getValue("acceptedAt") !== null
-              ? iso8601ToYYMMDDHHMM(row.getValue("acceptedAt"))
-              : "승인대기"}
-          </span>
-        ),
-      },
+      ...(depositStatus === "CONFIRMED"
+        ? [
+            {
+              id: "acceptedAt",
+              header: "승인일시",
+              accessorKey: "acceptedAt",
+              size: 100,
+              cell: ({ row }: { row: Row<TetherDepositType> }) => (
+                <span>
+                  {row.getValue("acceptedAt") !== null
+                    ? iso8601ToYYMMDDHHMM(row.getValue("acceptedAt"))
+                    : transactionStatusLabelMap[
+                        row.getValue("status") as TransactionStatusType
+                      ]}
+                </span>
+              ),
+            },
+          ]
+        : []),
       {
         id: "status",
         header: "상태",
@@ -205,6 +269,22 @@ export function TetherDeposit(props: { user: EmployeeType }) {
           </span>
         ),
       },
+      ...(depositStatus === "PENDING"
+        ? [
+            {
+              id: "cancelled",
+              header: "반려",
+              accessorKey: "cancelled",
+              size: 50,
+              cell: ({ row }: { row: Row<TetherDepositType> }) => (
+                <CancelledControl
+                  refetch={refetch}
+                  depositInfo={row.original}
+                />
+              ),
+            },
+          ]
+        : []),
       ...(depositStatus === "PENDING"
         ? [
             {
@@ -234,6 +314,12 @@ export function TetherDeposit(props: { user: EmployeeType }) {
               cursor: pointer;
             `}
           >
+            <EditNoteIcon
+              onClick={() => {
+                setSelectedAccount(row.original);
+                setWriteOpen(true);
+              }}
+            />
             <DeleteIcon
               onClick={() =>
                 ConfirmAlert("삭제하시겠습니까 ?", () =>
@@ -290,10 +376,75 @@ export function TetherDeposit(props: { user: EmployeeType }) {
       </>
     );
 
+  function HeaderLineRender() {
+    return (
+      <HeaderLine theme={theme}>
+        <div
+          css={css`
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+          `}
+        >
+          <input
+            css={css`
+              border: none;
+              font-size: 16px;
+              width: 400px;
+            `}
+            ref={searchInputRef}
+            defaultValue={searchEmail} // 초기값만 설정
+            placeholder="이메일 검색"
+            onChange={(e) => handleSearch(e.target.value)}
+          />
+        </div>
+        <div
+          css={css`
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+          `}
+        >
+          <DateRangePicker
+            container={document.getElementById("date-area")!}
+            format="yyyy.MM.dd"
+            showOneCalendar
+            // @ts-ignore
+            value={dateRange}
+            onChange={(value) => {
+              setDateRange(value);
+            }}
+          />
+          <TableHeaderFuncButton
+            label="초기화"
+            func={() => {
+              setSearchEmail(undefined);
+              setDateRange([]);
+            }}
+            theme={theme}
+            css={css`
+              font-size: 12px;
+              border: 1px solid ${theme.mode.textSecondary};
+
+              &:hover {
+                color: ${theme.mode.textRevers};
+              }
+            `}
+          />
+        </div>
+      </HeaderLine>
+    );
+  }
+
   return (
     <>
       <FinancialAnalysisPanel
         user={user}
+        depositStatus={depositStatus}
         depositList={depositList}
         selectedWallet={selectedWallet}
       />
@@ -305,74 +456,48 @@ export function TetherDeposit(props: { user: EmployeeType }) {
         setActiveStatus={setDepositStatus}
         justifyContent="center"
       />
-      <StyledContainer width={(windowWidth / 100) * 95} theme={theme}>
+      <StyledContainer theme={theme}>
         {depositList.length === 0 ? (
           <>
             <StyledContainer theme={theme}>
+              <HeaderLineRender />
               <ContentsEmptyState />
             </StyledContainer>
           </>
         ) : (
           <>
+            <HeaderLineRender />
+            <HorizontalDivider width={95} />
             {depositStatus === "PENDING" ? <></> : null}
-            <TableContainer>
-              <TableHeader
-                table={table}
-                headerBorder="none"
-                columnResizeMode={columnResizeMode}
-              />
-              <TableBody
-                table={table}
-                fontSize={isTablet ? "10px" : undefined}
-              />
-            </TableContainer>
+            <TableWrapper width={(windowWidth / 100) * 92} theme={theme}>
+              <TableContainer>
+                <TableHeader
+                  table={table}
+                  headerBorder="none"
+                  columnResizeMode={columnResizeMode}
+                />
+                <TableBody table={table} />
+              </TableContainer>
+            </TableWrapper>
             <Pagination table={table} />
           </>
         )}
+        <StyledModal
+          open={memoViewOpen}
+          close={() => setWriteOpen(false)}
+          children={
+            <WriteTetherMemo
+              accountId={selectedAccount.id}
+              prevContents={selectedAccount.memo}
+              close={() => setWriteOpen(false)}
+              refetch={refetch}
+            />
+          }
+        />
       </StyledContainer>
     </>
   );
 }
-
-const TableContainer = styled.table`
-  border-spacing: 0;
-  width: 100%;
-  overflow-x: scroll;
-
-  thead {
-    border: none;
-  }
-`;
-
-// const HeaderLine = styled.div<{ theme: Theme }>(
-//   ({ theme }) => css`
-//     width: 95%;
-//     display: flex;
-//     flex-direction: row;
-//     justify-content: space-between;
-//     gap: 16px;
-//
-//     padding: 14px 0 8px 0;
-//
-//     font-family: ${theme.mode.font.component.itemTitle};
-//   `,
-// );
-
-const StyledContainer = styled(Container)<{ theme: Theme; width?: number }>(
-  ({ theme, width }) => css`
-    flex-direction: column;
-    width: ${width ? `${width}px` : "100%"};
-    height: 100%;
-    align-items: center;
-    justify-content: center;
-
-    overflow-x: scroll;
-
-    border-radius: ${theme.borderRadius.softBox};
-
-    background-color: ${theme.mode.cardBackground};
-  `,
-);
 
 function AcceptControl(props: {
   refetch: (
@@ -386,10 +511,10 @@ function AcceptControl(props: {
   const [isAccept, setIsAccept] = useState<boolean>(depositInfo.accepted);
 
   const accept = () => {
-    const requestDeposit: TetherDepositAcceptType = {
+    const requestDeposit: TetherDepositChangeStatusType = {
       depositId: depositInfo.id,
       tetherWallet: depositInfo.tetherWallet,
-      amount: depositInfo.amount,
+      amount: new Decimal(depositInfo.amount).toFixed(4),
     };
     approveDeposit(requestDeposit)
       .then(() => refetch().then(() => SuccessAlert("변경 완료")))
@@ -413,3 +538,49 @@ function AcceptControl(props: {
     </div>
   );
 }
+
+function CancelledControl(props: {
+  refetch: (
+    _options?: RefetchOptions,
+  ) => Promise<
+    QueryObserverResult<PaginationResponse<TetherDepositType>, Error>
+  >;
+  depositInfo: TetherDepositType;
+}) {
+  const { refetch, depositInfo } = props;
+  const [isCancel, setIsCancel] = useState<boolean>(false);
+
+  const cancel = () => {
+    const requestDeposit: TetherDepositChangeStatusType = {
+      depositId: depositInfo.id,
+      tetherWallet: depositInfo.tetherWallet,
+      amount: new Decimal(depositInfo.amount).toFixed(4),
+    };
+    cancelDeposit(requestDeposit)
+      .then(() => refetch().then(() => SuccessAlert("변경 완료")))
+      .then(() => setIsCancel((prev) => !prev));
+  };
+
+  const cancelledChange = (value: boolean) => {
+    if (value) {
+      ConfirmAlert("반려하시겠습니까?", cancel);
+    } else {
+      ErrorAlert("이미 반려된 입금은 취소할 수 없습니다.");
+    }
+  };
+
+  return (
+    <div>
+      <Switch
+        checked={isCancel}
+        onChange={(e) => cancelledChange(e.target.checked)}
+        defaultChecked={isCancel}
+      />
+    </div>
+  );
+}
+
+const StyledModal = styled(CustomModal)`
+  justify-content: flex-start;
+  align-items: center;
+`;

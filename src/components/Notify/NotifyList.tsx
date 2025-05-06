@@ -24,7 +24,11 @@ import styled from "@emotion/styled";
 import { FuncItem, PlusButton } from "../styled/Button";
 import { EllipsisCase, HorizontalDivider } from "../layouts/Layouts";
 import { Pagination, TableBody, TableHeader } from "../Table";
-import { CustomModal } from "../Modal/Modal";
+import {
+  CustomModal,
+  ModalHeaderLine,
+  WriteModalContainer,
+} from "../Modal/Modal";
 import { Editor, Viewer } from "../Lexical/Editor";
 import { createNotify } from "../../api/notify";
 import { ErrorAlert, SuccessAlert } from "../Alert/Alerts";
@@ -34,7 +38,7 @@ export function ViewNotify(props: { notify: NotifyType; close: () => void }) {
   const theme = useTheme();
 
   return (
-    <NotifyModalContainer>
+    <WriteModalContainer>
       <ModalHeaderLine>
         <StyledInput
           theme={theme}
@@ -44,7 +48,7 @@ export function ViewNotify(props: { notify: NotifyType; close: () => void }) {
         />
       </ModalHeaderLine>
       <Viewer contents={notify.contents}></Viewer>
-    </NotifyModalContainer>
+    </WriteModalContainer>
   );
 }
 
@@ -72,7 +76,7 @@ function WriteNotify(props: { user: EmployeeType; close: () => void }) {
   };
 
   return (
-    <NotifyModalContainer>
+    <WriteModalContainer>
       <ModalHeaderLine>
         <StyledInput
           theme={theme}
@@ -82,7 +86,7 @@ function WriteNotify(props: { user: EmployeeType; close: () => void }) {
         <StyledPlusButton func={saveNotify} theme={theme} />
       </ModalHeaderLine>
       <Editor setContents={setContents} />
-    </NotifyModalContainer>
+    </WriteModalContainer>
   );
 }
 
@@ -96,20 +100,6 @@ const StyledPlusButton = styled(PlusButton)<{ theme: Theme }>(
     }
   `,
 );
-
-const ModalHeaderLine = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-`;
-
-const NotifyModalContainer = styled(Container)`
-  width: 100%;
-  flex-direction: column;
-  justify-content: center;
-`;
 
 const StyledInput = styled.input<{
   theme: Theme;

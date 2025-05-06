@@ -4,6 +4,7 @@ import { useProportionHook } from "../../hooks/useWindowHooks";
 import { Modal } from "@mui/material";
 import styled from "@emotion/styled";
 import { ReactNode } from "react";
+import { Container } from "../layouts/Frames/FrameLayouts";
 
 /** ReactNode를 받아 반응형으로 자녀요소를 모달로 띄우는 컴포넌트입니다.
  * date-area 가 이미 선언되어 있으므로 캘린더 설정 작업을 할때 디자인을 신경쓰지 않아도 됩니다.
@@ -60,3 +61,17 @@ export const ModalContainer = styled.div<{ width: number; theme: Theme }>(
     justify-content: center;
   `,
 );
+
+export const ModalHeaderLine = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+`;
+
+export const WriteModalContainer = styled(Container)`
+  width: 100%;
+  flex-direction: column;
+  justify-content: center;
+`;

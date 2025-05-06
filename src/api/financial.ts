@@ -1,9 +1,11 @@
 import {
   TetherAccountType,
-  TetherDepositAcceptType,
+  TetherAccountUpdateType,
+  TetherDepositChangeStatusType,
   TetherDepositType,
   TransactionStatusType,
 } from "../model/financial";
+import { DateTime } from "luxon";
 import { PaginationResponse } from "../model/pagination";
 import {
   deleteToEmployeeServer,
@@ -12,15 +14,34 @@ import {
   patchToEmployeeServer,
 } from "./base";
 
-export async function getAllTetherAccounts(
+export async function updateSite(
+  updateInfo: TetherAccountUpdateType,
+): Promise<void> {
+  await patchToEmployeeServer("/financial/tether/update/site", updateInfo);
+}
+
+export async function updateMemo(
+  updateInfo: TetherAccountUpdateType,
+): Promise<void> {
+  await patchToEmployeeServer("/financial/tether/update/memo", updateInfo);
+}
+
+export async function getTetherAccount(
   page: number,
   size: number,
+  email: string | null | undefined,
 ): Promise<PaginationResponse<TetherAccountType>> {
-  const response = await getFromEmployeeServer(
-    `/financial/tether/get/account/all?page=${page}&size=${size}&sort=insertDateTime,desc`,
-  );
-
-  return response.data;
+  if (email) {
+    const response = await getFromEmployeeServer(
+      `/financial/tether/get/account/by/email/${email}?page=${page}&size=${size}&sort=insertDateTime,desc`,
+    );
+    return response.data;
+  } else {
+    const response = await getFromEmployeeServer(
+      `/financial/tether/get/account/all?page=${page}&size=${size}&sort=insertDateTime,desc`,
+    );
+    return response.data;
+  }
 }
 
 export async function updateTetherWallet(
@@ -35,11 +56,22 @@ export async function updateTetherWallet(
 }
 
 export async function approveDeposit(
-  acceptRequest: TetherDepositAcceptType,
+  acceptRequest: TetherDepositChangeStatusType,
 ): Promise<boolean> {
   const response = await patchToEmployeeServer(
     "/financial/tether/accept/deposit",
     acceptRequest,
+  );
+
+  return response.data;
+}
+
+export async function cancelDeposit(
+  cancelRequest: TetherDepositChangeStatusType,
+): Promise<boolean> {
+  const response = await patchToEmployeeServer(
+    "/financial/tether/cancel/deposit",
+    cancelRequest,
   );
 
   return response.data;
@@ -55,16 +87,51 @@ export async function getDepositsByAccountId(
   return response.data;
 }
 
-export async function getDepositsByStatus(
+export async function getDepositsByStatusOrEmailOrRange(
   status: TransactionStatusType,
   page: number,
   size: number,
+  range: [(Date | undefined)?, (Date | undefined)?] | null,
+  email: string | null | undefined,
 ): Promise<PaginationResponse<TetherDepositType>> {
-  const response = await getFromEmployeeServer(
-    `/financial/tether/get/deposits/by/status/${status}?page=${page}&size=${size}&sort=requestedAt,desc`,
-  );
+  if (email && range?.length == 0) {
+    const response = await getFromEmployeeServer(
+      `financial/tether/get/deposits/by/status/${status}/email/${email}`,
+    );
+    return response.data;
+  } else if (!email && range && range.length !== 0 && range[0] && range[1]) {
+    const start = DateTime.fromJSDate(range[0])
+      .setZone("Asia/Seoul")
+      .set({ hour: 0, minute: 0, second: 0 })
+      .toISO({ includeOffset: false });
+    const end = DateTime.fromJSDate(range[1])
+      .setZone("Asia/Seoul")
+      .set({ hour: 23, minute: 59, second: 59 })
+      .toISO({ includeOffset: false });
 
-  return response.data;
+    const response = await getFromEmployeeServer(
+      `/financial/tether/get/deposits/range/by/status/${status}?start=${start}&end=${end}&page=${page}&size=${size}&sort=requestedAt,desc`,
+    );
+    return response.data;
+  } else if (email && range && range[0] && range[1]) {
+    const start = DateTime.fromJSDate(range[0])
+      .setZone("Asia/Seoul")
+      .set({ hour: 0, minute: 0, second: 0 })
+      .toISO({ includeOffset: false });
+    const end = DateTime.fromJSDate(range[1])
+      .setZone("Asia/Seoul")
+      .set({ hour: 23, minute: 59, second: 59 })
+      .toISO({ includeOffset: false });
+    const response = await getFromEmployeeServer(
+      `/financial/tether/get/deposits/range/by/status/${status}/email/${email}?start=${start}&end=${end}&page=${page}&size=${size}&sort=requestedAt,desc`,
+    );
+    return response.data;
+  } else {
+    const response = await getFromEmployeeServer(
+      `/financial/tether/get/deposits/by/status/${status}?page=${page}&size=${size}&sort=requestedAt,desc`,
+    );
+    return response.data;
+  }
 }
 
 export async function getDepositsByAccountIdAndStatus(

@@ -10,6 +10,7 @@ import { Notify } from "./Notify";
 import { TetherAccount } from "./manage/TetherAccount";
 import { createOrUpdate, getById } from "../api/workTable";
 import { ErrorAlert } from "../components/Alert/Alerts";
+import { EmployeeReview } from "./manage/EmployeeReview";
 
 export interface WorkTableCheckListType extends BaseCheckItemProps {
   label: WorkMenuListType;
@@ -28,7 +29,7 @@ export function WorkTable(props: { user: EmployeeType }) {
 
   const workMenuComponentMap: Record<WorkMenuListType, ReactNode> = {
     MANAGE_EMPLOYEE: <Employee />,
-    REVIEW_EMPLOYEE: <Employee />,
+    REVIEW_EMPLOYEE: <EmployeeReview />,
     MANAGE_TETHER: <TetherAccount />,
     MANAGE_TETHER_DEPOSIT: <TetherDeposit user={user} />,
     NOTIFY: <Notify />,
