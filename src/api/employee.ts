@@ -61,6 +61,30 @@ export async function getEmployeeListByLevel(
   return response.data;
 }
 
+export async function getEmployeeListByLevelLessThen(
+  level: LevelType,
+  page: number,
+  size: number,
+): Promise<PaginationResponse<EmployeeType>> {
+  const response = await getFromEmployeeServer(
+    `/employee/get/by/${level}/less/then?page=${page}&size=${size}&sort=insert_date_time,desc`,
+  );
+
+  return response.data;
+}
+
+export async function getEmployeeListByLevelGreaterThenEqual(
+  page: number,
+  size: number,
+  level: LevelType,
+): Promise<PaginationResponse<EmployeeType>> {
+  const response = await getFromEmployeeServer(
+    `/employee/get/by/${level}/greater/then?page=${page}&size=${size}&sort=insertDateTime,desc`,
+  );
+
+  return response.data;
+}
+
 export async function updateEmployee(
   employee: EmployeeType,
 ): Promise<EmployeeType> {
