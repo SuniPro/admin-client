@@ -42,6 +42,13 @@ export interface TetherDepositType {
   status: TransactionStatusType;
 }
 
+export interface TetherDepositSummaryType {
+  totalAmount: Decimal;
+  depositLength: number;
+  maximumDepositor: string;
+  maximumAmount: Decimal;
+}
+
 export interface ExchangeInfoType {
   amount: number;
   base: string;

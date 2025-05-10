@@ -220,10 +220,8 @@ export function SendIcon(props: { className?: string }) {
   );
 }
 
-type EditNoteIconProps = ComponentProps<typeof EditNote> & {
-  // 추가할 커스텀 props가 있다면 여기에 (예: customProp?: string)
-};
+type MuiIconsProps = ComponentProps<typeof EditNote> & {};
 
-export function EditNoteIcon(props: EditNoteIconProps) {
+export function EditNoteIcon(props: MuiIconsProps) {
   return <EditNote {...props} />;
 }

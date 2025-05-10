@@ -304,7 +304,7 @@ export const PageListArea = styled.div`
 
 export const PageViewSelector = styled.select<{ theme: Theme }>(
   ({ theme }) => css`
-    border-color: ${theme.colors.basicBlack};
+    border: 2px solid ${theme.mode.textAccent};
     background-color: rgba(0, 0, 0, 0);
     padding-left: 8px;
     color: ${theme.mode.textPrimary};
@@ -312,6 +312,7 @@ export const PageViewSelector = styled.select<{ theme: Theme }>(
     height: 30px;
     border-radius: 10px;
     font-family: ${theme.mode.font.table.pagination};
+    transform: translateX(-50%);
   `,
 );
 

@@ -13,6 +13,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   Row,
+  SortingState,
   useReactTable,
 } from "@tanstack/react-table";
 import {
@@ -25,6 +26,7 @@ import {
   cancelDeposit,
   deleteDepositById,
   getDepositsByStatusOrEmailOrRange,
+  getTotalDepositSummaryByStatusAndEmail,
 } from "../../api/financial";
 import {
   statusNavigationMenu,
@@ -95,13 +97,18 @@ export function TetherDeposit(props: { user: EmployeeType }) {
     setSearchEmail(email); // 실제 검색 상태 업데이트
   }, 800);
 
+  const lastWeekStart = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000); // 현재로부터 정확히 7일 전
   const [dateRange, setDateRange] = useState<ValueType>([
-    new Date(),
+    lastWeekStart,
     new Date(),
   ]);
 
   const [columnResizeMode] = useState<ColumnResizeMode>("onChange");
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: "requestedAt", desc: true }, // 기본 정렬 상태
+  ]);
 
   const [depositStatus, setDepositStatus] =
     useState<TransactionStatusType>("PENDING");
@@ -123,10 +130,11 @@ export function TetherDeposit(props: { user: EmployeeType }) {
         depositStatus,
         pageIndex,
         pageSize,
-        dateRange,
         searchEmail,
+        dateRange,
       ),
     placeholderData: (previousData) => previousData,
+    refetchInterval: 30000,
   });
 
   const depositList = data?.content;
@@ -135,19 +143,26 @@ export function TetherDeposit(props: { user: EmployeeType }) {
 
   useEffect(() => {
     const currentLength = depositList?.length || 0;
-
     if (depositList && depositList.length > 0) {
       setSelectedWallet(depositList[0].tetherWallet);
-      if (
-        depositStatus === "PENDING" &&
-        currentLength > previousLengthRef.current
-      ) {
-        play();
+      if (depositStatus === "PENDING") {
+        play(); // depositStatus가 PENDING이고 depositList 길이가 0이 아니면 항상 play 실행
       }
     }
 
     previousLengthRef.current = currentLength;
   }, [depositList, depositStatus, play]);
+
+  const { data: totalDepositsCost } = useQuery({
+    queryKey: ["totalDepositsCost", depositStatus],
+    queryFn: () =>
+      getTotalDepositSummaryByStatusAndEmail(
+        depositStatus,
+        searchEmail,
+        dateRange,
+      ),
+    refetchInterval: 60000,
+  });
 
   const [selectedWallet, setSelectedWallet] = useState<string>("");
   const [selectedAccount, setSelectedAccount] = useState<TetherAccountType>({
@@ -192,15 +207,6 @@ export function TetherDeposit(props: { user: EmployeeType }) {
               {row.getValue("tetherWallet")}
             </span>
           </Tooltip>
-        ),
-      },
-      {
-        id: "insertDateTime",
-        header: "등록일시",
-        accessorKey: "insertDateTime",
-        size: 100,
-        cell: ({ row }) => (
-          <span>{iso8601ToYYMMDDHHMM(row.getValue("insertDateTime"))}</span>
         ),
       },
       {
@@ -315,6 +321,7 @@ export function TetherDeposit(props: { user: EmployeeType }) {
             `}
           >
             <EditNoteIcon
+              color={row.original.memo !== null ? "primary" : "disabled"}
               onClick={() => {
                 setSelectedAccount(row.original);
                 setWriteOpen(true);
@@ -341,6 +348,7 @@ export function TetherDeposit(props: { user: EmployeeType }) {
     columns,
     pageCount: data?.totalPages ?? 0,
     state: {
+      sorting,
       columnFilters,
       pagination: {
         pageIndex,
@@ -348,6 +356,7 @@ export function TetherDeposit(props: { user: EmployeeType }) {
       },
     },
     manualPagination: true,
+    onSortingChange: setSorting,
     onPaginationChange: (updater) => {
       const next =
         typeof updater === "function"
@@ -423,7 +432,7 @@ export function TetherDeposit(props: { user: EmployeeType }) {
             label="초기화"
             func={() => {
               setSearchEmail(undefined);
-              setDateRange([]);
+              setDateRange([lastWeekStart, new Date()]);
             }}
             theme={theme}
             css={css`
@@ -444,9 +453,9 @@ export function TetherDeposit(props: { user: EmployeeType }) {
     <>
       <FinancialAnalysisPanel
         user={user}
-        depositStatus={depositStatus}
         depositList={depositList}
         selectedWallet={selectedWallet}
+        totalDepositsCost={totalDepositsCost}
       />
       <Navigation
         navigationItemWidth={120}
@@ -479,7 +488,7 @@ export function TetherDeposit(props: { user: EmployeeType }) {
                 <TableBody table={table} />
               </TableContainer>
             </TableWrapper>
-            <Pagination table={table} />
+            <Pagination table={table} viewSizeBox={true} />
           </>
         )}
         <StyledModal
