@@ -1,8 +1,8 @@
 import { useTheme } from "@emotion/react";
 import { EmployeeType } from "../../../model/employee";
 import {
+  TetherDepositSummaryType,
   TetherDepositType,
-  TransactionStatusType,
 } from "../../../model/financial";
 import {
   AnalysisContainer,
@@ -17,18 +17,16 @@ import {
 import { iso8601ToSummaryString } from "../../styled/Date/DateFomatter";
 import { AnalysisEmptyState } from "../AnalysisEmptyState";
 import { DepositAmountAnalysis } from "./DepositAmountAnalysis";
-import { useQuery } from "@tanstack/react-query";
-import { getTotalDepositAmountByStatus } from "../../../api/financial";
 import { DepositShareRate } from "./DepositShareRate";
 import { Decimal } from "decimal.js";
 
 export function FinancialAnalysisPanel(props: {
   user: EmployeeType;
-  depositStatus: TransactionStatusType;
   depositList: TetherDepositType[];
   selectedWallet: string;
+  totalDepositsCost?: TetherDepositSummaryType;
 }) {
-  const { depositStatus, depositList, selectedWallet } = props;
+  const { depositList, selectedWallet, totalDepositsCost } = props;
 
   const theme = useTheme();
   const { windowWidth } = useWindowContext();
@@ -87,25 +85,15 @@ export function FinancialAnalysisPanel(props: {
     },
   );
 
-  const { data: totalDepositsCost } = useQuery({
-    queryKey: ["totalDepositsCost", depositStatus, depositList],
-    queryFn: () => getTotalDepositAmountByStatus(depositStatus),
-    refetchInterval: 60000,
-  });
-
   return (
     <AnalysisContainer isWide={isWide}>
       {depositList.length !== 0 ? (
         <>
-          <AnalysisContentsContainer theme={theme} width={26} isWide={isWide}>
-            {totalDepositsCost ? (
-              <DepositAmountAnalysis
-                totalDepositsCost={totalDepositsCost}
-                depositList={depositList}
-                amountShare={amountShareRateData[0]}
-              />
-            ) : null}
-          </AnalysisContentsContainer>
+          {totalDepositsCost ? (
+            <AnalysisContentsContainer theme={theme} width={26} isWide={isWide}>
+              <DepositAmountAnalysis tetherDepositSummary={totalDepositsCost} />
+            </AnalysisContentsContainer>
+          ) : null}
           <AnalysisContentsContainer theme={theme} width={24} isWide={isWide}>
             <DepositShareRate data={amountShareRateData}></DepositShareRate>
           </AnalysisContentsContainer>

@@ -58,7 +58,7 @@ export function Editor(props: {
   const editorConfig: InitialConfigType = {
     // The editor theme
     namespace: "editor",
-    editorState: prevContents ?? "",
+    editorState: prevContents,
     ...lexicalCommonConfig,
     // Any custom nodes go here
   };

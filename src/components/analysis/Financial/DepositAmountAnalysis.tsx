@@ -3,16 +3,12 @@ import { css, Theme, useTheme } from "@emotion/react";
 import { OutLine } from "../../layouts/Layouts";
 import styled from "@emotion/styled";
 import { useWindowContext } from "../../../context/WindowContext";
-import { SimpleFunnerChartType } from "../../statistics/visualization/Chart";
-import { TetherDepositType } from "../../../model/financial";
-import { Decimal } from "decimal.js";
+import { TetherDepositSummaryType } from "../../../model/financial";
 
 export function DepositAmountAnalysis(props: {
-  totalDepositsCost: number;
-  depositList: TetherDepositType[];
-  amountShare?: SimpleFunnerChartType;
+  tetherDepositSummary: TetherDepositSummaryType;
 }) {
-  const { totalDepositsCost, depositList, amountShare } = props;
+  const { tetherDepositSummary } = props;
   const theme = useTheme();
   const { windowWidth } = useWindowContext();
   const isWide = windowWidth >= theme.windowSize.HD;
@@ -31,7 +27,12 @@ export function DepositAmountAnalysis(props: {
         `}
       >
         <span>총 입금 금액</span>
-        <span>{totalDepositsCost.toLocaleString("ko-KR")} 원</span>
+        <span>
+          {parseFloat(
+            tetherDepositSummary.totalAmount.toString(),
+          ).toLocaleString("ko-KR")}{" "}
+          원
+        </span>
       </DescriptionLine>
       <DescriptionLine
         theme={theme}
@@ -41,7 +42,7 @@ export function DepositAmountAnalysis(props: {
         `}
       >
         <span>총 입금 건수</span>
-        <span>{depositList.length} 건</span>
+        <span>{tetherDepositSummary.depositLength} 건</span>
       </DescriptionLine>
       <DescriptionLine
         theme={theme}
@@ -51,7 +52,7 @@ export function DepositAmountAnalysis(props: {
         `}
       >
         <span>최대 입금자</span>
-        <span>{amountShare?.name}</span>
+        <span>{tetherDepositSummary.maximumDepositor}</span>
       </DescriptionLine>
       <DescriptionLine
         theme={theme}
@@ -62,16 +63,10 @@ export function DepositAmountAnalysis(props: {
       >
         <span>최대 입금 액수</span>
         <span>
-          {amountShare?.value.toLocaleString("ko-KR")} 원 /{" "}
-          {amountShare?.value &&
-            depositList
-              .find((deposit) =>
-                new Decimal(deposit.amount).equals(
-                  new Decimal(amountShare.value),
-                ),
-              )
-              ?.usdtAmount.toString()}
-          USDT
+          {parseFloat(
+            tetherDepositSummary.maximumAmount.toString(),
+          ).toLocaleString("ko-KR")}{" "}
+          원
         </span>
       </DescriptionLine>
     </OutLine>

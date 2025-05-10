@@ -98,7 +98,7 @@ export const AnalysisContainer = styled(Container)<{ isWide: boolean }>(
     flex-direction: row;
     flex-wrap: ${isWide ? "nowrap" : "wrap"};
     align-items: center;
-    justify-content: ${isWide ? "space-between" : "center"};
+    justify-content: ${isWide ? "flex-start" : "center"};
     gap: 10px;
   `,
 );

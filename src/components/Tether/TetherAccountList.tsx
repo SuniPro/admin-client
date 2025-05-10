@@ -151,6 +151,7 @@ export function TetherAccountList(props: {
         cell: ({ row }) => (
           <TableFunctionLine>
             <EditNoteIcon
+              color={row.original.memo !== null ? "primary" : "disabled"}
               onClick={() => {
                 setSelectedAccount(row.original);
                 setWriteOpen(true);
@@ -245,7 +246,7 @@ export function TetherAccountList(props: {
             <TableBody table={table} />
           </TableContainer>
         </TableWrapper>
-        <Pagination table={table} />
+        <Pagination table={table} viewSizeBox={true} />
         <CustomModal
           open={open}
           close={close}

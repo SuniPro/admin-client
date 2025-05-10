@@ -2,6 +2,7 @@ import {
   TetherAccountType,
   TetherAccountUpdateType,
   TetherDepositChangeStatusType,
+  TetherDepositSummaryType,
   TetherDepositType,
   TransactionStatusType,
 } from "../model/financial";
@@ -13,6 +14,7 @@ import {
   getFromUserServer,
   patchToEmployeeServer,
 } from "./base";
+import { ValueType } from "rsuite/DateRangePicker";
 
 export async function updateSite(
   updateInfo: TetherAccountUpdateType,
@@ -91,39 +93,23 @@ export async function getDepositsByStatusOrEmailOrRange(
   status: TransactionStatusType,
   page: number,
   size: number,
-  range: [(Date | undefined)?, (Date | undefined)?] | null,
   email: string | null | undefined,
+  range: ValueType,
 ): Promise<PaginationResponse<TetherDepositType>> {
+  const dateRangeValue = dateRange(range);
   if (email && range?.length == 0) {
     const response = await getFromEmployeeServer(
       `financial/tether/get/deposits/by/status/${status}/email/${email}`,
     );
     return response.data;
-  } else if (!email && range && range.length !== 0 && range[0] && range[1]) {
-    const start = DateTime.fromJSDate(range[0])
-      .setZone("Asia/Seoul")
-      .set({ hour: 0, minute: 0, second: 0 })
-      .toISO({ includeOffset: false });
-    const end = DateTime.fromJSDate(range[1])
-      .setZone("Asia/Seoul")
-      .set({ hour: 23, minute: 59, second: 59 })
-      .toISO({ includeOffset: false });
-
+  } else if (!email && dateRangeValue) {
     const response = await getFromEmployeeServer(
-      `/financial/tether/get/deposits/range/by/status/${status}?start=${start}&end=${end}&page=${page}&size=${size}&sort=requestedAt,desc`,
+      `/financial/tether/get/deposits/range/by/status/${status}?start=${dateRangeValue.start}&end=${dateRangeValue.end}&page=${page}&size=${size}&sort=requestedAt,desc`,
     );
     return response.data;
-  } else if (email && range && range[0] && range[1]) {
-    const start = DateTime.fromJSDate(range[0])
-      .setZone("Asia/Seoul")
-      .set({ hour: 0, minute: 0, second: 0 })
-      .toISO({ includeOffset: false });
-    const end = DateTime.fromJSDate(range[1])
-      .setZone("Asia/Seoul")
-      .set({ hour: 23, minute: 59, second: 59 })
-      .toISO({ includeOffset: false });
+  } else if (email && dateRangeValue) {
     const response = await getFromEmployeeServer(
-      `/financial/tether/get/deposits/range/by/status/${status}/email/${email}?start=${start}&end=${end}&page=${page}&size=${size}&sort=requestedAt,desc`,
+      `/financial/tether/get/deposits/range/by/status/${status}/email/${email}?start=${dateRangeValue.start}&end=${dateRangeValue.end}&page=${page}&size=${size}&sort=requestedAt,desc`,
     );
     return response.data;
   } else {
@@ -200,15 +186,45 @@ export async function getDepositsByWalletAndDateRange(
   return response.data;
 }
 
-export async function getTotalDepositAmountByStatus(
+export async function getTotalDepositSummaryByStatusAndEmail(
   status: TransactionStatusType,
-): Promise<number> {
-  const response = await getFromEmployeeServer(
-    `/financial/tether/get/total/deposit/amount/by/status/${status}`,
-  );
+  email: string | null | undefined,
+  range: ValueType,
+): Promise<TetherDepositSummaryType> {
+  const dateRangeValue = dateRange(range);
 
+  // 1. email 정규화 (null/undefined → "null" 문자열로 통일)
+  const normalizedEmail = email ?? "null";
+
+  // 2. URL 동적 생성
+  const baseUrl = `/financial/tether/get/total/deposit/amount/by/status/${status}/email/${normalizedEmail}`;
+  const queryParams = dateRangeValue
+    ? `?start=${dateRangeValue.start}&end=${dateRangeValue.end}`
+    : "";
+
+  // 3. API 호출
+  const response = await getFromEmployeeServer(`${baseUrl}${queryParams}`);
   return response.data;
 }
+
+const dateRange = (
+  range: [(Date | undefined)?, (Date | undefined)?] | null,
+) => {
+  if (range && range[0] && range[1]) {
+    const start = DateTime.fromJSDate(range[0])
+      .setZone("Asia/Seoul")
+      .set({ hour: 0, minute: 0, second: 0 })
+      .toISO({ includeOffset: false });
+    const end = DateTime.fromJSDate(range[1])
+      .setZone("Asia/Seoul")
+      .set({ hour: 23, minute: 59, second: 59 })
+      .toISO({ includeOffset: false });
+
+    if (start && end) {
+      return { start, end };
+    }
+  }
+};
 
 export async function getTotalDepositAmountByStatusAndWallet(
   status: TransactionStatusType,

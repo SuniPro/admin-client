@@ -10,8 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@lexical/react": "^0.30.0",
+    "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@mui/icons-material": "^6.4.11",
     "@mui/material": "^6.4.11",
     "@react-hook/resize-observer": "^2.0.2",
