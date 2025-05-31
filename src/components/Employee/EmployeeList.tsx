@@ -29,7 +29,7 @@ import { Container } from "../layouts/Frames/FrameLayouts";
 import { SignUp } from "../../Page/Sign";
 import { Pagination, TableBody, TableHeader } from "../Table";
 import { CustomModal } from "../Modal/Modal";
-import { HorizontalDivider } from "../layouts/Layouts";
+import { EmailSearch, HorizontalDivider } from "../layouts/Layouts";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { getAllEmployeeList } from "../../api/employee";
@@ -174,6 +174,7 @@ export function EmployeeList(props: {
                 border: none;
                 font-size: 16px;
                 margin-right: 20px;
+                background-color: ${theme.mode.cardBackground};
               `}
               value={safeGetColumn("department")?.getFilterValue() as string}
               onChange={(e) =>
@@ -189,11 +190,8 @@ export function EmployeeList(props: {
                 </option>
               ))}
             </select>
-            <input
-              css={css`
-                border: none;
-                font-size: 16px;
-              `}
+            <EmailSearch
+              theme={theme}
               placeholder="이름 검색"
               value={table.getColumn("name")?.getFilterValue() as string}
               onChange={(e) =>

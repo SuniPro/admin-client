@@ -64,7 +64,10 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import useSound from "use-sound";
 import alertSound from "../../assets/sound/alert/alert.mp3";
 import DateRangePicker, { ValueType } from "rsuite/DateRangePicker";
-import { HorizontalDivider } from "../../components/layouts/Layouts";
+import {
+  EmailSearch,
+  HorizontalDivider,
+} from "../../components/layouts/Layouts";
 import { useDebounceCallback } from "usehooks-ts";
 import { CustomModal } from "../../components/Modal/Modal";
 import styled from "@emotion/styled";
@@ -396,16 +399,12 @@ export function TetherDeposit(props: { user: EmployeeType }) {
             justify-content: space-between;
           `}
         >
-          <input
-            css={css`
-              border: none;
-              font-size: 16px;
-              width: 400px;
-            `}
+          <EmailSearch
             ref={searchInputRef}
             defaultValue={searchEmail} // 초기값만 설정
             placeholder="이메일 검색"
             onChange={(e) => handleSearch(e.target.value)}
+            theme={theme}
           />
         </div>
         <div

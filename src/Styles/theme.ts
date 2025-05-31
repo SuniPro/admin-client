@@ -273,8 +273,8 @@ const darkMode = {
   font: {
     logo: fontStyle.iBrand,
     header: {
-      menuItem: fontStyle.yesGothicExtraBold,
-      user: fontStyle.appleNeoBold,
+      menuItem: fontStyle.koPubDotumBold,
+      user: fontStyle.nanumGothic,
     },
     snb: {
       menuText: fontStyle.roboto,
@@ -284,7 +284,7 @@ const darkMode = {
     },
     search: fontStyle.yesGothicMedium,
     component: {
-      mainTitle: fontStyle.montserrat,
+      mainTitle: fontStyle.koPubDotumBold,
       itemTitle: fontStyle.nanumGothic,
       itemDescription: fontStyle.yesGothicMedium,
     },
@@ -292,7 +292,7 @@ const darkMode = {
       stateView: fontStyle.yesGothicExtraBold,
     },
     button: {
-      default: fontStyle.appleNeoBold,
+      default: fontStyle.koPubDotumBold,
     },
     table: {
       pagination: fontStyle.appleNeoBold,

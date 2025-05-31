@@ -160,3 +160,12 @@ export const Text = styled.span<{ width?: number; textAlign: string }>(
     width: ${width}px;
   `,
 );
+
+export const EmailSearch = styled.input<{ theme: Theme }>(
+  ({ theme }) => css`
+    background-color: ${theme.mode.cardBackground};
+    border: none;
+    font-size: 16px;
+    width: 400px;
+  `,
+);
