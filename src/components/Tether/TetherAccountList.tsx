@@ -36,7 +36,7 @@ import {
   TableHeaderFuncButton,
   TableWrapper,
 } from "../Table";
-import { HorizontalDivider } from "../layouts/Layouts";
+import { EmailSearch, HorizontalDivider } from "../layouts/Layouts";
 import { CustomModal } from "../Modal/Modal";
 import styled from "@emotion/styled";
 import { Container } from "../layouts/Frames/FrameLayouts";
@@ -208,15 +208,11 @@ export function TetherAccountList(props: {
               justify-content: space-between;
             `}
           >
-            <input
-              css={css`
-                border: none;
-                font-size: 16px;
-                width: 400px;
-              `}
+            <EmailSearch
               value={searchEmail}
               placeholder="이메일 검색"
               onChange={(e) => debounced(e.target.value)}
+              theme={theme}
             />
           </div>
           <TableHeaderFuncButton

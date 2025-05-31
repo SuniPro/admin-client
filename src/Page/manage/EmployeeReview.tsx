@@ -27,7 +27,10 @@ import {
   TableWrapper,
 } from "../../components/Table";
 import { useWindowContext } from "../../context/WindowContext";
-import { HorizontalDivider } from "../../components/layouts/Layouts";
+import {
+  EmailSearch,
+  HorizontalDivider,
+} from "../../components/layouts/Layouts";
 import styled from "@emotion/styled";
 import { createAbility, getAbilityTargetEmployeeList } from "../../api/review";
 import { AbilityReviewType } from "../../model/review";
@@ -246,7 +249,7 @@ export function EmployeeReview() {
               justify-content: flex-start;
             `}
           >
-            <input
+            <EmailSearch
               css={css`
                 border: none;
                 font-size: 16px;
@@ -258,6 +261,7 @@ export function EmployeeReview() {
               onChange={(e) =>
                 table.getColumn("employeeName")?.setFilterValue(e.target.value)
               }
+              theme={theme}
             />
           </div>
           <TableHeaderFuncButton

@@ -5,7 +5,7 @@ export interface WorkTableType {
   name: string;
   department: DepartmentType;
   level: LevelType;
-  workMenuList: testType[];
+  workMenuList: workMenuType[];
 }
 
 export const workMenuList = [
@@ -16,7 +16,7 @@ export const workMenuList = [
   "NOTIFY",
 ] as const;
 
-export type testType = typeof workMenuList;
+export type workMenuType = typeof workMenuList;
 
 export type WorkMenuListType = (typeof workMenuList)[number];
 
