@@ -27,7 +27,6 @@ import {
   SELECTION_CHANGE_COMMAND,
 } from "lexical";
 import type { JSX } from "react";
-import * as React from "react";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 
 import "./ImageNode.css";
