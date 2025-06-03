@@ -23,10 +23,10 @@ let hasRegisteredKeyDownListener = false;
 
 function registerKeyTimeStampTracker() {
   window.addEventListener(
-    'keydown',
+    "keydown",
     (event: KeyboardEvent) => {
       // Tab
-      if (event.key === 'Tab') {
+      if (event.key === "Tab") {
         lastTabKeyDownTimestamp = event.timeStamp;
       }
     },

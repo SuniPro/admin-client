@@ -26,8 +26,8 @@ export default function LinkPlugin({
       attributes={
         hasLinkAttributes
           ? {
-              rel: 'noopener noreferrer',
-              target: '_blank',
+              rel: "noopener noreferrer",
+              target: "_blank",
             }
           : undefined
       }

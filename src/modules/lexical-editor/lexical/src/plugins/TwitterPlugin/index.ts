@@ -28,7 +28,7 @@ export default function TwitterPlugin(): JSX.Element | null {
 
   useEffect(() => {
     if (!editor.hasNodes([TweetNode])) {
-      throw new Error('TwitterPlugin: TweetNode not registered on editor');
+      throw new Error("TwitterPlugin: TweetNode not registered on editor");
     }
 
     return editor.registerCommand<string>(

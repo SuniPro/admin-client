@@ -132,10 +132,10 @@ export default function ContextMenuPlugin(): JSX.Element {
 
             const permission = await navigator.permissions.query({
               // @ts-expect-error These types are incorrect.
-              name: 'clipboard-read',
+              name: "clipboard-read",
             });
-            if (permission.state === 'denied') {
-              alert('Not allowed to paste from clipboard.');
+            if (permission.state === "denied") {
+              alert("Not allowed to paste from clipboard.");
               return;
             }
 
@@ -144,7 +144,7 @@ export default function ContextMenuPlugin(): JSX.Element {
               data.setData(type, dataString);
             }
 
-            const event = new ClipboardEvent('paste', {
+            const event = new ClipboardEvent("paste", {
               clipboardData: data,
             });
 
@@ -157,19 +157,19 @@ export default function ContextMenuPlugin(): JSX.Element {
           navigator.clipboard.read().then(async function (...args) {
             const permission = await navigator.permissions.query({
               // @ts-expect-error These types are incorrect.
-              name: 'clipboard-read',
+              name: "clipboard-read",
             });
 
-            if (permission.state === 'denied') {
-              alert('Not allowed to paste from clipboard.');
+            if (permission.state === "denied") {
+              alert("Not allowed to paste from clipboard.");
               return;
             }
 
             const data = new DataTransfer();
             const items = await navigator.clipboard.readText();
-            data.setData('text/plain', items);
+            data.setData("text/plain", items);
 
-            const event = new ClipboardEvent('paste', {
+            const event = new ClipboardEvent("paste", {
               clipboardData: data,
             });
             editor.dispatchCommand(PASTE_COMMAND, event);
@@ -249,7 +249,7 @@ export default function ContextMenuPlugin(): JSX.Element {
           selectOptionAndCleanUp,
           setHighlightedIndex,
         },
-        {setMenuRef},
+        { setMenuRef },
       ) =>
         anchorElementRef.current
           ? ReactDOM.createPortal(
@@ -257,10 +257,11 @@ export default function ContextMenuPlugin(): JSX.Element {
                 className="typeahead-popover auto-embed-menu"
                 style={{
                   marginLeft: anchorElementRef.current.style.width,
-                  userSelect: 'none',
+                  userSelect: "none",
                   width: 200,
                 }}
-                ref={setMenuRef}>
+                ref={setMenuRef}
+              >
                 <ContextMenu
                   options={options}
                   selectedItemIndex={selectedIndex}

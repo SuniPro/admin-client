@@ -374,16 +374,16 @@ function useFloatingTextFormatToolbar(
       const node = getSelectedNode(selection);
 
       // Update text format
-      setIsBold(selection.hasFormat('bold'));
-      setIsItalic(selection.hasFormat('italic'));
-      setIsUnderline(selection.hasFormat('underline'));
-      setIsUppercase(selection.hasFormat('uppercase'));
-      setIsLowercase(selection.hasFormat('lowercase'));
-      setIsCapitalize(selection.hasFormat('capitalize'));
-      setIsStrikethrough(selection.hasFormat('strikethrough'));
-      setIsSubscript(selection.hasFormat('subscript'));
-      setIsSuperscript(selection.hasFormat('superscript'));
-      setIsCode(selection.hasFormat('code'));
+      setIsBold(selection.hasFormat("bold"));
+      setIsItalic(selection.hasFormat("italic"));
+      setIsUnderline(selection.hasFormat("underline"));
+      setIsUppercase(selection.hasFormat("uppercase"));
+      setIsLowercase(selection.hasFormat("lowercase"));
+      setIsCapitalize(selection.hasFormat("capitalize"));
+      setIsStrikethrough(selection.hasFormat("strikethrough"));
+      setIsSubscript(selection.hasFormat("subscript"));
+      setIsSuperscript(selection.hasFormat("superscript"));
+      setIsCode(selection.hasFormat("code"));
 
       // Update links
       const parent = node.getParent();
@@ -395,15 +395,15 @@ function useFloatingTextFormatToolbar(
 
       if (
         !$isCodeHighlightNode(selection.anchor.getNode()) &&
-        selection.getTextContent() !== ''
+        selection.getTextContent() !== ""
       ) {
         setIsText($isTextNode(node) || $isParagraphNode(node));
       } else {
         setIsText(false);
       }
 
-      const rawTextContent = selection.getTextContent().replace(/\n/g, '');
-      if (!selection.isCollapsed() && rawTextContent === '') {
+      const rawTextContent = selection.getTextContent().replace(/\n/g, "");
+      if (!selection.isCollapsed() && rawTextContent === "") {
         setIsText(false);
         return;
       }
@@ -411,9 +411,9 @@ function useFloatingTextFormatToolbar(
   }, [editor]);
 
   useEffect(() => {
-    document.addEventListener('selectionchange', updatePopup);
+    document.addEventListener("selectionchange", updatePopup);
     return () => {
-      document.removeEventListener('selectionchange', updatePopup);
+      document.removeEventListener("selectionchange", updatePopup);
     };
   }, [updatePopup]);
 

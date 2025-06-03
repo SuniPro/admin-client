@@ -33,7 +33,7 @@ type CommandPayload = {
 };
 
 export const INSERT_EQUATION_COMMAND: LexicalCommand<CommandPayload> =
-  createCommand('INSERT_EQUATION_COMMAND');
+  createCommand("INSERT_EQUATION_COMMAND");
 
 export function InsertEquationDialog({
   activeEditor,
@@ -44,7 +44,10 @@ export function InsertEquationDialog({
 }): JSX.Element {
   const onEquationConfirm = useCallback(
     (equation: string, inline: boolean) => {
-      activeEditor.dispatchCommand(INSERT_EQUATION_COMMAND, {equation, inline});
+      activeEditor.dispatchCommand(INSERT_EQUATION_COMMAND, {
+        equation,
+        inline,
+      });
       onClose();
     },
     [activeEditor, onClose],
@@ -59,14 +62,14 @@ export default function EquationsPlugin(): JSX.Element | null {
   useEffect(() => {
     if (!editor.hasNodes([EquationNode])) {
       throw new Error(
-        'EquationsPlugins: EquationsNode not registered on editor',
+        "EquationsPlugins: EquationsNode not registered on editor",
       );
     }
 
     return editor.registerCommand<CommandPayload>(
       INSERT_EQUATION_COMMAND,
       (payload) => {
-        const {equation, inline} = payload;
+        const { equation, inline } = payload;
         const equationNode = $createEquationNode(equation, inline);
 
         $insertNodes([equationNode]);

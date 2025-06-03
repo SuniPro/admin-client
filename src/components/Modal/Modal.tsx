@@ -1,10 +1,10 @@
-import {css, Theme, useTheme} from "@emotion/react";
-import {useWindowContext} from "../../context/WindowContext";
-import {useProportionHook} from "../../hooks/useWindowHooks";
-import {Modal} from "@mui/material";
+import { css, Theme, useTheme } from "@emotion/react";
+import { useWindowContext } from "../../context/WindowContext";
+import { useProportionHook } from "../../hooks/useWindowHooks";
+import { Modal } from "@mui/material";
 import styled from "@emotion/styled";
-import {ReactNode} from "react";
-import {Container} from "../layouts/Frames";
+import { ReactNode } from "react";
+import { Container } from "../layouts/Frames";
 
 /** ReactNode를 받아 반응형으로 자녀요소를 모달로 띄우는 컴포넌트입니다.
  * date-area 가 이미 선언되어 있으므로 캘린더 설정 작업을 할때 디자인을 신경쓰지 않아도 됩니다.

@@ -43,7 +43,8 @@ function FigmaComponent({
     <BlockWithAlignableContents
       className={className}
       format={format}
-      nodeKey={nodeKey}>
+      nodeKey={nodeKey}
+    >
       <iframe
         width="560"
         height="315"
@@ -66,7 +67,7 @@ export class FigmaNode extends DecoratorBlockNode {
   __id: string;
 
   static getType(): string {
-    return 'figma';
+    return "figma";
   }
 
   static clone(node: FigmaNode): FigmaNode {
@@ -109,8 +110,8 @@ export class FigmaNode extends DecoratorBlockNode {
   decorate(_editor: LexicalEditor, config: EditorConfig): JSX.Element {
     const embedBlockTheme = config.theme.embedBlock || {};
     const className = {
-      base: embedBlockTheme.base || '',
-      focus: embedBlockTheme.focus || '',
+      base: embedBlockTheme.base || "",
+      focus: embedBlockTheme.focus || "",
     };
     return (
       <FigmaComponent

@@ -28,7 +28,7 @@ export default function YouTubePlugin(): JSX.Element | null {
 
   useEffect(() => {
     if (!editor.hasNodes([YouTubeNode])) {
-      throw new Error('YouTubePlugin: YouTubeNode not registered on editor');
+      throw new Error("YouTubePlugin: YouTubeNode not registered on editor");
     }
 
     return editor.registerCommand<string>(

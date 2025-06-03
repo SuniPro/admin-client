@@ -40,8 +40,8 @@ export class AutocompleteNode extends TextNode {
     return new AutocompleteNode(node.__text, node.__uuid, node.__key);
   }
 
-  static getType(): 'autocomplete' {
-    return 'autocomplete';
+  static getType(): "autocomplete" {
+    return "autocomplete";
   }
 
   static importJSON(
@@ -70,7 +70,7 @@ export class AutocompleteNode extends TextNode {
   }
 
   exportDOM(_: LexicalEditor): DOMExportOutput {
-    return {element: null};
+    return { element: null };
   }
 
   excludeFromCopy() {
@@ -81,7 +81,7 @@ export class AutocompleteNode extends TextNode {
     const dom = super.createDOM(config);
     dom.classList.add(config.theme.autocomplete);
     if (this.__uuid !== UUID) {
-      dom.style.display = 'none';
+      dom.style.display = "none";
     }
     return dom;
   }
@@ -91,5 +91,5 @@ export function $createAutocompleteNode(
   text: string,
   uuid: string,
 ): AutocompleteNode {
-  return new AutocompleteNode(text, uuid).setMode('token');
+  return new AutocompleteNode(text, uuid).setMode("token");
 }

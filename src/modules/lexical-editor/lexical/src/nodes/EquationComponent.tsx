@@ -100,7 +100,7 @@ export default function EquationComponent({
         ),
       );
     } else {
-      return editor.registerUpdateListener(({editorState}) => {
+      return editor.registerUpdateListener(({ editorState }) => {
         const isSelected = editorState.read(() => {
           const selection = $getSelection();
           return (

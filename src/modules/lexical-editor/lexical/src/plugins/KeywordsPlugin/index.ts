@@ -23,7 +23,7 @@ export default function KeywordsPlugin(): JSX.Element | null {
 
   useEffect(() => {
     if (!editor.hasNodes([KeywordNode])) {
-      throw new Error('KeywordsPlugin: KeywordNode not registered on editor');
+      throw new Error("KeywordsPlugin: KeywordNode not registered on editor");
     }
   }, [editor]);
 

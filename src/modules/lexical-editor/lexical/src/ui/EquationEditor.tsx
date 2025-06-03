@@ -20,7 +20,7 @@ type BaseEquationEditorProps = {
 };
 
 function EquationEditor(
-  {equation, setEquation, inline}: BaseEquationEditorProps,
+  { equation, setEquation, inline }: BaseEquationEditorProps,
   forwardedRef: Ref<HTMLInputElement | HTMLTextAreaElement>,
 ): JSX.Element {
   const onChange = (event: ChangeEvent) => {
@@ -41,14 +41,14 @@ function EquationEditor(
     </span>
   ) : (
     <div className="EquationEditor_inputBackground">
-      <span className="EquationEditor_dollarSign">{'$$\n'}</span>
+      <span className="EquationEditor_dollarSign">{"$$\n"}</span>
       <textarea
         className="EquationEditor_blockEditor"
         value={equation}
         onChange={onChange}
         ref={forwardedRef as RefObject<HTMLTextAreaElement>}
       />
-      <span className="EquationEditor_dollarSign">{'\n$$'}</span>
+      <span className="EquationEditor_dollarSign">{"\n$$"}</span>
     </div>
   );
 }

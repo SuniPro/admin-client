@@ -36,7 +36,7 @@ export function $convertSummaryElement(
 
 export class CollapsibleTitleNode extends ElementNode {
   static getType(): string {
-    return 'collapsible-title';
+    return "collapsible-title";
   }
 
   static clone(node: CollapsibleTitleNode): CollapsibleTitleNode {
@@ -44,15 +44,15 @@ export class CollapsibleTitleNode extends ElementNode {
   }
 
   createDOM(config: EditorConfig, editor: LexicalEditor): HTMLElement {
-    const dom = document.createElement('summary');
-    dom.classList.add('Collapsible__title');
+    const dom = document.createElement("summary");
+    dom.classList.add("Collapsible__title");
     if (IS_CHROME) {
-      dom.addEventListener('click', () => {
+      dom.addEventListener("click", () => {
         editor.update(() => {
           const collapsibleContainer = this.getLatest().getParentOrThrow();
           if (!$isCollapsibleContainerNode(collapsibleContainer)) {
             throw new Error(
-              'Expected parent node to be a CollapsibleContainerNode',
+              "Expected parent node to be a CollapsibleContainerNode",
             );
           }
           collapsibleContainer.toggleOpen();
@@ -86,7 +86,7 @@ export class CollapsibleTitleNode extends ElementNode {
   static transform(): (node: LexicalNode) => void {
     return (node: LexicalNode) => {
       if (!$isCollapsibleTitleNode(node)) {
-        throw new Error('node is not a CollapsibleTitleNode');
+        throw new Error("node is not a CollapsibleTitleNode");
       }
       if (node.isEmpty()) {
         node.remove();
@@ -99,7 +99,7 @@ export class CollapsibleTitleNode extends ElementNode {
 
     if (!$isCollapsibleContainerNode(containerNode)) {
       throw new Error(
-        'CollapsibleTitleNode expects to be child of CollapsibleContainerNode',
+        "CollapsibleTitleNode expects to be child of CollapsibleContainerNode",
       );
     }
 
@@ -107,7 +107,7 @@ export class CollapsibleTitleNode extends ElementNode {
       const contentNode = this.getNextSibling();
       if (!$isCollapsibleContentNode(contentNode)) {
         throw new Error(
-          'CollapsibleTitleNode expects to have CollapsibleContentNode sibling',
+          "CollapsibleTitleNode expects to have CollapsibleContentNode sibling",
         );
       }
 

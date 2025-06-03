@@ -17,12 +17,12 @@ type Props = Readonly<{
   children: ReactNode;
 }>;
 
-export function DialogButtonsList({children}: Props): JSX.Element {
+export function DialogButtonsList({ children }: Props): JSX.Element {
   return <div className="DialogButtonsList">{children}</div>;
 }
 
 export function DialogActions({
-  'data-test-id': dataTestId,
+  "data-test-id": dataTestId,
   children,
 }: Props): JSX.Element {
   return (

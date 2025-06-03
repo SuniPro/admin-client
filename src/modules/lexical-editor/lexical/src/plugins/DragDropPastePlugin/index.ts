@@ -33,7 +33,7 @@ export default function DragDropPaste(): null {
             files,
             [ACCEPTABLE_IMAGE_TYPES].flatMap((x) => x),
           );
-          for (const {file, result} of filesResult) {
+          for (const { file, result } of filesResult) {
             if (isMimeType(file, ACCEPTABLE_IMAGE_TYPES)) {
               editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
                 altText: file.name,

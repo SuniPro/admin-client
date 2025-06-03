@@ -22,7 +22,7 @@ const EMAIL_REGEX =
 
 const MATCHERS = [
   createLinkMatcherWithRegExp(URL_REGEX, (text) => {
-    return text.startsWith('http') ? text : `https://${text}`;
+    return text.startsWith("http") ? text : `https://${text}`;
   }),
   createLinkMatcherWithRegExp(EMAIL_REGEX, (text) => {
     return `mailto:${text}`;

@@ -22,7 +22,7 @@ export default function FileInput({
   accept,
   label,
   onChange,
-  'data-test-id': dataTestId,
+  "data-test-id": dataTestId,
 }: Props): JSX.Element {
   return (
     <div className="Input__wrapper">

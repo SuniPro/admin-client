@@ -62,7 +62,7 @@ function $textNodeTransform(node: TextNode): void {
 function useEmojis(editor: LexicalEditor): void {
   useEffect(() => {
     if (!editor.hasNodes([EmojiNode])) {
-      throw new Error('EmojisPlugin: EmojiNode not registered on editor');
+      throw new Error("EmojisPlugin: EmojiNode not registered on editor");
     }
 
     return editor.registerNodeTransform(TextNode, $textNodeTransform);

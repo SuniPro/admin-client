@@ -51,14 +51,14 @@ export const INSERT_LAYOUT_COMMAND: LexicalCommand<string> =
 export const UPDATE_LAYOUT_COMMAND: LexicalCommand<{
   template: string;
   nodeKey: NodeKey;
-}> = createCommand<{template: string; nodeKey: NodeKey}>();
+}> = createCommand<{ template: string; nodeKey: NodeKey }>();
 
 export function LayoutPlugin(): null {
   const [editor] = useLexicalComposerContext();
   useEffect(() => {
     if (!editor.hasNodes([LayoutContainerNode, LayoutItemNode])) {
       throw new Error(
-        'LayoutPlugin: LayoutContainerNode, or LayoutItemNode not registered on editor',
+        "LayoutPlugin: LayoutContainerNode, or LayoutItemNode not registered on editor",
       );
     }
 
@@ -173,7 +173,7 @@ export function LayoutPlugin(): null {
       ),
       editor.registerCommand(
         UPDATE_LAYOUT_COMMAND,
-        ({template, nodeKey}) => {
+        ({ template, nodeKey }) => {
           editor.update(() => {
             const container = $getNodeByKey<LexicalNode>(nodeKey);
 

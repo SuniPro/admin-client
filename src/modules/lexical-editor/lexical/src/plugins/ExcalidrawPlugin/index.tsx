@@ -40,7 +40,7 @@ export default function ExcalidrawPlugin(): JSX.Element | null {
   useEffect(() => {
     if (!editor.hasNodes([ExcalidrawNode])) {
       throw new Error(
-        'ExcalidrawPlugin: ExcalidrawNode not registered on editor',
+        "ExcalidrawPlugin: ExcalidrawNode not registered on editor",
       );
     }
 

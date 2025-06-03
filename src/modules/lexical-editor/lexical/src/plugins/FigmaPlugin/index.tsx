@@ -28,7 +28,7 @@ export default function FigmaPlugin(): JSX.Element | null {
 
   useEffect(() => {
     if (!editor.hasNodes([FigmaNode])) {
-      throw new Error('FigmaPlugin: FigmaNode not registered on editor');
+      throw new Error("FigmaPlugin: FigmaNode not registered on editor");
     }
 
     return editor.registerCommand<string>(
