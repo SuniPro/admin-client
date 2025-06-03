@@ -48,6 +48,11 @@ export const StyledFuncButton = styled.button<{
     activeBackgroundColor = theme.mode.buttonHoverBackground,
     inActiveBackgroundColor = theme.mode.buttonBackground,
   }) => css`
+    border-radius: 8px;
+    border: 1px solid transparent;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
     background-color: ${isActive
       ? activeBackgroundColor
       : inActiveBackgroundColor};

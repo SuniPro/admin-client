@@ -26,19 +26,22 @@ import { EllipsisCase, HorizontalDivider } from "../layouts/Layouts";
 import { Pagination, TableBody, TableHeader } from "../Table";
 import {
   CustomModal,
+  EditorModalContainer,
   ModalHeaderLine,
-  WriteModalContainer,
 } from "../Modal/Modal";
-import { Editor, Viewer } from "../Lexical/Editor";
 import { createNotify } from "../../api/notify";
 import { ErrorAlert, SuccessAlert } from "../Alert/Alerts";
+import { LexicalEditor } from "../../modules/lexical-editor/lexical/src/LexicalEditor";
+import { Viewer } from "../Lexical/Editor";
+import { useWindowContext } from "../../context/WindowContext";
+import { useProportionHook } from "../../hooks/useWindowHooks";
 
 export function ViewNotify(props: { notify: NotifyType; close: () => void }) {
   const { notify } = props;
   const theme = useTheme();
 
   return (
-    <WriteModalContainer>
+    <EditorModalContainer>
       <ModalHeaderLine>
         <StyledInput
           theme={theme}
@@ -48,12 +51,16 @@ export function ViewNotify(props: { notify: NotifyType; close: () => void }) {
         />
       </ModalHeaderLine>
       <Viewer contents={notify.contents}></Viewer>
-    </WriteModalContainer>
+    </EditorModalContainer>
   );
 }
 
-function WriteNotify(props: { user: EmployeeType; close: () => void }) {
-  const { user, close } = props;
+function WriteNotify(props: {
+  user: EmployeeType;
+  close: () => void;
+  width: number;
+}) {
+  const { user, close, width } = props;
   const [title, setTitle] = useState<string>("");
   const [contents, setContents] = useState<string>("");
   const theme = useTheme();
@@ -76,7 +83,7 @@ function WriteNotify(props: { user: EmployeeType; close: () => void }) {
   };
 
   return (
-    <WriteModalContainer>
+    <LexicalModalContainer toolbarSize={width}>
       <ModalHeaderLine>
         <StyledInput
           theme={theme}
@@ -85,8 +92,8 @@ function WriteNotify(props: { user: EmployeeType; close: () => void }) {
         />
         <StyledPlusButton func={saveNotify} theme={theme} />
       </ModalHeaderLine>
-      <Editor setContents={setContents} />
-    </WriteModalContainer>
+      <LexicalEditor setContents={setContents} />
+    </LexicalModalContainer>
   );
 }
 
@@ -128,6 +135,13 @@ export function NotifyList(props: {
   const theme = useTheme();
   const [selectedNotify, setSelectedNotify] = useState<NotifyType>(
     notifyList[0],
+  );
+
+  const { windowWidth } = useWindowContext();
+  const { size } = useProportionHook(
+    windowWidth,
+    1000,
+    theme.windowSize.tablet,
   );
 
   const [writeOpen, setWriteOpen] = useState<boolean>(false);
@@ -293,10 +307,15 @@ export function NotifyList(props: {
           }
         />
         <StyledModal
+          width={size}
           open={writeOpen}
           close={() => setWriteOpen(false)}
           children={
-            <WriteNotify user={user} close={() => setWriteOpen(false)} />
+            <WriteNotify
+              user={user}
+              close={() => setWriteOpen(false)}
+              width={size}
+            />
           }
         />
       </StyledContainer>
@@ -357,3 +376,15 @@ const StyledModal = styled(CustomModal)`
   justify-content: flex-start;
   align-items: center;
 `;
+
+const LexicalModalContainer = styled(Container)<{ toolbarSize: number }>(
+  ({ toolbarSize }) => css`
+    width: 100%;
+    flex-direction: column;
+    justify-content: center;
+
+    .toolbar {
+      width: ${toolbarSize}px !important;
+    }
+  `,
+);
