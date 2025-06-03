@@ -6,13 +6,13 @@ import {
   TetherDepositType,
   TransactionStatusType,
 } from "../model/financial";
-import { DateTime } from "luxon";
 import { PaginationResponse } from "../model/pagination";
 import {
   deleteToEmployeeServer,
   getFromEmployeeServer,
   getFromUserServer,
   patchToEmployeeServer,
+  rangeFormatter,
 } from "./base";
 import { ValueType } from "rsuite/DateRangePicker";
 
@@ -96,7 +96,7 @@ export async function getDepositsByStatusOrEmailOrRange(
   email: string | null | undefined,
   range: ValueType,
 ): Promise<PaginationResponse<TetherDepositType>> {
-  const dateRangeValue = dateRange(range);
+  const dateRangeValue = rangeFormatter(range);
   if (email && range?.length == 0) {
     const response = await getFromEmployeeServer(
       `financial/tether/get/deposits/by/status/${status}/email/${email}`,
@@ -191,7 +191,7 @@ export async function getTotalDepositSummaryByStatusAndEmail(
   email: string | null | undefined,
   range: ValueType,
 ): Promise<TetherDepositSummaryType> {
-  const dateRangeValue = dateRange(range);
+  const dateRangeValue = rangeFormatter(range);
 
   // 1. email 정규화 (null/undefined → "null" 문자열로 통일)
   const normalizedEmail = email ?? "null";
@@ -206,25 +206,6 @@ export async function getTotalDepositSummaryByStatusAndEmail(
   const response = await getFromEmployeeServer(`${baseUrl}${queryParams}`);
   return response.data;
 }
-
-const dateRange = (
-  range: [(Date | undefined)?, (Date | undefined)?] | null,
-) => {
-  if (range && range[0] && range[1]) {
-    const start = DateTime.fromJSDate(range[0])
-      .setZone("Asia/Seoul")
-      .set({ hour: 0, minute: 0, second: 0 })
-      .toISO({ includeOffset: false });
-    const end = DateTime.fromJSDate(range[1])
-      .setZone("Asia/Seoul")
-      .set({ hour: 23, minute: 59, second: 59 })
-      .toISO({ includeOffset: false });
-
-    if (start && end) {
-      return { start, end };
-    }
-  }
-};
 
 export async function getTotalDepositAmountByStatusAndWallet(
   status: TransactionStatusType,

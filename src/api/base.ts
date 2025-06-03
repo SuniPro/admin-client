@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from "axios";
+import { DateTime } from "luxon";
 
 export class HttpError extends Error {
   public status: number;
@@ -23,6 +24,25 @@ interface InitOptions {
   skipError?: boolean;
   allowStatus?: number[];
 }
+
+export const rangeFormatter = (
+  range: [(Date | undefined)?, (Date | undefined)?] | null,
+) => {
+  if (range && range[0] && range[1]) {
+    const start = DateTime.fromJSDate(range[0])
+      .setZone("Asia/Seoul")
+      .set({ hour: 0, minute: 0, second: 0 })
+      .toISO({ includeOffset: false });
+    const end = DateTime.fromJSDate(range[1])
+      .setZone("Asia/Seoul")
+      .set({ hour: 23, minute: 59, second: 59 })
+      .toISO({ includeOffset: false });
+
+    if (start && end) {
+      return { start, end };
+    }
+  }
+};
 
 export async function getFromEmployeeServer(
   url: string,

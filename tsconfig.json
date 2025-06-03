@@ -1,7 +1,14 @@
 {
   "files": [],
+  "compilerOptions": {
+    "types": ["node"],
+    "baseUrl": "src",
+    "paths": {
+      "@modules/lexical-editor/lexical": ["modules/lexical-deitor/lexical"]
+    }
+  },
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
-  ]
+  ],
 }

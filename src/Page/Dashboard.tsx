@@ -6,7 +6,7 @@ import { css, Theme, useTheme } from "@emotion/react";
 import { useUserContext } from "../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { ContentsContainer } from "../components/layouts/Layouts";
+import { ContentsContainer } from "../components/layouts";
 import { DashboardMenuType } from "../model/menu";
 import { Notify } from "./Notify";
 import { useQuery } from "@tanstack/react-query";
@@ -14,6 +14,7 @@ import { getLatestNotify } from "../api/notify";
 import { CustomModal } from "../components/Modal/Modal";
 import { ViewNotify } from "../components/Notify/NotifyList";
 import { WorkTable } from "./WorkTable";
+import { Reports } from "./work/Report";
 
 export function Dashboard(props: { activeMenu: DashboardMenuType }) {
   const { activeMenu } = props;
@@ -46,6 +47,9 @@ export function Dashboard(props: { activeMenu: DashboardMenuType }) {
 
       case "workTable":
         return <WorkTable user={user} />;
+
+      case "report":
+        return <Reports />;
     }
   };
 

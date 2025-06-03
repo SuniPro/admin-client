@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { EmployeeAnalysisPanel } from "../../components/analysis/Employee";
 import { useUserContext } from "../../context/UserContext";
-import { EmployeeList } from "../../components/Employee/EmployeeList";
+import { EmployeeList } from "../../components/list/EmployeeList";
 
 export function Employee() {
   const { user } = useUserContext();
