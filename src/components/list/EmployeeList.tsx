@@ -53,9 +53,8 @@ export function EmployeeList(props: {
   const [pageSize, setPageSize] = useState(10);
 
   const { data, refetch } = useQuery<PaginationResponse<EmployeeType>>({
-    queryKey: ["getAllEmployeeList"],
+    queryKey: ["getAllEmployeeList", pageIndex, pageSize],
     queryFn: () => getAllEmployeeList(pageIndex, pageSize),
-    refetchInterval: 10000,
   });
 
   const employeeList = data?.content;

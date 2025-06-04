@@ -157,7 +157,7 @@ export function TetherDeposit(props: { user: EmployeeType }) {
   }, [depositList, depositStatus, play]);
 
   const { data: totalDepositsCost } = useQuery({
-    queryKey: ["totalDepositsCost", depositStatus],
+    queryKey: ["totalDepositsCost", depositStatus, dateRange, searchEmail],
     queryFn: () =>
       getTotalDepositSummaryByStatusAndEmail(
         depositStatus,

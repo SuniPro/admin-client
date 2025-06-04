@@ -112,7 +112,7 @@ export function ReportList(props: { user: EmployeeType }) {
   ]);
 
   const { data, refetch } = useQuery<PaginationResponse<ReportType>>({
-    queryKey: ["getReportsByLevel"],
+    queryKey: ["getReportsByLevel", pageIndex, pageSize, dateRange],
     queryFn: () =>
       getReportsByLevel(user.level, user.id, pageIndex, pageSize, dateRange),
     refetchInterval: 10000,
