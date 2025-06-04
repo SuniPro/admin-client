@@ -42,8 +42,6 @@ jobs:
             docker rm taekang-admin-client || true
             docker run -d \
               -p 80:80 \
-              -p 443:443 \
-              -v /etc/ssl/admin:/etc/ssl/admin:ro \
               --restart unless-stopped \
               --name taekang-admin-client \
               perasperaadastra250225/taekang-admin-client:1.0.0

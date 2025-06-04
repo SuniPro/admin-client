@@ -137,7 +137,7 @@ function buildImportMap(): DOMConversionMap {
   // Wrap all TextNode importers with a function that also imports
   // the custom styles implemented by the playground
   for (const [tag, fn] of Object.entries(TextNode.importDOM() || {})) {
-    importMap[tag] = (importNode) => {
+    importMap[tag as string] = (importNode) => {
       const importer = fn(importNode);
       if (!importer) {
         return null;
@@ -188,8 +188,8 @@ export function LexicalEditor(props: {
     editorState: isCollab
       ? null
       : emptyEditor
-      ? undefined
-      : $prepopulatedRichText,
+        ? undefined
+        : $prepopulatedRichText,
     html: { import: buildImportMap() },
     namespace: "Playground",
     nodes: [...PlaygroundNodes],

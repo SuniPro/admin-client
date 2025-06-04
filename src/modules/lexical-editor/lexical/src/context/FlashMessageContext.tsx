@@ -19,12 +19,12 @@ import {
 import FlashMessage from "../ui/FlashMessage";
 
 export type ShowFlashMessage = (
-  message?: React.ReactNode,
-  duration?: number,
+  _message?: ReactNode,
+  _duration?: number,
 ) => void;
 
 interface FlashMessageProps {
-  message?: React.ReactNode;
+  message?: ReactNode;
   duration?: number;
 }
 
