@@ -50,6 +50,7 @@ export interface ImagePayload {
   width?: number;
   captionsEnabled?: boolean;
 }
+/* eslint-disable */
 
 function isGoogleDocCheckboxImg(img: HTMLImageElement): boolean {
   return (

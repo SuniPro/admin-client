@@ -7,7 +7,9 @@
  */
 
 import type { Option, Options, PollNode } from "./PollNode";
+import { $isPollNode, createPollOption } from "./PollNode";
 import type { JSX } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import "./PollNode.css";
 
@@ -24,17 +26,16 @@ import {
   COMMAND_PRIORITY_LOW,
   NodeKey,
 } from "lexical";
-import * as React from "react";
-import { useEffect, useMemo, useRef, useState } from "react";
 
 import Button from "../ui/Button";
 import joinClasses from "../utils/joinClasses";
-import { $isPollNode, createPollOption } from "./PollNode";
 
+/* eslint-disable */
 function getTotalVotes(options: Options): number {
-  return options.reduce((totalVotes, next) => {
-    return totalVotes + next.votes.length;
-  }, 0);
+  return options.reduce(
+    (totalVotes, next) => totalVotes + next.votes.length,
+    0,
+  );
 }
 
 function PollOptionComponent({
@@ -49,8 +50,8 @@ function PollOptionComponent({
   options: Options;
   totalVotes: number;
   withPollNode: (
-    cb: (pollNode: PollNode) => void,
-    onSelect?: () => void,
+    _cb: (_pollNode: PollNode) => void,
+    _onSelect?: () => void,
   ) => void;
 }): JSX.Element {
   const { clientID } = useCollaborationContext();
@@ -73,7 +74,7 @@ function PollOptionComponent({
           ref={checkboxRef}
           className="PollNode__optionCheckbox"
           type="checkbox"
-          onChange={(e) => {
+          onChange={(_e) => {
             withPollNode((node) => {
               node.toggleVote(option, clientID);
             });
@@ -144,30 +145,32 @@ export default function PollComponent({
   const [selection, setSelection] = useState<BaseSelection | null>(null);
   const ref = useRef(null);
 
-  useEffect(() => {
-    return mergeRegister(
-      editor.registerUpdateListener(({ editorState }) => {
-        setSelection(editorState.read(() => $getSelection()));
-      }),
-      editor.registerCommand<MouseEvent>(
-        CLICK_COMMAND,
-        (payload) => {
-          const event = payload;
+  useEffect(
+    () =>
+      mergeRegister(
+        editor.registerUpdateListener(({ editorState }) => {
+          setSelection(editorState.read(() => $getSelection()));
+        }),
+        editor.registerCommand<MouseEvent>(
+          CLICK_COMMAND,
+          (payload) => {
+            const event = payload;
 
-          if (event.target === ref.current) {
-            if (!event.shiftKey) {
-              clearSelection();
+            if (event.target === ref.current) {
+              if (!event.shiftKey) {
+                clearSelection();
+              }
+              setSelected(!isSelected);
+              return true;
             }
-            setSelected(!isSelected);
-            return true;
-          }
 
-          return false;
-        },
-        COMMAND_PRIORITY_LOW,
+            return false;
+          },
+          COMMAND_PRIORITY_LOW,
+        ),
       ),
-    );
-  }, [clearSelection, editor, isSelected, nodeKey, setSelected]);
+    [clearSelection, editor, isSelected, nodeKey, setSelected],
+  );
 
   const withPollNode = (
     cb: (node: PollNode) => void,

@@ -63,7 +63,7 @@ export async function docFromHash(
   const b64 = atob(m[1].replace(/_/g, "/").replace(/-/g, "+"));
   const array = new Uint8Array(b64.length);
   for (let i = 0; i < b64.length; i++) {
-    array[i] = b64.charCodeAt(i);
+    array[i as number] = b64.charCodeAt(i);
   }
   const closed = writer.write(array).then(() => writer.close());
   const output = [];

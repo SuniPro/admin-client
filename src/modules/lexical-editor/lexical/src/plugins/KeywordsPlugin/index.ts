@@ -27,9 +27,11 @@ export default function KeywordsPlugin(): JSX.Element | null {
     }
   }, [editor]);
 
-  const $createKeywordNode_ = useCallback((textNode: TextNode): KeywordNode => {
-    return $createKeywordNode(textNode.getTextContent());
-  }, []);
+  const $createKeywordNode_ = useCallback(
+    (textNode: TextNode): KeywordNode =>
+      $createKeywordNode(textNode.getTextContent()),
+    [],
+  );
 
   const getKeywordMatch = useCallback((text: string) => {
     const matchArr = KEYWORDS_REGEX.exec(text);

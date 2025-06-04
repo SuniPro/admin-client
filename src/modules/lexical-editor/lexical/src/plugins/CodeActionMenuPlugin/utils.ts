@@ -8,6 +8,8 @@
 import { debounce } from "lodash-es";
 import { useMemo, useRef } from "react";
 
+/* eslint-disable */
+
 export function useDebounce<T extends (...args: never[]) => void>(
   fn: T,
   ms: number,

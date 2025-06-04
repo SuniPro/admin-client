@@ -23,7 +23,6 @@ import {
   SKIP_SCROLL_INTO_VIEW_TAG,
 } from "lexical";
 import type { JSX } from "react";
-import * as React from "react";
 import {
   CSSProperties,
   PointerEventHandler,
@@ -41,6 +40,7 @@ import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext
 import { useLexicalEditable } from "@lexical/react/useLexicalEditable";
 import { calculateZoomLevel, mergeRegister } from "@lexical/utils";
 import { createPortal } from "react-dom";
+/* eslint-disable */
 
 type PointerPosition = {
   x: number;

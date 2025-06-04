@@ -9,7 +9,7 @@
 import type { EditorThemeClasses } from "lexical";
 
 import "./PlaygroundEditorTheme.css";
-
+/* eslint-disable */
 const theme: EditorThemeClasses = {
   autocomplete: "PlaygroundEditorTheme__autocomplete",
   blockCursor: "PlaygroundEditorTheme__blockCursor",

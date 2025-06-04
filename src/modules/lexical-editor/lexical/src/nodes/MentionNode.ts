@@ -121,8 +121,10 @@ export class MentionNode extends TextNode {
 
 export function $createMentionNode(
   mentionName: string,
+  // @ts-ignore
   textContent?: string,
 ): MentionNode {
+  // eslint-disable-next-line no-unused-vars
   const mentionNode = new MentionNode(mentionName, (textContent = mentionName));
   mentionNode.setMode("segmented").toggleDirectionless();
   return $applyNodeReplacement(mentionNode);

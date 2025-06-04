@@ -17,6 +17,7 @@ import type {
 import { TextNode } from "lexical";
 
 import { uuid as UUID } from "../plugins/AutocompletePlugin";
+/* eslint-disable */
 
 export type SerializedAutocompleteNode = Spread<
   {

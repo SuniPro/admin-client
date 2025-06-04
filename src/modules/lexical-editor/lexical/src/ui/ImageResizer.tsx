@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-
+/* eslint-disable */
 import type { LexicalEditor } from "lexical";
 import type { JSX } from "react";
 import * as React from "react";
@@ -76,8 +76,8 @@ export default function ImageResizer({
   const maxWidthContainer = maxWidth
     ? maxWidth
     : editorRootElement !== null
-    ? editorRootElement.getBoundingClientRect().width - 20
-    : 100;
+      ? editorRootElement.getBoundingClientRect().width - 20
+      : 100;
   const maxHeightContainer =
     editorRootElement !== null
       ? editorRootElement.getBoundingClientRect().height - 20

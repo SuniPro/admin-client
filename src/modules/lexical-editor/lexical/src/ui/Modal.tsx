@@ -7,12 +7,12 @@
  */
 
 import type { JSX } from "react";
+import * as React from "react";
+import { ReactNode, useEffect, useRef } from "react";
 
 import "./Modal.css";
 
 import { isDOMNode } from "lexical";
-import * as React from "react";
-import { ReactNode, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 
 function PortalImpl({
@@ -65,7 +65,7 @@ function PortalImpl({
     return () => {
       window.removeEventListener("keydown", handler);
       if (modalOverlayElement !== null) {
-        modalOverlayElement?.removeEventListener("click", clickOutsideHandler);
+        modalOverlayElement.removeEventListener("click", clickOutsideHandler);
       }
     };
   }, [closeOnClickOutside, onClose]);

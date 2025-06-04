@@ -26,6 +26,7 @@ import {
 } from "lexical";
 
 import { setDomHiddenUntilFound } from "./CollapsibleUtils";
+/* eslint-disable */
 
 type SerializedCollapsibleContainerNode = Spread<
   {
@@ -64,7 +65,7 @@ export class CollapsibleContainerNode extends ElementNode {
     return true;
   }
 
-  collapseAtStart(selection: RangeSelection): boolean {
+  collapseAtStart(_selection: RangeSelection): boolean {
     // Unwrap the CollapsibleContainerNode by replacing it with the children
     // of its children (CollapsibleTitleNode, CollapsibleContentNode)
     const nodesToInsert: LexicalNode[] = [];
@@ -84,7 +85,7 @@ export class CollapsibleContainerNode extends ElementNode {
     return true;
   }
 
-  createDOM(config: EditorConfig, editor: LexicalEditor): HTMLElement {
+  createDOM(_config: EditorConfig, editor: LexicalEditor): HTMLElement {
     // details is not well supported in Chrome #5582
     let dom: HTMLElement;
     if (IS_CHROME) {
@@ -132,12 +133,10 @@ export class CollapsibleContainerNode extends ElementNode {
 
   static importDOM(): DOMConversionMap<HTMLDetailsElement> | null {
     return {
-      details: (domNode: HTMLDetailsElement) => {
-        return {
-          conversion: $convertDetailsElement,
-          priority: 1,
-        };
-      },
+      details: (_domNode: HTMLDetailsElement) => ({
+        conversion: $convertDetailsElement,
+        priority: 1,
+      }),
     };
   }
 

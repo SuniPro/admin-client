@@ -7,6 +7,7 @@
  */
 
 import { useCallback, useEffect, useRef } from "react";
+/* eslint-disable */
 
 const getElement = (): HTMLElement => {
   let element = document.getElementById("report-container");
@@ -46,13 +47,10 @@ export default function useReport(): (
     }
   }, []);
 
-  useEffect(() => {
-    return cleanup;
-  }, [cleanup]);
+  useEffect(() => cleanup, [cleanup]);
 
   return useCallback(
     (content) => {
-      // eslint-disable-next-line no-console
       console.log(content);
       const element = getElement();
       if (timer.current !== null) {

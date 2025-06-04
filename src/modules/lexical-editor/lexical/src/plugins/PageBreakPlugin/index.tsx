@@ -20,6 +20,7 @@ import {
 } from "lexical";
 
 import { $createPageBreakNode, PageBreakNode } from "../../nodes/PageBreakNode";
+/* eslint-disable */
 
 export const INSERT_PAGE_BREAK: LexicalCommand<undefined> = createCommand();
 

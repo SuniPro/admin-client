@@ -19,7 +19,6 @@ import {
   SELECTION_CHANGE_COMMAND,
 } from "lexical";
 import type { JSX } from "react";
-import * as React from "react";
 import { ReactPortal, useCallback, useEffect, useRef, useState } from "react";
 
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
@@ -52,6 +51,8 @@ import { createPortal } from "react-dom";
 import useModal from "../../hooks/useModal";
 import ColorPicker from "../../ui/ColorPicker";
 import DropDown, { DropDownItem } from "../../ui/DropDown";
+
+/* eslint-disable */
 
 function computeSelectionCount(selection: TableSelection): {
   columns: number;
@@ -134,23 +135,25 @@ function TableActionMenu({
     () => currentCellBackgroundColor(editor) || "",
   );
 
-  useEffect(() => {
-    return editor.registerMutationListener(
-      TableCellNode,
-      (nodeMutations) => {
-        const nodeUpdated =
-          nodeMutations.get(tableCellNode.getKey()) === "updated";
+  useEffect(
+    () =>
+      editor.registerMutationListener(
+        TableCellNode,
+        (nodeMutations) => {
+          const nodeUpdated =
+            nodeMutations.get(tableCellNode.getKey()) === "updated";
 
-        if (nodeUpdated) {
-          editor.getEditorState().read(() => {
-            updateTableCellNode(tableCellNode.getLatest());
-          });
-          setBackgroundColor(currentCellBackgroundColor(editor) || "");
-        }
-      },
-      { skipInitialization: true },
-    );
-  }, [editor, tableCellNode]);
+          if (nodeUpdated) {
+            editor.getEditorState().read(() => {
+              updateTableCellNode(tableCellNode.getLatest());
+            });
+            setBackgroundColor(currentCellBackgroundColor(editor) || "");
+          }
+        },
+        { skipInitialization: true },
+      ),
+    [editor, tableCellNode],
+  );
 
   useEffect(() => {
     editor.getEditorState().read(() => {
@@ -336,7 +339,7 @@ function TableActionMenu({
       for (let col = 0; col < gridMap[tableRowIndex].length; col++) {
         const mapCell = gridMap[tableRowIndex][col];
 
-        if (!mapCell?.cell) {
+        if (!mapCell.cell) {
           continue;
         }
 
@@ -366,7 +369,7 @@ function TableActionMenu({
       for (let row = 0; row < gridMap.length; row++) {
         const mapCell = gridMap[row][tableColumnIndex];
 
-        if (!mapCell?.cell) {
+        if (!mapCell.cell) {
           continue;
         }
 

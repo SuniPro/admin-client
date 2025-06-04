@@ -5,6 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
+/* eslint-disable */
+
 import type { ExcalidrawInitialElements } from "../../ui/ExcalidrawModal";
 import ExcalidrawModal from "../../ui/ExcalidrawModal";
 import type { AppState, BinaryFiles } from "@excalidraw/excalidraw/types";

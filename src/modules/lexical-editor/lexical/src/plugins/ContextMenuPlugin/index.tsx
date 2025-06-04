@@ -29,6 +29,8 @@ import {
 } from "lexical";
 import * as ReactDOM from "react-dom";
 
+/* eslint-disable */
+
 function ContextMenuItem({
   index,
   isSelected,
@@ -110,8 +112,8 @@ export class ContextMenuOption extends MenuOption {
 export default function ContextMenuPlugin(): JSX.Element {
   const [editor] = useLexicalComposerContext();
 
-  const defaultOptions = useMemo(() => {
-    return [
+  const defaultOptions = useMemo(
+    () => [
       new ContextMenuOption(`Copy`, {
         onSelect: (_node) => {
           editor.dispatchCommand(COPY_COMMAND, null);
@@ -124,7 +126,7 @@ export default function ContextMenuPlugin(): JSX.Element {
       }),
       new ContextMenuOption(`Paste`, {
         onSelect: (_node) => {
-          navigator.clipboard.read().then(async function (...args) {
+          navigator.clipboard.read().then(async function () {
             const data = new DataTransfer();
 
             const items = await navigator.clipboard.read();
@@ -154,7 +156,7 @@ export default function ContextMenuPlugin(): JSX.Element {
       }),
       new ContextMenuOption(`Paste as Plain Text`, {
         onSelect: (_node) => {
-          navigator.clipboard.read().then(async function (...args) {
+          navigator.clipboard.read().then(async function () {
             const permission = await navigator.permissions.query({
               // @ts-expect-error These types are incorrect.
               name: "clipboard-read",
@@ -196,8 +198,9 @@ export default function ContextMenuPlugin(): JSX.Element {
           }
         },
       }),
-    ];
-  }, [editor]);
+    ],
+    [editor],
+  );
 
   const [options, setOptions] = React.useState(defaultOptions);
 

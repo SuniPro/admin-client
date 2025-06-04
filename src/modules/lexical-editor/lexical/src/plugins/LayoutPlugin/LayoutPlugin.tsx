@@ -80,7 +80,7 @@ export function LayoutPlugin(): null {
             parent &&
             (before
               ? parent.getFirstChild<LexicalNode>()
-              : parent?.getLastChild<LexicalNode>());
+              : parent.getLastChild<LexicalNode>());
           const descendant = before
             ? container.getFirstDescendant<LexicalNode>()?.getKey()
             : container.getLastDescendant<LexicalNode>()?.getKey();

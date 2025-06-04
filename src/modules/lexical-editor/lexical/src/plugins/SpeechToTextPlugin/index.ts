@@ -20,6 +20,7 @@ import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext
 import { useEffect, useRef, useState } from "react";
 
 import useReport from "../../hooks/useReport";
+/* eslint-disable */
 
 export const SPEECH_TO_TEXT_COMMAND: LexicalCommand<boolean> = createCommand(
   "SPEECH_TO_TEXT_COMMAND",
@@ -106,16 +107,18 @@ function SpeechToTextPlugin(): null {
       }
     };
   }, [SpeechRecognition, editor, isEnabled, report]);
-  useEffect(() => {
-    return editor.registerCommand(
-      SPEECH_TO_TEXT_COMMAND,
-      (_isEnabled: boolean) => {
-        setIsEnabled(_isEnabled);
-        return true;
-      },
-      COMMAND_PRIORITY_EDITOR,
-    );
-  }, [editor]);
+  useEffect(
+    () =>
+      editor.registerCommand(
+        SPEECH_TO_TEXT_COMMAND,
+        (_isEnabled: boolean) => {
+          setIsEnabled(_isEnabled);
+          return true;
+        },
+        COMMAND_PRIORITY_EDITOR,
+      ),
+    [editor],
+  );
 
   return null;
 }

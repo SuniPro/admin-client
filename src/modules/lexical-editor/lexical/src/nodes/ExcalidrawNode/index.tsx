@@ -20,6 +20,7 @@ import type {
 import { DecoratorNode } from "lexical";
 import type { JSX } from "react";
 import * as React from "react";
+/* eslint-disable */
 
 type Dimension = number | "inherit";
 

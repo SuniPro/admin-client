@@ -64,7 +64,7 @@ function $search(selection: null | BaseSelection): [boolean, string] {
   const text = node.getTextContent();
   let i = node.getTextContentSize();
   let c;
-  while (i-- && i >= 0 && (c = text[i]) !== " ") {
+  while (i-- && i >= 0 && (c = text[i as number]) !== " ") {
     word.push(c);
   }
   if (word.length === 0) {

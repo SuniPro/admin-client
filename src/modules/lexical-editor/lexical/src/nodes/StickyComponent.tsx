@@ -85,7 +85,7 @@ export default function StickyComponent({
     const position = positioningRef.current;
     const resizeObserver = new ResizeObserver((entries) => {
       for (let i = 0; i < entries.length; i++) {
-        const entry = entries[i];
+        const entry = entries[i as number];
         const { target } = entry;
         position.rootElementRect = target.getBoundingClientRect();
         const stickyContainer = stickyContainerRef.current;

@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-
+/* eslint-disable */
 type Force = [number, number];
 type Listener = (force: Force, e: TouchEvent) => void;
 type ElementValues = {

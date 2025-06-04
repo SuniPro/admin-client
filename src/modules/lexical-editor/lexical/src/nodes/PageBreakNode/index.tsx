@@ -34,27 +34,29 @@ function PageBreakComponent({ nodeKey }: { nodeKey: NodeKey }) {
   const [isSelected, setSelected, clearSelection] =
     useLexicalNodeSelection(nodeKey);
 
-  useEffect(() => {
-    return mergeRegister(
-      editor.registerCommand(
-        CLICK_COMMAND,
-        (event: MouseEvent) => {
-          const pbElem = editor.getElementByKey(nodeKey);
+  useEffect(
+    () =>
+      mergeRegister(
+        editor.registerCommand(
+          CLICK_COMMAND,
+          (event: MouseEvent) => {
+            const pbElem = editor.getElementByKey(nodeKey);
 
-          if (event.target === pbElem) {
-            if (!event.shiftKey) {
-              clearSelection();
+            if (event.target === pbElem) {
+              if (!event.shiftKey) {
+                clearSelection();
+              }
+              setSelected(!isSelected);
+              return true;
             }
-            setSelected(!isSelected);
-            return true;
-          }
 
-          return false;
-        },
-        COMMAND_PRIORITY_LOW,
+            return false;
+          },
+          COMMAND_PRIORITY_LOW,
+        ),
       ),
-    );
-  }, [clearSelection, editor, isSelected, nodeKey, setSelected]);
+    [clearSelection, editor, isSelected, nodeKey, setSelected],
+  );
 
   useEffect(() => {
     const pbElem = editor.getElementByKey(nodeKey);

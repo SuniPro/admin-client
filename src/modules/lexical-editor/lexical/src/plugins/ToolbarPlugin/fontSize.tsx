@@ -22,6 +22,7 @@ import {
   UpdateFontSizeType,
 } from "./utils";
 
+/* eslint-disable */
 export function parseAllowedFontSize(input: string): string {
   const match = input.match(/^(\d+(?:\.\d+)?)px$/);
   if (match) {

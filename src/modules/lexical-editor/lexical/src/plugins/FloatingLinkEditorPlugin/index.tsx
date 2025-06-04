@@ -173,35 +173,37 @@ function FloatingLinkEditor({
     };
   }, [anchorElem.parentElement, editor, $updateLinkEditor]);
 
-  useEffect(() => {
-    return mergeRegister(
-      editor.registerUpdateListener(({ editorState }) => {
-        editorState.read(() => {
-          $updateLinkEditor();
-        });
-      }),
+  useEffect(
+    () =>
+      mergeRegister(
+        editor.registerUpdateListener(({ editorState }) => {
+          editorState.read(() => {
+            $updateLinkEditor();
+          });
+        }),
 
-      editor.registerCommand(
-        SELECTION_CHANGE_COMMAND,
-        () => {
-          $updateLinkEditor();
-          return true;
-        },
-        COMMAND_PRIORITY_LOW,
-      ),
-      editor.registerCommand(
-        KEY_ESCAPE_COMMAND,
-        () => {
-          if (isLink) {
-            setIsLink(false);
+        editor.registerCommand(
+          SELECTION_CHANGE_COMMAND,
+          () => {
+            $updateLinkEditor();
             return true;
-          }
-          return false;
-        },
-        COMMAND_PRIORITY_HIGH,
+          },
+          COMMAND_PRIORITY_LOW,
+        ),
+        editor.registerCommand(
+          KEY_ESCAPE_COMMAND,
+          () => {
+            if (isLink) {
+              setIsLink(false);
+              return true;
+            }
+            return false;
+          },
+          COMMAND_PRIORITY_HIGH,
+        ),
       ),
-    );
-  }, [editor, $updateLinkEditor, setIsLink, isLink]);
+    [editor, $updateLinkEditor, setIsLink, isLink],
+  );
 
   useEffect(() => {
     editor.getEditorState().read(() => {

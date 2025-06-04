@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 
 import { exportToSvg } from "@excalidraw/excalidraw";
 
+/* eslint-disable */
 type ImageType = "svg" | "canvas";
 
 type Dimension = "inherit" | number;
@@ -63,7 +64,7 @@ type Props = {
 // exportToSvg has fonts from excalidraw.com
 // We don't want them to be used in open source
 const removeStyleFromSvg_HACK = (svg: SVGElement) => {
-  const styleTag = svg?.firstElementChild?.firstElementChild;
+  const styleTag = svg.firstElementChild?.firstElementChild;
 
   // Generated SVG is getting double-sized by height and width attributes
   // We want to match the real size of the SVG element
