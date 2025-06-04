@@ -7,6 +7,7 @@
  */
 
 import type { JSX } from "react";
+import * as React from "react";
 
 import { makeStateWrapper } from "@lexical/utils";
 import {
@@ -19,7 +20,6 @@ import {
   SerializedLexicalNode,
   Spread,
 } from "lexical";
-import * as React from "react";
 
 export type Options = ReadonlyArray<Option>;
 
@@ -149,7 +149,7 @@ export class PollNode extends DecoratorNode<JSX.Element> {
       const clonedOption = cloneOption(option, text);
       const options = Array.from(prevOptions);
       const index = options.indexOf(option);
-      options[index] = clonedOption;
+      options[index as number] = clonedOption;
       return options;
     });
   }
@@ -170,7 +170,7 @@ export class PollNode extends DecoratorNode<JSX.Element> {
       }
       const clonedOption = cloneOption(option, option.text, votesClone);
       const options = Array.from(prevOptions);
-      options[index] = clonedOption;
+      options[index as number] = clonedOption;
       return options;
     });
   }

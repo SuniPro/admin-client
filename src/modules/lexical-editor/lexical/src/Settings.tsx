@@ -7,13 +7,14 @@
  */
 
 import type { JSX } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { CAN_USE_BEFORE_INPUT } from "@lexical/utils";
-import { useEffect, useMemo, useState } from "react";
 
 import { INITIAL_SETTINGS, isDevPlayground } from "./appSettings";
 import { useSettings } from "./context/SettingsContext";
 import Switch from "./ui/Switch";
+import { ErrorAlert } from "../../../../components/Alert";
 
 export default function Settings(): JSX.Element {
   const windowLocation = window.location;
@@ -41,7 +42,7 @@ export default function Settings(): JSX.Element {
   } = useSettings();
   useEffect(() => {
     if (INITIAL_SETTINGS.disableBeforeInput && CAN_USE_BEFORE_INPUT) {
-      console.error(
+      ErrorAlert(
         `Legacy events are enabled (disableBeforeInput) but CAN_USE_BEFORE_INPUT is true`,
       );
     }
@@ -51,6 +52,7 @@ export default function Settings(): JSX.Element {
     const parentWindow = window.parent;
     const _search = windowLocation.search;
     const _isSplitScreen =
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       parentWindow && parentWindow.location.pathname === "/split/";
     return [_isSplitScreen, _search];
   }, [windowLocation]);
@@ -165,6 +167,7 @@ export default function Settings(): JSX.Element {
           <Switch
             onClick={() => {
               setOption(
+                // eslint-disable-next-line noSecrets/no-secrets
                 "shouldPreserveNewLinesInMarkdown",
                 !shouldPreserveNewLinesInMarkdown,
               );
@@ -182,6 +185,7 @@ export default function Settings(): JSX.Element {
           <Switch
             onClick={() => {
               setOption(
+                // eslint-disable-next-line noSecrets/no-secrets
                 "shouldAllowHighlightingWithBrackets",
                 !shouldAllowHighlightingWithBrackets,
               );

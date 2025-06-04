@@ -63,7 +63,7 @@ export function EmployeeReview() {
   const [pageSize, setPageSize] = useState(10);
 
   const { data: reviewData } = useQuery<PaginationResponse<AbilityReviewType>>({
-    queryKey: ["getReview"],
+    queryKey: ["getReview", pageSize, pageIndex],
     queryFn: () =>
       getAbilityTargetEmployeeList(
         user!.level,

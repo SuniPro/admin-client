@@ -137,7 +137,7 @@ export class CommentStore {
 
     if (thread !== undefined && commentOrThread.type === "comment") {
       for (let i = 0; i < nextComments.length; i++) {
-        const comment = nextComments[i];
+        const comment = nextComments[i as number];
         if (comment.type === "thread" && comment.id === thread.id) {
           const newThread = cloneThread(comment);
           nextComments.splice(i, 1, newThread);
@@ -182,7 +182,7 @@ export class CommentStore {
 
     if (thread !== undefined) {
       for (let i = 0; i < nextComments.length; i++) {
-        const nextComment = nextComments[i];
+        const nextComment = nextComments[i as number];
         if (nextComment.type === "thread" && nextComment.id === thread.id) {
           const newThread = cloneThread(nextComment);
           nextComments.splice(i, 1, newThread);
@@ -296,18 +296,16 @@ export class CommentStore {
     const disconnect = () => {
       try {
         provider.disconnect();
-      } catch (e) {
-        // Do nothing
-      }
+        // eslint-disable-next-line no-unused-vars
+      } catch (e) {}
     };
 
     const unsubscribe = this._editor.registerCommand(
       TOGGLE_CONNECT_COMMAND,
       (payload) => {
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         if (connect !== undefined && disconnect !== undefined) {
-          const shouldConnect = payload;
-
-          if (shouldConnect) {
+          if (payload) {
             // eslint-disable-next-line no-console
             console.log("Comments connected!");
             connect();
@@ -331,7 +329,7 @@ export class CommentStore {
     ) => {
       if (transaction.origin !== this) {
         for (let i = 0; i < events.length; i++) {
-          const event = events[i];
+          const event = events[i as number];
 
           if (event instanceof YArrayEvent) {
             const target = event.target;
@@ -339,7 +337,7 @@ export class CommentStore {
             let offset = 0;
 
             for (let s = 0; s < deltas.length; s++) {
-              const delta = deltas[s];
+              const delta = deltas[s as number];
               const insert = delta.insert;
               const retain = delta.retain;
               const del = delta.delete;
@@ -406,8 +404,8 @@ export class CommentStore {
                 for (let d = 0; d < del; d++) {
                   const commentOrThread =
                     parentThread === undefined || parentThread === false
-                      ? this._comments[offset]
-                      : parentThread.comments[offset];
+                      ? this._comments[offset as number]
+                      : parentThread.comments[offset as number];
                   this._withLocalTransaction(() => {
                     this.deleteCommentOrThread(
                       commentOrThread,
@@ -444,11 +442,13 @@ export function useCommentStore(commentStore: CommentStore): Comments {
     commentStore.getComments(),
   );
 
-  useEffect(() => {
-    return commentStore.registerOnChange(() => {
-      setComments(commentStore.getComments());
-    });
-  }, [commentStore]);
+  useEffect(
+    () =>
+      commentStore.registerOnChange(() => {
+        setComments(commentStore.getComments());
+      }),
+    [commentStore],
+  );
 
   return comments;
 }
