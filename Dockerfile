@@ -5,8 +5,9 @@ WORKDIR /app
 
 COPY package*.json ./
 
-# npm install 대신 ci, 단 실패 방지용 --legacy-peer-deps 옵션도 가능
-RUN npm install --include=optional
+# Optional deps 설치 + rollup native 바이너리 직접 설치
+RUN npm ci --include=optional \
+  && npm install --save-dev @rollup/rollup-linux-x64-gnu
 
 COPY .env.production .env
 COPY . .
@@ -25,6 +26,6 @@ COPY nginx.conf /etc/nginx/nginx.conf
 
 RUN mkdir -p /var/log/nginx
 
-EXPOSE 80
+EXPOSE 5010
 
 CMD ["nginx", "-g", "daemon off;"]
