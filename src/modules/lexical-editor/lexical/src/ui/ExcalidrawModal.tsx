@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-
+/* eslint-disable */
 import type {
   AppState,
   BinaryFiles,
@@ -123,15 +123,15 @@ export default function ExcalidrawModal({
     };
 
     if (excaliDrawModelRef.current !== null) {
-      modalOverlayElement = excaliDrawModelRef.current?.parentElement;
+      modalOverlayElement = excaliDrawModelRef.current.parentElement;
       if (modalOverlayElement !== null) {
-        modalOverlayElement?.addEventListener("click", clickOutsideHandler);
+        modalOverlayElement.addEventListener("click", clickOutsideHandler);
       }
     }
 
     return () => {
       if (modalOverlayElement !== null) {
-        modalOverlayElement?.removeEventListener("click", clickOutsideHandler);
+        modalOverlayElement.removeEventListener("click", clickOutsideHandler);
       }
     };
   }, [closeOnClickOutside, onDelete]);

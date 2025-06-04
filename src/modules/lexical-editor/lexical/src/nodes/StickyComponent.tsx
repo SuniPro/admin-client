@@ -7,24 +7,20 @@
  */
 
 import type { LexicalEditor, NodeKey } from "lexical";
+import { $getNodeByKey } from "lexical";
 import type { JSX } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 
 import "./StickyNode.css";
 
-import { useCollaborationContext } from "@lexical/react/LexicalCollaborationContext";
 import { CollaborationPlugin } from "@lexical/react/LexicalCollaborationPlugin";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
-import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { LexicalNestedComposer } from "@lexical/react/LexicalNestedComposer";
 import { PlainTextPlugin } from "@lexical/react/LexicalPlainTextPlugin";
 import { calculateZoomLevel } from "@lexical/utils";
-import { $getNodeByKey } from "lexical";
-import * as React from "react";
-import { useEffect, useLayoutEffect, useRef } from "react";
 
 import { createWebsocketProvider } from "../collaboration";
-import { useSharedHistoryContext } from "../context/SharedHistoryContext";
 import StickyEditorTheme from "../themes/StickyEditorTheme";
 import ContentEditable from "../ui/ContentEditable";
 import { $isStickyNode } from "./StickyNode";
@@ -73,7 +69,6 @@ export default function StickyComponent({
     x: 0,
     y: 0,
   });
-  const { isCollabActive } = useCollaborationContext();
 
   useEffect(() => {
     const position = positioningRef.current;
@@ -90,7 +85,7 @@ export default function StickyComponent({
     const position = positioningRef.current;
     const resizeObserver = new ResizeObserver((entries) => {
       for (let i = 0; i < entries.length; i++) {
-        const entry = entries[i];
+        const entry = entries[i as number];
         const { target } = entry;
         position.rootElementRect = target.getBoundingClientRect();
         const stickyContainer = stickyContainerRef.current;
@@ -160,7 +155,7 @@ export default function StickyComponent({
     }
   };
 
-  const handlePointerUp = (event: PointerEvent) => {
+  const handlePointerUp = (_event: PointerEvent) => {
     const stickyContainer = stickyContainerRef.current;
     const positioning = positioningRef.current;
     if (stickyContainer !== null) {
@@ -195,8 +190,6 @@ export default function StickyComponent({
     });
   };
 
-  const { historyState } = useSharedHistoryContext();
-
   return (
     <div ref={stickyContainerRef} className="sticky-note-container">
       <div
@@ -213,6 +206,7 @@ export default function StickyComponent({
           }
           const stickContainer = stickyContainer;
           const positioning = positioningRef.current;
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
           if (stickContainer !== null) {
             const { top, left } = stickContainer.getBoundingClientRect();
             const zoom = calculateZoomLevel(stickContainer);
@@ -246,15 +240,11 @@ export default function StickyComponent({
           initialEditor={caption}
           initialTheme={StickyEditorTheme}
         >
-          {isCollabActive ? (
-            <CollaborationPlugin
-              id={caption.getKey()}
-              providerFactory={createWebsocketProvider}
-              shouldBootstrap={true}
-            />
-          ) : (
-            <HistoryPlugin externalHistoryState={historyState} />
-          )}
+          <CollaborationPlugin
+            id={caption.getKey()}
+            providerFactory={createWebsocketProvider}
+            shouldBootstrap={true}
+          />
           <PlainTextPlugin
             contentEditable={
               <ContentEditable

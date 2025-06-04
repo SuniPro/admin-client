@@ -7,7 +7,6 @@
  */
 
 import type { JSX } from "react";
-
 import * as React from "react";
 import { useMemo } from "react";
 
@@ -19,7 +18,7 @@ export default function Switch({
 }: Readonly<{
   checked: boolean;
   id?: string;
-  onClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  onClick: (_e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   text: string;
 }>): JSX.Element {
   const buttonId = useMemo(() => "id_" + Math.floor(Math.random() * 10000), []);

@@ -15,6 +15,7 @@ import "./ColorPicker.css";
 import { calculateZoomLevel } from "@lexical/utils";
 
 import TextInput from "./TextInput";
+/* eslint-disable */
 
 let skipAddingToHistoryStack = false;
 

@@ -20,6 +20,7 @@ interface Props {
   editor: LexicalEditor;
   getCodeDOMNode: () => HTMLElement | null;
 }
+/* eslint-disable */
 
 export function CopyButton({ editor, getCodeDOMNode }: Props) {
   const [isCopyCompleted, setCopyCompleted] = useState<boolean>(false);

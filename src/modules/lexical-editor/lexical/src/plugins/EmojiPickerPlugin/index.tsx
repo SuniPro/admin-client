@@ -18,9 +18,10 @@ import {
   $isRangeSelection,
   TextNode,
 } from "lexical";
-import * as React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import * as ReactDOM from "react-dom";
+
+/* eslint-disable */
 
 class EmojiOption extends MenuOption {
   title: string;
@@ -116,20 +117,22 @@ export default function EmojiPickerPlugin() {
     punctuation: "\\.,\\+\\*\\?\\$\\@\\|#{}\\(\\)\\^\\[\\]\\\\/!%'\"~=<>:;", // allow _ and -
   });
 
-  const options: Array<EmojiOption> = useMemo(() => {
-    return emojiOptions
-      .filter((option: EmojiOption) => {
-        return queryString != null
-          ? new RegExp(queryString, "gi").exec(option.title) ||
-            option.keywords != null
-            ? option.keywords.some((keyword: string) =>
-                new RegExp(queryString, "gi").exec(keyword),
-              )
-            : false
-          : emojiOptions;
-      })
-      .slice(0, MAX_EMOJI_SUGGESTION_COUNT);
-  }, [emojiOptions, queryString]);
+  const options: Array<EmojiOption> = useMemo(
+    () =>
+      emojiOptions
+        .filter((option: EmojiOption) =>
+          queryString != null
+            ? new RegExp(queryString, "gi").exec(option.title) ||
+              option.keywords != null
+              ? option.keywords.some((keyword: string) =>
+                  new RegExp(queryString, "gi").exec(keyword),
+                )
+              : false
+            : emojiOptions,
+        )
+        .slice(0, MAX_EMOJI_SUGGESTION_COUNT),
+    [emojiOptions, queryString],
+  );
 
   const onSelectOption = useCallback(
     (

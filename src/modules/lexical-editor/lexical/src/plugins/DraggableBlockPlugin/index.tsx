@@ -13,6 +13,7 @@ import "./index.css";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { DraggableBlockPlugin_EXPERIMENTAL } from "@lexical/react/LexicalDraggableBlockPlugin";
 import { $createParagraphNode, $getNearestNodeFromDOMNode } from "lexical";
+/* eslint-disable */
 
 const DRAGGABLE_BLOCK_MENU_CLASSNAME = "draggable-block-menu";
 
@@ -56,7 +57,9 @@ export default function DraggableBlockPlugin({
   return (
     <DraggableBlockPlugin_EXPERIMENTAL
       anchorElem={anchorElem}
+      // @ts-ignore
       menuRef={menuRef}
+      // @ts-ignore
       targetLineRef={targetLineRef}
       menuComponent={
         <div ref={menuRef} className="icon draggable-block-menu">

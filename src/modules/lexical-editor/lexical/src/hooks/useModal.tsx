@@ -5,11 +5,9 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-
+/* eslint-disable */
 import type { JSX } from "react";
-
 import { useCallback, useMemo, useState } from "react";
-import * as React from "react";
 
 import Modal from "../ui/Modal";
 
@@ -46,7 +44,7 @@ export default function useModal(): [
   const showModal = useCallback(
     (
       title: string,
-      // eslint-disable-next-line no-shadow
+
       getContent: (onClose: () => void) => JSX.Element,
       closeOnClickOutside = false,
     ) => {

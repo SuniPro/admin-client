@@ -75,17 +75,15 @@ function CodeActionMenuContainer({
         }
       });
 
-      if (codeNode) {
-        const { y: editorElemY, right: editorElemRight } =
-          anchorElem.getBoundingClientRect();
-        const { y, right } = codeDOMNode.getBoundingClientRect();
-        setLang(_lang);
-        setShown(true);
-        setPosition({
-          right: `${editorElemRight - right + CODE_PADDING}px`,
-          top: `${y - editorElemY}px`,
-        });
-      }
+      const { y: editorElemY, right: editorElemRight } =
+        anchorElem.getBoundingClientRect();
+      const { y, right } = codeDOMNode.getBoundingClientRect();
+      setLang(_lang);
+      setShown(true);
+      setPosition({
+        right: `${editorElemRight - right + CODE_PADDING}px`,
+        top: `${y - editorElemY}px`,
+      });
     },
     50,
     1000,

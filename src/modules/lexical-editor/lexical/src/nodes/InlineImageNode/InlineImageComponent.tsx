@@ -42,6 +42,7 @@ import ContentEditable from "../../ui/ContentEditable";
 import { DialogActions } from "../../ui/Dialog";
 import Select from "../../ui/Select";
 import TextInput from "../../ui/TextInput";
+/* eslint-disable */
 
 const imageCache = new Set();
 

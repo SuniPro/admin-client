@@ -19,7 +19,7 @@ import {
 
 import { isDOMNode } from "lexical";
 import { createPortal } from "react-dom";
-
+/* eslint-disable */
 type DropDownContextType = {
   registerItem: (ref: React.RefObject<HTMLButtonElement>) => void;
 };
@@ -51,6 +51,7 @@ export function DropDownItem({
 
   useEffect(() => {
     if (ref && ref.current) {
+      // @ts-ignore
       registerItem(ref);
     }
   }, [ref, registerItem]);

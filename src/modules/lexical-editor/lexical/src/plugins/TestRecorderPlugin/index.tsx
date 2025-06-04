@@ -14,7 +14,6 @@ import {
   getDOMSelection,
 } from "lexical";
 import type { JSX } from "react";
-import * as React from "react";
 import {
   useCallback,
   useEffect,
@@ -25,23 +24,23 @@ import {
 
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { IS_APPLE } from "@lexical/utils";
+/* eslint-disable */
 
 const copy = (text: string | null) => {
   const textArea = document.createElement("textarea");
   textArea.value = text || "";
   textArea.style.position = "absolute";
   textArea.style.opacity = "0";
-  document.body?.appendChild(textArea);
+  document.body.appendChild(textArea);
   textArea.focus();
   textArea.select();
   try {
     const result = document.execCommand("copy");
-    // eslint-disable-next-line no-console
     console.log(result);
   } catch (error) {
     console.error(error);
   }
-  document.body?.removeChild(textArea);
+  document.body.removeChild(textArea);
 };
 
 const download = (filename: string, text: string | null) => {
@@ -52,9 +51,9 @@ const download = (filename: string, text: string | null) => {
   );
   a.setAttribute("download", filename);
   a.style.display = "none";
-  document.body?.appendChild(a);
+  document.body.appendChild(a);
   a.click();
-  document.body?.removeChild(a);
+  document.body.removeChild(a);
 };
 
 const formatStep = (step: Step) => {
@@ -131,7 +130,7 @@ function getPathFromNodeToEditor(node: Node, rootElement: HTMLElement | null) {
   while (currentNode !== rootElement) {
     if (currentNode !== null && currentNode !== undefined) {
       path.unshift(
-        Array.from(currentNode?.parentNode?.childNodes ?? []).indexOf(
+        Array.from(currentNode.parentNode?.childNodes ?? []).indexOf(
           currentNode as ChildNode,
         ),
       );
@@ -153,7 +152,6 @@ const keyPresses = new Set([
 ]);
 
 type Step = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any;
   count: number;
   name: string;
@@ -172,9 +170,7 @@ function useTestRecorder(
   const skipNextSelectionChangeRef = useRef(false);
   const preRef = useRef<HTMLPreElement>(null);
 
-  const getCurrentEditor = useCallback(() => {
-    return editor;
-  }, [editor]);
+  const getCurrentEditor = useCallback(() => editor, [editor]);
 
   const generateTestContent = useCallback(() => {
     const rootElement = editor.getRootElement();
@@ -362,7 +358,7 @@ ${steps.map(formatStep).join(`\n`)}
     const removeUpdateListener = editor.registerUpdateListener(() => {
       const rootElement = editor.getRootElement();
       if (rootElement !== null) {
-        setCurrentInnerHTML(rootElement?.innerHTML);
+        setCurrentInnerHTML(rootElement.innerHTML);
       }
     });
     return removeUpdateListener;

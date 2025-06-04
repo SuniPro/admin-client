@@ -7,7 +7,6 @@
  */
 
 import type { JSX } from "react";
-import * as React from "react";
 import { useEffect, useRef, useState } from "react";
 
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
@@ -45,6 +44,7 @@ import Button from "../../ui/Button";
 import { DialogActions, DialogButtonsList } from "../../ui/Dialog";
 import FileInput from "../../ui/FileInput";
 import TextInput from "../../ui/TextInput";
+/* eslint-disable */
 
 export type InsertImagePayload = Readonly<ImagePayload>;
 
@@ -238,23 +238,17 @@ export default function ImagesPlugin({
       ),
       editor.registerCommand<DragEvent>(
         DRAGSTART_COMMAND,
-        (event) => {
-          return $onDragStart(event);
-        },
+        (event) => $onDragStart(event),
         COMMAND_PRIORITY_HIGH,
       ),
       editor.registerCommand<DragEvent>(
         DRAGOVER_COMMAND,
-        (event) => {
-          return $onDragover(event);
-        },
+        (event) => $onDragover(event),
         COMMAND_PRIORITY_LOW,
       ),
       editor.registerCommand<DragEvent>(
         DROP_COMMAND,
-        (event) => {
-          return $onDrop(event, editor);
-        },
+        (event) => $onDrop(event, editor),
         COMMAND_PRIORITY_HIGH,
       ),
     );

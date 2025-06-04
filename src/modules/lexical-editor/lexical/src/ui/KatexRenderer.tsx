@@ -7,7 +7,6 @@
  */
 
 import type { JSX } from "react";
-import * as React from "react";
 import { useEffect, useRef } from "react";
 
 import katex from "katex";
@@ -26,6 +25,7 @@ export default function KatexRenderer({
   useEffect(() => {
     const katexElement = katexElementRef.current;
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (katexElement !== null) {
       katex.render(equation, katexElement, {
         displayMode: !inline, // true === block display //

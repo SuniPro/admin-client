@@ -18,15 +18,14 @@ import type {
   Spread,
 } from "lexical";
 import type { JSX } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { BlockWithAlignableContents } from "@lexical/react/LexicalBlockWithAlignableContents";
 import {
   DecoratorBlockNode,
   SerializedDecoratorBlockNode,
 } from "@lexical/react/LexicalDecoratorBlockNode";
-import * as React from "react";
-import { useCallback, useEffect, useRef, useState } from "react";
-
+/* eslint-disable */
 const WIDGET_SCRIPT_URL = "https://platform.twitter.com/widgets.js";
 
 type TweetComponentProps = Readonly<{
@@ -37,7 +36,7 @@ type TweetComponentProps = Readonly<{
   format: ElementFormatType | null;
   loadingComponent?: JSX.Element | string;
   nodeKey: NodeKey;
-  onError?: (error: string) => void;
+  onError?: (_error: string) => void;
   onLoad?: () => void;
   tweetID: string;
 }>;
@@ -95,7 +94,7 @@ function TweetComponent({
         const script = document.createElement("script");
         script.src = WIDGET_SCRIPT_URL;
         script.async = true;
-        document.body?.appendChild(script);
+        document.body.appendChild(script);
         script.onload = createTweet;
         if (onError) {
           script.onerror = onError as OnErrorEventHandler;
@@ -192,7 +191,7 @@ export class TweetNode extends DecoratorBlockNode {
     return `https://x.com/i/web/status/${this.__id}`;
   }
 
-  decorate(editor: LexicalEditor, config: EditorConfig): JSX.Element {
+  decorate(_editor: LexicalEditor, config: EditorConfig): JSX.Element {
     const embedBlockTheme = config.theme.embedBlock || {};
     const className = {
       base: embedBlockTheme.base || "",

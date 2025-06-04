@@ -22,7 +22,6 @@ import type { JSX } from "react";
 import * as React from "react";
 
 type Dimension = number | "inherit";
-
 const ExcalidrawComponent = React.lazy(() => import("./ExcalidrawComponent"));
 
 export type SerializedExcalidrawNode = Spread<
@@ -176,7 +175,7 @@ export class ExcalidrawNode extends DecoratorNode<JSX.Element> {
     self.__height = height;
   }
 
-  decorate(editor: LexicalEditor, config: EditorConfig): JSX.Element {
+  decorate(_editor: LexicalEditor, _config: EditorConfig): JSX.Element {
     return (
       <ExcalidrawComponent
         nodeKey={this.getKey()}

@@ -45,6 +45,7 @@ import { DialogActions } from "../../ui/Dialog";
 import FileInput from "../../ui/FileInput";
 import Select from "../../ui/Select";
 import TextInput from "../../ui/TextInput";
+/* eslint-disable */
 
 export type InsertInlineImagePayload = Readonly<InlineImagePayload>;
 
@@ -185,23 +186,17 @@ export default function InlineImagePlugin(): JSX.Element | null {
       ),
       editor.registerCommand<DragEvent>(
         DRAGSTART_COMMAND,
-        (event) => {
-          return $onDragStart(event);
-        },
+        (event) => $onDragStart(event),
         COMMAND_PRIORITY_HIGH,
       ),
       editor.registerCommand<DragEvent>(
         DRAGOVER_COMMAND,
-        (event) => {
-          return $onDragover(event);
-        },
+        (event) => $onDragover(event),
         COMMAND_PRIORITY_LOW,
       ),
       editor.registerCommand<DragEvent>(
         DROP_COMMAND,
-        (event) => {
-          return $onDrop(event, editor);
-        },
+        (event) => $onDrop(event, editor),
         COMMAND_PRIORITY_HIGH,
       ),
     );

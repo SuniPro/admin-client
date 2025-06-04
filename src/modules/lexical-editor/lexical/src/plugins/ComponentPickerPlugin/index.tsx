@@ -7,7 +7,6 @@
  */
 
 import type { JSX } from "react";
-import * as React from "react";
 import { useCallback, useMemo, useState } from "react";
 
 import { $createCodeNode } from "@lexical/code";
@@ -48,6 +47,8 @@ import InsertLayoutDialog from "../LayoutPlugin/InsertLayoutDialog";
 import { INSERT_PAGE_BREAK } from "../PageBreakPlugin";
 import { InsertPollDialog } from "../PollPlugin";
 import { InsertTableDialog } from "../TablePlugin";
+
+/* eslint-disable */
 
 class ComponentPickerOption extends MenuOption {
   // What shows up in the editor

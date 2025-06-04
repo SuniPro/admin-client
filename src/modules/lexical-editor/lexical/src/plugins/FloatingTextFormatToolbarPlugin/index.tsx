@@ -7,7 +7,6 @@
  */
 
 import type { JSX } from "react";
-import * as React from "react";
 import { Dispatch, useCallback, useEffect, useRef, useState } from "react";
 
 import "./index.css";
@@ -83,7 +82,7 @@ function TextFormatFloatingToolbar({
 
   function mouseMoveListener(e: MouseEvent) {
     if (
-      popupCharStylesEditorRef?.current &&
+      popupCharStylesEditorRef.current &&
       (e.buttons === 1 || e.buttons === 3)
     ) {
       if (popupCharStylesEditorRef.current.style.pointerEvents !== "none") {
@@ -98,8 +97,8 @@ function TextFormatFloatingToolbar({
       }
     }
   }
-  function mouseUpListener(e: MouseEvent) {
-    if (popupCharStylesEditorRef?.current) {
+  function mouseUpListener(_e: MouseEvent) {
+    if (popupCharStylesEditorRef.current) {
       if (popupCharStylesEditorRef.current.style.pointerEvents !== "auto") {
         popupCharStylesEditorRef.current.style.pointerEvents = "auto";
       }
@@ -107,7 +106,7 @@ function TextFormatFloatingToolbar({
   }
 
   useEffect(() => {
-    if (popupCharStylesEditorRef?.current) {
+    if (popupCharStylesEditorRef.current) {
       document.addEventListener("mousemove", mouseMoveListener);
       document.addEventListener("mouseup", mouseUpListener);
 
@@ -319,7 +318,7 @@ function TextFormatFloatingToolbar({
       <button
         type="button"
         onClick={insertComment}
-        className={"popup-item spaced insert-comment"}
+        className="popup-item spaced insert-comment"
         title="Insert comment"
         aria-label="Insert comment"
       >
@@ -417,18 +416,20 @@ function useFloatingTextFormatToolbar(
     };
   }, [updatePopup]);
 
-  useEffect(() => {
-    return mergeRegister(
-      editor.registerUpdateListener(() => {
-        updatePopup();
-      }),
-      editor.registerRootListener(() => {
-        if (editor.getRootElement() === null) {
-          setIsText(false);
-        }
-      }),
-    );
-  }, [editor, updatePopup]);
+  useEffect(
+    () =>
+      mergeRegister(
+        editor.registerUpdateListener(() => {
+          updatePopup();
+        }),
+        editor.registerRootListener(() => {
+          if (editor.getRootElement() === null) {
+            setIsText(false);
+          }
+        }),
+      ),
+    [editor, updatePopup],
+  );
 
   if (!isText) {
     return null;

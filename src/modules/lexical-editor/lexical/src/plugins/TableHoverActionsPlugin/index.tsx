@@ -36,6 +36,7 @@ import { createPortal } from "react-dom";
 
 import { getThemeSelector } from "../../utils/getThemeSelector";
 import { useDebounce } from "../CodeActionMenuPlugin/utils";
+/* eslint-disable */
 
 const BUTTON_WIDTH_PX = 20;
 
@@ -95,7 +96,7 @@ function TableHoverActionsContainer({
               const rowCount = table.getChildrenSize();
               const colCount = (
                 (table as TableNode).getChildAtIndex(0) as TableRowNode
-              )?.getChildrenSize();
+              ).getChildrenSize();
 
               const rowIndex =
                 $getTableRowIndexFromTableCellNode(maybeTableCell);
@@ -172,12 +173,14 @@ function TableHoverActionsContainer({
 
   // Hide the buttons on any table dimensions change to prevent last row cells
   // overlap behind the 'Add Row' button when text entry changes cell height
-  const tableResizeObserver = useMemo(() => {
-    return new ResizeObserver(() => {
-      setShownRow(false);
-      setShownColumn(false);
-    });
-  }, []);
+  const tableResizeObserver = useMemo(
+    () =>
+      new ResizeObserver(() => {
+        setShownRow(false);
+        setShownColumn(false);
+      }),
+    [],
+  );
 
   useEffect(() => {
     if (!shouldListenMouseMove) {
@@ -194,47 +197,49 @@ function TableHoverActionsContainer({
     };
   }, [shouldListenMouseMove, debouncedOnMouseMove]);
 
-  useEffect(() => {
-    return mergeRegister(
-      editor.registerMutationListener(
-        TableNode,
-        (mutations) => {
-          editor.getEditorState().read(
-            () => {
-              let resetObserver = false;
-              for (const [key, type] of mutations) {
-                switch (type) {
-                  case "created": {
-                    tableSetRef.current.add(key);
-                    resetObserver = true;
-                    break;
+  useEffect(
+    () =>
+      mergeRegister(
+        editor.registerMutationListener(
+          TableNode,
+          (mutations) => {
+            editor.getEditorState().read(
+              () => {
+                let resetObserver = false;
+                for (const [key, type] of mutations) {
+                  switch (type) {
+                    case "created": {
+                      tableSetRef.current.add(key);
+                      resetObserver = true;
+                      break;
+                    }
+                    case "destroyed": {
+                      tableSetRef.current.delete(key);
+                      resetObserver = true;
+                      break;
+                    }
+                    default:
+                      break;
                   }
-                  case "destroyed": {
-                    tableSetRef.current.delete(key);
-                    resetObserver = true;
-                    break;
+                }
+                if (resetObserver) {
+                  // Reset resize observers
+                  tableResizeObserver.disconnect();
+                  for (const tableKey of tableSetRef.current) {
+                    const { tableElement } = $getTableAndElementByKey(tableKey);
+                    tableResizeObserver.observe(tableElement);
                   }
-                  default:
-                    break;
+                  setShouldListenMouseMove(tableSetRef.current.size > 0);
                 }
-              }
-              if (resetObserver) {
-                // Reset resize observers
-                tableResizeObserver.disconnect();
-                for (const tableKey of tableSetRef.current) {
-                  const { tableElement } = $getTableAndElementByKey(tableKey);
-                  tableResizeObserver.observe(tableElement);
-                }
-                setShouldListenMouseMove(tableSetRef.current.size > 0);
-              }
-            },
-            { editor },
-          );
-        },
-        { skipInitialization: false },
+              },
+              { editor },
+            );
+          },
+          { skipInitialization: false },
+        ),
       ),
-    );
-  }, [editor, tableResizeObserver]);
+    [editor, tableResizeObserver],
+  );
 
   const insertAction = (insertRow: boolean) => {
     editor.update(() => {

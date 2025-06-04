@@ -6,11 +6,10 @@
  *
  */
 
-import * as React from "react";
-
 import ColorPicker from "./ColorPicker";
 import DropDown from "./DropDown";
 
+/* eslint-disable */
 type Props = {
   disabled?: boolean;
   buttonAriaLabel?: string;

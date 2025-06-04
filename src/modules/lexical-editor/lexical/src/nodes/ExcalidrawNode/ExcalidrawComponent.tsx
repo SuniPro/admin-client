@@ -105,8 +105,8 @@ export default function ExcalidrawComponent({
     els: ExcalidrawInitialElements,
     aps: Partial<AppState>,
     fls: BinaryFiles,
-  ) => {
-    return editor.update(() => {
+  ) =>
+    editor.update(() => {
       const node = $getNodeByKey(nodeKey);
       if ($isExcalidrawNode(node)) {
         if ((els && els.length > 0) || Object.keys(fls).length > 0) {
@@ -122,7 +122,6 @@ export default function ExcalidrawComponent({
         }
       }
     });
-  };
 
   const onResizeStart = () => {
     setIsResizing(true);

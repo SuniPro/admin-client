@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-
+/* eslint-disable */
 import { INITIAL_SETTINGS, Settings } from "./appSettings";
 
 // Export a function so this is not tree-shaken,

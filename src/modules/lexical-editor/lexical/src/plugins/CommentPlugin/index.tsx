@@ -27,7 +27,6 @@ import {
   KEY_ESCAPE_COMMAND,
 } from "lexical";
 import type { JSX } from "react";
-import * as React from "react";
 import {
   useCallback,
   useEffect,
@@ -129,22 +128,19 @@ function AddCommentBox({
   );
 }
 
-function EscapeHandlerPlugin({
-  onEscape,
-}: {
-  onEscape: (e: KeyboardEvent) => boolean;
-}): null {
+function EscapeHandlerPlugin({ onEscape }: { onEscape: () => boolean }): null {
   const [editor] = useLexicalComposerContext();
 
-  useEffect(() => {
-    return editor.registerCommand(
-      KEY_ESCAPE_COMMAND,
-      (event: KeyboardEvent) => {
-        return onEscape(event);
-      },
-      2,
-    );
-  }, [editor, onEscape]);
+  useEffect(
+    () =>
+      editor.registerCommand(
+        KEY_ESCAPE_COMMAND,
+        // @ts-ignore
+        (event: KeyboardEvent) => onEscape(event),
+        2,
+      ),
+    [editor, onEscape],
+  );
 
   return null;
 }
@@ -160,8 +156,8 @@ function PlainTextEditor({
   autoFocus?: boolean;
   className?: string;
   editorRef?: { current: null | LexicalEditor };
-  onChange: (editorState: EditorState, editor: LexicalEditor) => void;
-  onEscape: (e: KeyboardEvent) => boolean;
+  onChange: () => void;
+  onEscape: () => boolean;
   placeholder?: string;
 }) {
   const initialConfig = {
@@ -175,6 +171,7 @@ function PlainTextEditor({
 
   return (
     <LexicalComposer initialConfig={initialConfig}>
+      {/* eslint-disable-next-line noSecrets/no-secrets */}
       <div className="CommentPlugin_CommentInputBox_EditorContainer">
         <PlainTextPlugin
           contentEditable={
@@ -184,7 +181,7 @@ function PlainTextEditor({
         />
         <OnChangePlugin onChange={onChange} />
         <HistoryPlugin />
-        {autoFocus !== false && <AutoFocusPlugin />}
+        {autoFocus && <AutoFocusPlugin />}
         <EscapeHandlerPlugin onEscape={onEscape} />
         <ClearEditorPlugin />
         {editorRef !== undefined && <EditorRefPlugin editorRef={editorRef} />}
@@ -194,7 +191,9 @@ function PlainTextEditor({
 }
 
 function useOnChange(
+  //eslint-disable-next-line
   setContent: (text: string) => void,
+  //eslint-disable-next-line
   setCanSubmit: (canSubmit: boolean) => void,
 ) {
   return useCallback(
@@ -216,9 +215,13 @@ function CommentInputBox({
   cancelAddComment: () => void;
   editor: LexicalEditor;
   submitAddComment: (
+    //eslint-disable-next-line
     commentOrThread: Comment | Thread,
+    //eslint-disable-next-line
     isInlineComment: boolean,
+    //eslint-disable-next-line
     thread?: Thread,
+    //eslint-disable-next-line
     selection?: RangeSelection | null,
   ) => void;
 }) {
@@ -271,15 +274,16 @@ function CommentInputBox({
           const elementsLength = elements.length;
 
           for (let i = 0; i < selectionRectsLength; i++) {
-            const selectionRect = selectionRects[i];
-            let elem: HTMLSpanElement = elements[i];
+            const selectionRect = selectionRects[i as number];
+            let elem: HTMLSpanElement = elements[i as number];
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             if (elem === undefined) {
               elem = document.createElement("span");
-              elements[i] = elem;
+              elements[i as number] = elem;
               container.appendChild(elem);
             }
             const color = "255, 212, 0";
-            const style = `position:absolute;top:${
+            elem.style.cssText = `position:absolute;top:${
               selectionRect.top +
               (window.pageYOffset || document.documentElement.scrollTop)
             }px;left:${selectionRect.left}px;height:${
@@ -287,10 +291,9 @@ function CommentInputBox({
             }px;width:${
               selectionRect.width
             }px;background-color:rgba(${color}, 0.3);pointer-events:none;z-index:5;`;
-            elem.style.cssText = style;
           }
           for (let i = elementsLength - 1; i >= selectionRectsLength; i--) {
-            const elem = elements[i];
+            const elem = elements[i as number];
             container.removeChild(elem);
             elements.pop();
           }
@@ -303,6 +306,7 @@ function CommentInputBox({
     updateLocation();
     const container = selectionState.container;
     const body = document.body;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (body !== null) {
       body.appendChild(container);
       return () => {
@@ -349,8 +353,11 @@ function CommentInputBox({
   return (
     <div className="CommentPlugin_CommentInputBox" ref={boxRef}>
       <PlainTextEditor
+        /* eslint-disable-next-line noSecrets/no-secrets */
         className="CommentPlugin_CommentInputBox_Editor"
+        // @ts-ignore
         onEscape={onEscape}
+        // @ts-ignore
         onChange={onChange}
       />
       <div className="CommentPlugin_CommentInputBox_Buttons">
@@ -379,9 +386,11 @@ function CommentsComposer({
 }: {
   placeholder?: string;
   submitAddComment: (
+    // eslint-disable-next-line
     commentOrThread: Comment,
+    // eslint-disable-next-line
     isInlineComment: boolean,
-    // eslint-disable-next-line no-shadow
+    // eslint-disable-next-line
     thread?: Thread,
   ) => void;
   thread?: Thread;
@@ -408,9 +417,8 @@ function CommentsComposer({
       <PlainTextEditor
         className="CommentPlugin_CommentsPanel_Editor"
         autoFocus={false}
-        onEscape={() => {
-          return true;
-        }}
+        onEscape={() => true}
+        // @ts-ignore
         onChange={onChange}
         editorRef={editorRef}
         placeholder={placeholder}
@@ -433,12 +441,8 @@ function ShowDeleteCommentOrThreadDialog({
   thread = undefined,
 }: {
   commentOrThread: Comment | Thread;
-
-  deleteCommentOrThread: (
-    comment: Comment | Thread,
-    // eslint-disable-next-line no-shadow
-    thread?: Thread,
-  ) => void;
+  // eslint-disable-next-line
+  deleteCommentOrThread: (comment: Comment | Thread, thread?: Thread) => void;
   onClose: () => void;
   thread?: Thread;
 }): JSX.Element {
@@ -473,11 +477,8 @@ function CommentsPanelListComment({
   rtf,
 }: {
   comment: Comment;
-  deleteComment: (
-    commentOrThread: Comment | Thread,
-    // eslint-disable-next-line no-shadow
-    thread?: Thread,
-  ) => void;
+  // eslint-disable-next-line
+  deleteComment: (commentOrThread: Comment | Thread, thread?: Thread) => void;
   rtf: Intl.RelativeTimeFormat;
   thread?: Thread;
 }): JSX.Element {
@@ -539,14 +540,19 @@ function CommentsPanelList({
   activeIDs: Array<string>;
   comments: Comments;
   deleteCommentOrThread: (
+    // eslint-disable-next-line
     commentOrThread: Comment | Thread,
+    // eslint-disable-next-line
     thread?: Thread,
   ) => void;
   listRef: { current: null | HTMLUListElement };
   markNodeMap: Map<string, Set<NodeKey>>;
   submitAddComment: (
+    // eslint-disable-next-line
     commentOrThread: Comment | Thread,
+    // eslint-disable-next-line
     isInlineComment: boolean,
+    // eslint-disable-next-line
     thread?: Thread,
   ) => void;
 }): JSX.Element {
@@ -583,6 +589,7 @@ function CommentsPanelList({
             const markNodeKeys = markNodeMap.get(id);
             if (
               markNodeKeys !== undefined &&
+              // eslint-disable-next-line
               (activeIDs === null || activeIDs.indexOf(id) === -1)
             ) {
               const activeElement = document.activeElement;
@@ -609,15 +616,17 @@ function CommentsPanelList({
           };
 
           return (
-            // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
             <li
               key={id}
               onClick={handleClickThread}
+              /* eslint-disable-next-line noSecrets/no-secrets */
               className={`CommentPlugin_CommentsPanel_List_Thread ${
                 markNodeMap.has(id) ? "interactive" : ""
               } ${activeIDs.indexOf(id) === -1 ? "" : "active"}`}
             >
+              {/* eslint-disable-next-line noSecrets/no-secrets */}
               <div className="CommentPlugin_CommentsPanel_List_Thread_QuoteBox">
+                {/* eslint-disable-next-line noSecrets/no-secrets */}
                 <blockquote className="CommentPlugin_CommentsPanel_List_Thread_Quote">
                   {"> "}
                   <span>{commentOrThread.quote}</span>
@@ -650,6 +659,7 @@ function CommentsPanelList({
                   />
                 ))}
               </ul>
+              {/* eslint-disable-next-line noSecrets/no-secrets */}
               <div className="CommentPlugin_CommentsPanel_List_Thread_Editor">
                 <CommentsComposer
                   submitAddComment={submitAddComment}
@@ -683,13 +693,18 @@ function CommentsPanel({
   activeIDs: Array<string>;
   comments: Comments;
   deleteCommentOrThread: (
+    // eslint-disable-next-line
     commentOrThread: Comment | Thread,
+    // eslint-disable-next-line
     thread?: Thread,
   ) => void;
   markNodeMap: Map<string, Set<NodeKey>>;
   submitAddComment: (
+    // eslint-disable-next-line
     commentOrThread: Comment | Thread,
+    // eslint-disable-next-line
     isInlineComment: boolean,
+    // eslint-disable-next-line
     thread?: Thread,
   ) => void;
 }): JSX.Element {
@@ -724,15 +739,14 @@ function useCollabAuthorName(): string {
 export default function CommentPlugin({
   providerFactory,
 }: {
+  // eslint-disable-next-line
   providerFactory?: (id: string, yjsDocMap: Map<string, Doc>) => Provider;
 }): JSX.Element {
   const collabContext = useCollaborationContext();
   const [editor] = useLexicalComposerContext();
   const commentStore = useMemo(() => new CommentStore(editor), [editor]);
   const comments = useCommentStore(commentStore);
-  const markNodeMap = useMemo<Map<string, Set<NodeKey>>>(() => {
-    return new Map();
-  }, []);
+  const markNodeMap = useMemo<Map<string, Set<NodeKey>>>(() => new Map(), []);
   const [activeAnchorKey, setActiveAnchorKey] = useState<NodeKey | null>();
   const [activeIDs, setActiveIDs] = useState<Array<string>>([]);
   const [showCommentInput, setShowCommentInput] = useState(false);
@@ -822,7 +836,7 @@ export default function CommentPlugin({
   useEffect(() => {
     const changedElems: Array<HTMLElement> = [];
     for (let i = 0; i < activeIDs.length; i++) {
-      const id = activeIDs[i];
+      const id = activeIDs[i as number];
       const keys = markNodeMap.get(id);
       if (keys !== undefined) {
         for (const key of keys) {
@@ -837,7 +851,7 @@ export default function CommentPlugin({
     }
     return () => {
       for (let i = 0; i < changedElems.length; i++) {
-        const changedElem = changedElems[i];
+        const changedElem = changedElems[i as number];
         changedElem.classList.remove("selected");
       }
     };
@@ -850,9 +864,7 @@ export default function CommentPlugin({
       registerNestedElementResolver<MarkNode>(
         editor,
         MarkNode,
-        (from: MarkNode) => {
-          return $createMarkNode(from.getIDs());
-        },
+        (from: MarkNode) => $createMarkNode(from.getIDs()),
         (from: MarkNode, to: MarkNode) => {
           // Merge the IDs
           const ids = from.getIDs();
@@ -876,7 +888,7 @@ export default function CommentPlugin({
               }
 
               for (let i = 0; i < ids.length; i++) {
-                const id = ids[i];
+                const id = ids[i as number];
                 let markNodeKeys = markNodeMap.get(id);
                 markNodeKeysToIDs.set(key, ids);
 

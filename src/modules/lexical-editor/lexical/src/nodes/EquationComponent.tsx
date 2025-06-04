@@ -7,7 +7,6 @@
  */
 
 import type { JSX } from "react";
-import * as React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
@@ -27,6 +26,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import EquationEditor from "../ui/EquationEditor";
 import KatexRenderer from "../ui/KatexRenderer";
 import { $isEquationNode } from "./EquationNode";
+/* eslint-disable */
 
 type EquationComponentProps = {
   equation: string;

@@ -12,7 +12,7 @@ import { ChangeEvent, forwardRef } from "react";
 import "./EquationEditor.css";
 
 import { isHTMLElement } from "lexical";
-
+/* eslint-disable */
 type BaseEquationEditorProps = {
   equation: string;
   inline: boolean;

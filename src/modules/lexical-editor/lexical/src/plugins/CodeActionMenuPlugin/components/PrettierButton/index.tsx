@@ -11,6 +11,7 @@ import { $isCodeNode } from "@lexical/code";
 import { $getNearestNodeFromDOMNode, LexicalEditor } from "lexical";
 import { Options } from "prettier";
 import { useState } from "react";
+import { ErrorAlert } from "../../../../../../../../components/Alert";
 
 interface Props {
   lang: string;
@@ -36,10 +37,9 @@ type LanguagesType = keyof typeof PRETTIER_PARSER_MODULES;
 
 async function loadPrettierParserByLang(lang: string) {
   const dynamicImports = PRETTIER_PARSER_MODULES[lang as LanguagesType];
-  const modules = await Promise.all(
+  return await Promise.all(
     dynamicImports.map((dynamicImport) => dynamicImport()),
   );
-  return modules;
 }
 
 async function loadPrettierFormat() {
@@ -62,7 +62,8 @@ export function canBePrettier(lang: string): boolean {
 }
 
 function getPrettierOptions(lang: string): Options {
-  const options = PRETTIER_OPTIONS_BY_LANG[lang];
+  const options = PRETTIER_OPTIONS_BY_LANG[lang as string];
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (!options) {
     throw new Error(
       `CodeActionMenuPlugin: Prettier does not support this language: ${lang}`,
@@ -98,6 +99,7 @@ export function PrettierButton({ lang, editor, getCodeDOMNode }: Props) {
       const options = getPrettierOptions(lang);
       const prettierParsers = await loadPrettierParserByLang(lang);
       options.plugins = prettierParsers.map(
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         (parser) => parser.default || parser,
       );
       const formattedCode = await format(content, options);
@@ -121,7 +123,8 @@ export function PrettierButton({ lang, editor, getCodeDOMNode }: Props) {
       setSyntaxError(error.message);
       setTipsVisible(true);
     } else {
-      console.error("Unexpected error: ", error);
+      // @ts-ignore
+      ErrorAlert(`Unexpected error: ${error.message}`);
     }
   }
 

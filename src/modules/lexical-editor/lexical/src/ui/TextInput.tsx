@@ -7,16 +7,14 @@
  */
 
 import type { JSX } from "react";
+import { HTMLInputTypeAttribute } from "react";
 
 import "./Input.css";
-
-import * as React from "react";
-import { HTMLInputTypeAttribute } from "react";
 
 type Props = Readonly<{
   "data-test-id"?: string;
   label: string;
-  onChange: (val: string) => void;
+  onChange: (_val: string) => void;
   placeholder?: string;
   value: string;
   type?: HTMLInputTypeAttribute;

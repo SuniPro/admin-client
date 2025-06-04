@@ -95,7 +95,7 @@ import {
   formatParagraph,
   formatQuote,
 } from "./utils";
-
+/* eslint-disable */
 const rootTypeToRootName = {
   root: "Root",
   table: "Table",
