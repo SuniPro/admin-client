@@ -29,7 +29,7 @@ export default defineConfig({
     proxy: {
       // 첫 번째 프록시 설정
       "/admin": {
-        target: "http://localhost:8010",
+        target: "http://47.129.9.149:8010",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/admin/, ""),
         secure: false,
