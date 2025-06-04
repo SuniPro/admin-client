@@ -32,12 +32,10 @@ import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import "./ImageNode.css";
 
 import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
-import { useCollaborationContext } from "@lexical/react/LexicalCollaborationContext";
 import { CollaborationPlugin } from "@lexical/react/LexicalCollaborationPlugin";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { HashtagPlugin } from "@lexical/react/LexicalHashtagPlugin";
-import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { LexicalNestedComposer } from "@lexical/react/LexicalNestedComposer";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { useLexicalEditable } from "@lexical/react/useLexicalEditable";
@@ -46,7 +44,6 @@ import { mergeRegister } from "@lexical/utils";
 
 import { createWebsocketProvider } from "../collaboration";
 import { useSettings } from "../context/SettingsContext";
-import { useSharedHistoryContext } from "../context/SharedHistoryContext";
 import brokenImage from "../images/image-broken.svg";
 import EmojisPlugin from "../plugins/EmojisPlugin";
 import KeywordsPlugin from "../plugins/KeywordsPlugin";
@@ -240,7 +237,6 @@ export default function ImageComponent({
   const [isSelected, setSelected, clearSelection] =
     useLexicalNodeSelection(nodeKey);
   const [isResizing, setIsResizing] = useState<boolean>(false);
-  const { isCollabActive } = useCollaborationContext();
   const [editor] = useLexicalComposerContext();
   const [selection, setSelection] = useState<BaseSelection | null>(null);
   const activeEditorRef = useRef<LexicalEditor | null>(null);
@@ -438,7 +434,6 @@ export default function ImageComponent({
     setIsResizing(true);
   };
 
-  const { historyState } = useSharedHistoryContext();
   const {
     settings: { showNestedEditorTreeView },
   } = useSettings();
@@ -478,15 +473,11 @@ export default function ImageComponent({
               <EmojisPlugin />
               <HashtagPlugin />
               <KeywordsPlugin />
-              {isCollabActive ? (
-                <CollaborationPlugin
-                  id={caption.getKey()}
-                  providerFactory={createWebsocketProvider}
-                  shouldBootstrap={true}
-                />
-              ) : (
-                <HistoryPlugin externalHistoryState={historyState} />
-              )}
+              <CollaborationPlugin
+                id={caption.getKey()}
+                providerFactory={createWebsocketProvider}
+                shouldBootstrap={true}
+              />
               <RichTextPlugin
                 contentEditable={
                   <ContentEditable
@@ -497,7 +488,7 @@ export default function ImageComponent({
                 }
                 ErrorBoundary={LexicalErrorBoundary}
               />
-              {showNestedEditorTreeView === true ? <TreeViewPlugin /> : null}
+              {showNestedEditorTreeView ? <TreeViewPlugin /> : null}
             </LexicalNestedComposer>
           </div>
         )}

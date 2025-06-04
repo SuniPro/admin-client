@@ -33,16 +33,11 @@ import {
   AutocompleteNode,
 } from "../../nodes/AutocompleteNode";
 import { addSwipeRightListener } from "../../utils/swipe";
+import { ErrorAlert } from "../../../../../../components/Alert";
 
 const HISTORY_MERGE = { tag: HISTORY_MERGE_TAG };
 
-declare global {
-  interface Navigator {
-    userAgentData?: {
-      mobile: boolean;
-    };
-  }
-}
+declare global {}
 
 type SearchPromise = {
   dismiss: () => void;
@@ -79,17 +74,15 @@ function $search(selection: null | BaseSelection): [boolean, string] {
 }
 
 // TODO query should be custom
-function useQuery(): (searchText: string) => SearchPromise {
+function useQuery(): (_searchText: string) => SearchPromise {
   return useCallback((searchText: string) => {
     const server = new AutocompleteServer();
-    console.time("query");
-    const response = server.query(searchText);
-    console.timeEnd("query");
-    return response;
+    return server.query(searchText);
   }, []);
 }
 
 function formatSuggestionText(suggestion: string): string {
+  // @ts-ignore
   const userAgentData = window.navigator.userAgentData;
   const isMobile =
     userAgentData !== undefined
@@ -186,7 +179,7 @@ export default function AutocompletePlugin(): JSX.Element | null {
           })
           .catch((e) => {
             if (e !== "Dismissed") {
-              console.error(e);
+              ErrorAlert(e);
             }
           });
         lastMatch = match;
@@ -289,6 +282,7 @@ class AutocompleteServer {
           : searchText;
         const match = this.DATABASE.find(
           (dictionaryWord) =>
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
             dictionaryWord.startsWith(caseInsensitiveSearchText) ?? null,
         );
         if (match === undefined) {

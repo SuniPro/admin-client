@@ -7,8 +7,8 @@
  */
 
 import type { SettingName } from "../appSettings";
+import { DEFAULT_SETTINGS, INITIAL_SETTINGS } from "../appSettings";
 import type { JSX } from "react";
-
 import * as React from "react";
 import {
   createContext,
@@ -19,15 +19,13 @@ import {
   useState,
 } from "react";
 
-import { DEFAULT_SETTINGS, INITIAL_SETTINGS } from "../appSettings";
-
 type SettingsContextShape = {
-  setOption: (name: SettingName, value: boolean) => void;
+  setOption: (_name: SettingName, _value: boolean) => void;
   settings: Record<SettingName, boolean>;
 };
 
 const Context: React.Context<SettingsContextShape> = createContext({
-  setOption: (name: SettingName, value: boolean) => {
+  setOption(_name: SettingName, _value: boolean) {
     return;
   },
   settings: INITIAL_SETTINGS,
@@ -48,20 +46,20 @@ export const SettingsContext = ({
     setURLParam(setting, value);
   }, []);
 
-  const contextValue = useMemo(() => {
-    return { setOption, settings };
-  }, [setOption, settings]);
+  const contextValue = useMemo(
+    () => ({ setOption, settings }),
+    [setOption, settings],
+  );
 
   return <Context.Provider value={contextValue}>{children}</Context.Provider>;
 };
 
-export const useSettings = (): SettingsContextShape => {
-  return useContext(Context);
-};
+export const useSettings = (): SettingsContextShape => useContext(Context);
 
 function setURLParam(param: SettingName, value: null | boolean) {
   const url = new URL(window.location.href);
   const params = new URLSearchParams(url.search);
+  // eslint-disable-next-line security/detect-object-injection
   if (value !== DEFAULT_SETTINGS[param]) {
     params.set(param, String(value));
   } else {

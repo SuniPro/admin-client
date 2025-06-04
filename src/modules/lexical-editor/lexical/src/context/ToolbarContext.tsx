@@ -7,9 +7,7 @@
  */
 
 import type { JSX } from "react";
-
-import { ElementFormatType } from "lexical";
-import React, {
+import {
   createContext,
   ReactNode,
   useCallback,
@@ -18,6 +16,8 @@ import React, {
   useMemo,
   useState,
 } from "react";
+
+import { ElementFormatType } from "lexical";
 
 export const MIN_ALLOWED_FONT_SIZE = 8;
 export const MAX_ALLOWED_FONT_SIZE = 72;
@@ -44,7 +44,6 @@ export const blockTypeToBlockName = {
 };
 
 //disable eslint sorting rule for quick reference to toolbar state
-/* eslint-disable sort-keys-fix/sort-keys-fix */
 const INITIAL_TOOLBAR_STATE = {
   bgColor: "#fff",
   blockType: "paragraph" as keyof typeof blockTypeToBlockName,
@@ -84,8 +83,8 @@ type ToolbarStateValue<Key extends ToolbarStateKey> = ToolbarState[Key];
 type ContextShape = {
   toolbarState: ToolbarState;
   updateToolbarState<Key extends ToolbarStateKey>(
-    key: Key,
-    value: ToolbarStateValue<Key>,
+    _key: Key,
+    _value: ToolbarStateValue<Key>,
   ): void;
 };
 
@@ -113,12 +112,13 @@ export const ToolbarContext = ({
     updateToolbarState("fontSizeInputValue", selectionFontSize.slice(0, -2));
   }, [selectionFontSize, updateToolbarState]);
 
-  const contextValue = useMemo(() => {
-    return {
+  const contextValue = useMemo(
+    () => ({
       toolbarState,
       updateToolbarState,
-    };
-  }, [toolbarState, updateToolbarState]);
+    }),
+    [toolbarState, updateToolbarState],
+  );
 
   return <Context.Provider value={contextValue}>{children}</Context.Provider>;
 };

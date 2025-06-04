@@ -8,7 +8,6 @@
 
 import type { LexicalEditor } from "lexical";
 import type { JSX } from "react";
-import * as React from "react";
 import { useMemo, useState } from "react";
 
 import {
@@ -48,6 +47,7 @@ interface PlaygroundEmbedConfig extends EmbedConfig {
 export const YoutubeEmbedConfig: PlaygroundEmbedConfig = {
   contentName: "Youtube Video",
 
+  // eslint-disable-next-line noSecrets/no-secrets
   exampleUrl: "https://www.youtube.com/watch?v=jNQXAC9IVRw",
 
   // Icon for display.
@@ -64,7 +64,7 @@ export const YoutubeEmbedConfig: PlaygroundEmbedConfig = {
     const match =
       /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/.exec(url);
 
-    const id = match ? (match?.[2].length === 11 ? match[2] : null) : null;
+    const id = match ? (match[2].length === 11 ? match[2] : null) : null;
 
     if (id != null) {
       return {
@@ -119,6 +119,7 @@ export const TwitterEmbedConfig: PlaygroundEmbedConfig = {
 export const FigmaEmbedConfig: PlaygroundEmbedConfig = {
   contentName: "Figma Document",
 
+  // eslint-disable-next-line noSecrets/no-secrets
   exampleUrl: "https://www.figma.com/file/LKQ4FJ4bTnCSjedbRpk931/Sample-File",
 
   icon: <i className="icon figma" />,
@@ -132,6 +133,7 @@ export const FigmaEmbedConfig: PlaygroundEmbedConfig = {
   // Determine if a given URL is a match and return url data.
   parseUrl: (text: string) => {
     const match =
+      // eslint-disable-next-line security/detect-unsafe-regex
       /https:\/\/([\w.-]+\.)?figma.com\/(file|proto)\/([0-9a-zA-Z]{22,128})(?:\/.*)?$/.exec(
         text,
       );
@@ -196,8 +198,8 @@ function AutoEmbedMenu({
   onOptionMouseEnter,
 }: {
   selectedItemIndex: number | null;
-  onOptionClick: (option: AutoEmbedOption, index: number) => void;
-  onOptionMouseEnter: (index: number) => void;
+  onOptionClick: (_option: AutoEmbedOption, _index: number) => void;
+  onOptionMouseEnter: (_index: number) => void;
   options: Array<AutoEmbedOption>;
 }) {
   return (
@@ -218,7 +220,7 @@ function AutoEmbedMenu({
   );
 }
 
-const debounce = (callback: (text: string) => void, delay: number) => {
+const debounce = (callback: (_text: string) => void, delay: number) => {
   let timeoutId: number;
   return (text: string) => {
     window.clearTimeout(timeoutId);
@@ -243,6 +245,7 @@ export function AutoEmbedDialog({
     () =>
       debounce((inputText: string) => {
         const urlMatch = URL_MATCHER.exec(inputText);
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         if (embedConfig != null && inputText != null && urlMatch != null) {
           Promise.resolve(embedConfig.parseUrl(inputText)).then(
             (parseResult) => {
@@ -305,16 +308,14 @@ export default function AutoEmbedPlugin(): JSX.Element {
     activeEmbedConfig: PlaygroundEmbedConfig,
     embedFn: () => void,
     dismissFn: () => void,
-  ) => {
-    return [
-      new AutoEmbedOption("Dismiss", {
-        onSelect: dismissFn,
-      }),
-      new AutoEmbedOption(`Embed ${activeEmbedConfig.contentName}`, {
-        onSelect: embedFn,
-      }),
-    ];
-  };
+  ) => [
+    new AutoEmbedOption("Dismiss", {
+      onSelect: dismissFn,
+    }),
+    new AutoEmbedOption(`Embed ${activeEmbedConfig.contentName}`, {
+      onSelect: embedFn,
+    }),
+  ];
 
   return (
     <>

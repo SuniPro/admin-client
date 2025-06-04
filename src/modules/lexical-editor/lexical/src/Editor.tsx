@@ -17,7 +17,6 @@ import { CollaborationPlugin } from "@lexical/react/LexicalCollaborationPlugin";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { HashtagPlugin } from "@lexical/react/LexicalHashtagPlugin";
-import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { HorizontalRulePlugin } from "@lexical/react/LexicalHorizontalRulePlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { PlainTextPlugin } from "@lexical/react/LexicalPlainTextPlugin";
@@ -30,7 +29,6 @@ import { CAN_USE_DOM } from "@lexical/utils";
 
 import { createWebsocketProvider } from "./collaboration";
 import { useSettings } from "./context/SettingsContext";
-import { useSharedHistoryContext } from "./context/SharedHistoryContext";
 import ActionsPlugin from "./plugins/ActionsPlugin";
 import AutocompletePlugin from "./plugins/AutocompletePlugin";
 import AutoEmbedPlugin from "./plugins/AutoEmbedPlugin";
@@ -85,7 +83,6 @@ const skipCollaborationInit =
 export default function Editor(props: {
   setContents: Dispatch<SetStateAction<string>>;
 }): JSX.Element {
-  const { historyState } = useSharedHistoryContext();
   const {
     settings: {
       isCollab,
@@ -110,8 +107,8 @@ export default function Editor(props: {
   const placeholder = isCollab
     ? "Enter some collaborative rich text..."
     : isRichText
-    ? "Enter some rich text..."
-    : "Enter some plain text...";
+      ? "Enter some rich text..."
+      : "Enter some plain text...";
   const [floatingAnchorElem, setFloatingAnchorElem] =
     useState<HTMLDivElement | null>(null);
   const [isSmallWidthViewport, setIsSmallWidthViewport] =
@@ -186,15 +183,11 @@ export default function Editor(props: {
         />
         {isRichText ? (
           <>
-            {isCollab ? (
-              <CollaborationPlugin
-                id="main"
-                providerFactory={createWebsocketProvider}
-                shouldBootstrap={!skipCollaborationInit}
-              />
-            ) : (
-              <HistoryPlugin externalHistoryState={historyState} />
-            )}
+            <CollaborationPlugin
+              id="main"
+              providerFactory={createWebsocketProvider}
+              shouldBootstrap={!skipCollaborationInit}
+            />
             <RichTextPlugin
               contentEditable={
                 <div className="editor-scroller">
@@ -261,7 +254,6 @@ export default function Editor(props: {
               contentEditable={<ContentEditable placeholder={placeholder} />}
               ErrorBoundary={LexicalErrorBoundary}
             />
-            <HistoryPlugin externalHistoryState={historyState} />
           </>
         )}
         {(isCharLimit || isCharLimitUtf8) && (
