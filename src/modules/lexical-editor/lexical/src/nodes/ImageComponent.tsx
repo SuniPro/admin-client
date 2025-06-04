@@ -32,7 +32,6 @@ import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import "./ImageNode.css";
 
 import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
-import { CollaborationPlugin } from "@lexical/react/LexicalCollaborationPlugin";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { HashtagPlugin } from "@lexical/react/LexicalHashtagPlugin";
@@ -41,8 +40,6 @@ import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { useLexicalEditable } from "@lexical/react/useLexicalEditable";
 import { useLexicalNodeSelection } from "@lexical/react/useLexicalNodeSelection";
 import { mergeRegister } from "@lexical/utils";
-
-import { createWebsocketProvider } from "../collaboration";
 import { useSettings } from "../context/SettingsContext";
 import brokenImage from "../images/image-broken.svg";
 import EmojisPlugin from "../plugins/EmojisPlugin";
@@ -473,11 +470,6 @@ export default function ImageComponent({
               <EmojisPlugin />
               <HashtagPlugin />
               <KeywordsPlugin />
-              <CollaborationPlugin
-                id={caption.getKey()}
-                providerFactory={createWebsocketProvider}
-                shouldBootstrap={true}
-              />
               <RichTextPlugin
                 contentEditable={
                   <ContentEditable

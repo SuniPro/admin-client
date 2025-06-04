@@ -12,15 +12,11 @@ import type { JSX } from "react";
 import { useEffect, useLayoutEffect, useRef } from "react";
 
 import "./StickyNode.css";
-
-import { CollaborationPlugin } from "@lexical/react/LexicalCollaborationPlugin";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { LexicalNestedComposer } from "@lexical/react/LexicalNestedComposer";
 import { PlainTextPlugin } from "@lexical/react/LexicalPlainTextPlugin";
 import { calculateZoomLevel } from "@lexical/utils";
-
-import { createWebsocketProvider } from "../collaboration";
 import StickyEditorTheme from "../themes/StickyEditorTheme";
 import ContentEditable from "../ui/ContentEditable";
 import { $isStickyNode } from "./StickyNode";
@@ -240,11 +236,6 @@ export default function StickyComponent({
           initialEditor={caption}
           initialTheme={StickyEditorTheme}
         >
-          <CollaborationPlugin
-            id={caption.getKey()}
-            providerFactory={createWebsocketProvider}
-            shouldBootstrap={true}
-          />
           <PlainTextPlugin
             contentEditable={
               <ContentEditable
