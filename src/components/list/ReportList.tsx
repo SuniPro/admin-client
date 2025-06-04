@@ -23,7 +23,11 @@ import {
 import { useWindowContext } from "../../context/WindowContext";
 import { useQuery } from "@tanstack/react-query";
 import { PaginationResponse } from "../../model/pagination";
-import { createReport, getReportsByLevel } from "../../api/report";
+import {
+  createReport,
+  deleteReport,
+  getReportsByLevel,
+} from "../../api/report";
 import DateRangePicker, { ValueType } from "rsuite/DateRangePicker";
 import { ReportType } from "../../model/report";
 import { iso8601ToYYMMDDHHMM } from "../styled/Date/DateFomatter";
@@ -33,6 +37,7 @@ import {
   StyledContainer,
   TableBody,
   TableContainer,
+  TableFunctionLine,
   TableHeader,
   TableHeaderFuncButton,
 } from "../Table";
@@ -46,6 +51,7 @@ import { PlusButton } from "../styled/Button";
 import { Container } from "../layouts/Frames";
 import { CustomModal, ModalHeaderLine } from "../Modal";
 import { LexicalViewer } from "../../modules/lexical-editor/lexical/src/Editor";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 export function ViewReport(props: { report: ReportType; close: () => void }) {
   const { report } = props;
@@ -191,6 +197,16 @@ export function ReportList(props: { user: EmployeeType }) {
         size: 80,
         cell: ({ row }) => (
           <span>{iso8601ToYYMMDDHHMM(row.getValue("insertDateTime"))}</span>
+        ),
+      },
+      {
+        id: "func",
+        header: "기능",
+        size: 50,
+        cell: ({ row }) => (
+          <TableFunctionLine>
+            <DeleteIcon onClick={() => deleteReport(row.getValue("id"))} />
+          </TableFunctionLine>
         ),
       },
     ],

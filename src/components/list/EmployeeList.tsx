@@ -28,7 +28,7 @@ import { FuncItem } from "../styled/Button";
 import { Container } from "../layouts/Frames";
 import { SignUp } from "../../Page/Sign";
 import { Pagination, TableBody, TableHeader } from "../Table";
-import { CustomModal } from "../Modal/Modal";
+import { CustomModal } from "../Modal";
 import { EmailSearch, HorizontalDivider } from "../layouts";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";

@@ -42,6 +42,7 @@ export function GlobalStyled() {
         body {
           margin: 0;
           display: flex;
+          justify-content: center;
           place-items: center;
           min-width: 320px;
           min-height: 100vh;
