@@ -50,18 +50,26 @@ export function EmployeeAnalysisPanel(props: {
   const { data: abilityList } = useQuery({
     queryKey: ["getAbilitySet", employeeId],
     queryFn: () => getAbilitySet(employeeId),
-    refetchInterval: 60000,
   });
 
   const { data: commuteList } = useQuery({
     queryKey: ["getCommutes", employeeId],
     queryFn: () => getCommutes(employeeId),
-    refetchInterval: 60000,
   });
 
   const isWide = windowWidth >= theme.windowSize.HD;
 
   if (!abilityList || !commuteList) {
+    return (
+      <AnalysisContainer isWide={isWide}>
+        <AnalysisContentsContainer width={100} theme={theme} isWide={isWide}>
+          <AnalysisEmptyState />
+        </AnalysisContentsContainer>
+      </AnalysisContainer>
+    );
+  }
+
+  if (commuteList.length <= 0) {
     return (
       <AnalysisContainer isWide={isWide}>
         <AnalysisContentsContainer width={100} theme={theme} isWide={isWide}>
