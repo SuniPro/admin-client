@@ -59,17 +59,12 @@ export function EmployeeAnalysisPanel(props: {
 
   const isWide = windowWidth >= theme.windowSize.HD;
 
-  if (!abilityList || !commuteList) {
-    return (
-      <AnalysisContainer isWide={isWide}>
-        <AnalysisContentsContainer width={100} theme={theme} isWide={isWide}>
-          <AnalysisEmptyState />
-        </AnalysisContentsContainer>
-      </AnalysisContainer>
-    );
-  }
-
-  if (commuteList.length <= 0) {
+  if (
+    !abilityList ||
+    !commuteList ||
+    !Array.isArray(commuteList) ||
+    commuteList.length === 0
+  ) {
     return (
       <AnalysisContainer isWide={isWide}>
         <AnalysisContentsContainer width={100} theme={theme} isWide={isWide}>
