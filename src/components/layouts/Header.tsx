@@ -12,6 +12,8 @@ import { IconButton } from "@mui/material";
 import { StyledBadge } from "./Layouts";
 import { useQuery } from "@tanstack/react-query";
 import { getCountUnReadAboutNotify } from "../../api/notify";
+import { ConfirmAlert, SuccessAlert } from "../Alert";
+import { logout } from "../../api/sign";
 
 export function Header(props: {
   activeMenu: DashboardMenuType;
@@ -50,7 +52,13 @@ export function Header(props: {
         ))}
       </MenuLine>
       <UserLine>
-        <UserProfile>
+        <UserProfile
+          onClick={() =>
+            ConfirmAlert("로그아웃하시겠습니까?", () =>
+              logout().then(() => SuccessAlert("로그아웃 되었습니다.")),
+            )
+          }
+        >
           {user.name} {levelLabelMap[user.level]}
         </UserProfile>
         <IconButton>
