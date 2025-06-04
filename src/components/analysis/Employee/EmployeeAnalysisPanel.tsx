@@ -3,14 +3,8 @@ import {
   SimpleBarChartType,
   SimpleRadarChartType,
 } from "../../statistics/visualization/Chart";
-import { MemberWorkBalance } from "./MemberWorkBalance";
-import { MemberAbility } from "./MemberAbility";
-import { MemberSolvingMeter } from "./MemberSolvingMeter";
 import { useWindowContext } from "../../../context/WindowContext";
 import { EmployeeType } from "../../../model/employee";
-import { getAbilitySet, getCommutes } from "../../../api/review";
-import { useQuery } from "@tanstack/react-query";
-import { iso8601ToSummaryString } from "../../styled/Date/DateFomatter";
 import {
   abilityLabelMap,
   abilityList,
@@ -18,11 +12,14 @@ import {
   EmployeeAbilityType,
 } from "../../../model/review";
 import { sumBy } from "lodash";
-import {
-  AnalysisContainer,
-  AnalysisContentsContainer,
-} from "../../layouts/Layouts";
+import { AnalysisContainer, AnalysisContentsContainer } from "../../layouts";
 import { AnalysisEmptyState } from "../AnalysisEmptyState";
+import { useQuery } from "@tanstack/react-query";
+import { getAbilitySet, getCommutes } from "../../../api/review";
+import { iso8601ToSummaryString } from "../../styled/Date/DateFomatter";
+import { MemberWorkBalance } from "./MemberWorkBalance";
+import { MemberAbility } from "./MemberAbility";
+import { MemberSolvingMeter } from "./MemberSolvingMeter";
 
 export function convertToRadarData(
   ability: EmployeeAbilityType,
@@ -114,6 +111,7 @@ export function EmployeeAnalysisPanel(props: {
             />
           </AnalysisContentsContainer>
           <AnalysisContentsContainer theme={theme} width={56} isWide={isWide}>
+            eslint-disable-next-line noSecrets/no-secrets
             <MemberWorkBalance data={workDateList}></MemberWorkBalance>
           </AnalysisContentsContainer>
         </>
