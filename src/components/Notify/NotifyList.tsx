@@ -18,27 +18,20 @@ import {
   LevelType,
 } from "../../model/employee";
 import { iso8601ToYYMMDDHHMM } from "../styled/Date/DateFomatter";
-import { Container } from "../layouts/Frames/FrameLayouts";
+import { Container } from "../layouts/Frames";
 import { css, Theme, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { FuncItem, PlusButton } from "../styled/Button";
-import {
-  EllipsisCase,
-  EmailSearch,
-  HorizontalDivider,
-} from "../layouts/Layouts";
+import { EllipsisCase, EmailSearch, HorizontalDivider } from "../layouts";
 import { Pagination, TableBody, TableHeader } from "../Table";
-import {
-  CustomModal,
-  EditorModalContainer,
-  ModalHeaderLine,
-} from "../Modal/Modal";
+import { CustomModal, EditorModalContainer, ModalHeaderLine } from "../Modal";
 import { createNotify } from "../../api/notify";
-import { ErrorAlert, SuccessAlert } from "../Alert/Alerts";
+import { ErrorAlert, SuccessAlert } from "../Alert";
 import { LexicalEditor } from "../../modules/lexical-editor/lexical/src/LexicalEditor";
 import { Viewer } from "../Lexical/Editor";
 import { useWindowContext } from "../../context/WindowContext";
 import { useProportionHook } from "../../hooks/useWindowHooks";
+import { DateTime } from "luxon";
 
 export function ViewNotify(props: { notify: NotifyType; close: () => void }) {
   const { notify } = props;
@@ -76,6 +69,9 @@ function WriteNotify(props: {
       writer: user.name,
       title,
       contents,
+      insertDateTime: DateTime.now()
+        .setZone("Asia/Seoul")
+        .toISO({ includeOffset: false })!,
     };
 
     createNotify(notify)
