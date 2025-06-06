@@ -14,6 +14,7 @@ import { CustomModal } from "../components/Modal";
 import { ViewNotify } from "../components/Notify/NotifyList";
 import { WorkTable } from "./WorkTable";
 import { Reports } from "./work/Report";
+import { iso8601ToYYMMDDHHMM } from "../components/styled/Date/DateFomatter";
 
 export function Dashboard(props: { activeMenu: DashboardMenuType }) {
   const { activeMenu } = props;
@@ -45,7 +46,6 @@ export function Dashboard(props: { activeMenu: DashboardMenuType }) {
         return <Reports />;
     }
   };
-
   return (
     <DashboardContainer>
       <ContentsContainer>
@@ -56,7 +56,9 @@ export function Dashboard(props: { activeMenu: DashboardMenuType }) {
             </i>
             <span>{lastNotify?.title}</span>
           </NotifyArea>
-          <div>24.01.01</div>
+          <div>
+            {iso8601ToYYMMDDHHMM(lastNotify ? lastNotify.insertDateTime : "")}
+          </div>
         </NotifyContainer>
       </ContentsContainer>
       <ContentsContainer>{menuMatcher()}</ContentsContainer>

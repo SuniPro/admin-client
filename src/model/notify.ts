@@ -6,7 +6,7 @@ export interface NotifyType {
   writer: string;
   title: string;
   contents: string;
-  insertDateTime?: string;
+  insertDateTime: string;
   updateDateTime?: string;
   deletedDateTime?: string;
 }
