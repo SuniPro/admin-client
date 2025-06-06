@@ -3,6 +3,7 @@ import { NotifyType, NotifyWithReadType } from "../model/notify";
 import {
   deleteToEmployeeServer,
   getFromEmployeeServer,
+  patchToEmployeeServer,
   postToEmployeeServer,
   putToEmployeeServer,
 } from "./base";
@@ -59,8 +60,9 @@ export async function readNotify(
   id: number,
   employeeId: number,
 ): Promise<void> {
-  const response = await getFromEmployeeServer(
+  const response = await patchToEmployeeServer(
     `/notify/read/${id}/${employeeId}`,
+    null,
   );
   return response.data;
 }
@@ -86,19 +88,20 @@ export async function getCountUnReadAboutNotify(
   return response.data;
 }
 
-export async function getReadNotifyList(
+export async function getNotifyListByReadEmployee(
   employeeId: number,
+  level: LevelType,
 ): Promise<NotifyType[]> {
   const response = await getFromEmployeeServer(
-    `/notify/get/read/${employeeId}`,
+    `/notify/get/read/${employeeId}/${level}`,
   );
 
   return response.data;
 }
 
-export async function getUnReadNotifyList(
+export async function getNotifyListByUnReadEmployee(
   employeeId: number,
-  level: string,
+  level: LevelType,
 ): Promise<NotifyType[]> {
   const response = await getFromEmployeeServer(
     `/notify/get/unread/${employeeId}/${level}`,

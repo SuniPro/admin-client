@@ -2,7 +2,7 @@ import { css, Theme, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import Badge, { badgeClasses } from "@mui/material/Badge";
 import { ReactNode } from "react";
-import { Container } from "./Frames/FrameLayouts";
+import { Container } from "./Frames";
 
 export function HorizontalDivider(props: {
   width: number;
@@ -10,10 +10,30 @@ export function HorizontalDivider(props: {
 }) {
   const { className, width } = props;
   const theme = useTheme();
-  return <Line className={className} theme={theme} width={width}></Line>;
+  return (
+    <HorizontalLine
+      className={className}
+      theme={theme}
+      width={width}
+    ></HorizontalLine>
+  );
 }
 
-const Line = styled.div<{ theme: Theme; width: number }>(
+export function VerticalDivider(props: { height: number; className?: string }) {
+  const { className, height } = props;
+  const theme = useTheme();
+  return <VerticalLine className={className} theme={theme} height={height} />;
+}
+
+const VerticalLine = styled.div<{ theme: Theme; height: number }>(
+  ({ theme, height }) => css`
+    width: 1px;
+    height: ${height}%;
+    border-left: 1px solid ${theme.mode.textSecondary};
+  `,
+);
+
+const HorizontalLine = styled.div<{ theme: Theme; width: number }>(
   ({ theme, width }) => css`
     width: ${width}%;
     border-bottom: 1px solid ${theme.mode.textSecondary};
