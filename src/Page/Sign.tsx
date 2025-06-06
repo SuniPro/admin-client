@@ -83,19 +83,20 @@ export function SignIn() {
 }
 
 export function SignUp(props: {
+  user: EmployeeType;
   close: () => void;
   refetch: (
     _options?: RefetchOptions,
   ) => Promise<QueryObserverResult<PaginationResponse<EmployeeType>, Error>>;
 }) {
-  const { close, refetch } = props;
+  const { user, close, refetch } = props;
   const theme = useTheme();
   const [employee, setEmployee] = useState<SignUpFormType>({
     name: "",
     password: "",
     department: "OFFICE",
     level: "STAFF",
-    insertName: "suni",
+    insertName: user.name,
   });
   const [passwordCorrect, setPasswordCorrect] = useState<string>("");
 
