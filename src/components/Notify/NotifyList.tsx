@@ -282,7 +282,11 @@ export function NotifyList(props: {
               `}
               defaultValue={notifyType}
               value={notifyType}
-              onClick={() => ErrorAlert("전체보기를 해제하세요.")}
+              onClick={() => {
+                if (all) {
+                  ErrorAlert("전체보기를 해제하세요.");
+                }
+              }}
               onChange={(e) => {
                 if (!all) {
                   setNotifyType(e.target.value as "read" | "unread");
