@@ -3,7 +3,7 @@ import { Dispatch, SetStateAction } from "react";
 import { css, Theme, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { LogoContainer, LogoText } from "../Logo/Logo";
-import { FuncItem } from "../styled/Button/Button";
+import { FuncItem } from "../styled/Button";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../../context/UserContext";
 import { levelLabelMap } from "../../model/employee";
@@ -20,7 +20,7 @@ export function Header(props: {
   setActiveMenu: Dispatch<SetStateAction<DashboardMenuType>>;
 }) {
   const { activeMenu, setActiveMenu } = props;
-  const { user } = useUserContext();
+  const { user, isError } = useUserContext();
   const navigate = useNavigate();
 
   const { data: notifyCount } = useQuery({
@@ -33,6 +33,8 @@ export function Header(props: {
   const theme = useTheme();
 
   if (!user) return;
+
+  if (isError) return;
 
   return (
     <HeaderWrapper theme={theme}>
@@ -55,7 +57,10 @@ export function Header(props: {
         <UserProfile
           onClick={() =>
             ConfirmAlert("로그아웃하시겠습니까?", () =>
-              logout().then(() => SuccessAlert("로그아웃 되었습니다.")),
+              logout().then(() => {
+                SuccessAlert("로그아웃 되었습니다.");
+                navigate("login");
+              }),
             )
           }
         >

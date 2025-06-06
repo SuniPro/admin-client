@@ -1,3 +1,4 @@
+import { DepartmentType } from "../model/employee";
 import { ReportType } from "../model/report";
 import {
   deleteToEmployeeServer,
@@ -32,14 +33,34 @@ export async function getReportsByLevel(
   page: number,
   size: number,
   range: ValueType,
+  employeeName?: string | null,
+  department?: DepartmentType,
 ) {
   const dateRangeValue = rangeFormatter(range);
   if (!dateRangeValue) return;
-  const response = await getFromEmployeeServer(
-    `/report/get/by/level/${level}/employeeId/${employeeId}?start=${dateRangeValue.start}&end=${dateRangeValue.end}&page=${page}&size=${size}&sort=insertDateTime,desc`,
-  );
 
-  return response.data;
+  if (employeeName && !department) {
+    const response = await getFromEmployeeServer(
+      `/report/get/by/level/${level}/employeeId/${employeeId}/employeeName/${employeeName}?start=${dateRangeValue.start}&end=${dateRangeValue.end}&page=${page}&size=${size}&sort=insertDateTime,desc`,
+    );
+    return response.data;
+  } else if ((!employeeName || employeeName.length < 1) && department) {
+    const response = await getFromEmployeeServer(
+      `/report/get/by/level/${level}/employeeId/${employeeId}/department/${department}?start=${dateRangeValue.start}&end=${dateRangeValue.end}&page=${page}&size=${size}&sort=insertDateTime,desc`,
+    );
+    return response.data;
+  } else if (employeeName && employeeName.length > 1 && department) {
+    const response = await getFromEmployeeServer(
+      `/report/get/by/level/${level}/employeeId/${employeeId}/employeeName/${employeeName}/department/${department}?start=${dateRangeValue.start}&end=${dateRangeValue.end}&page=${page}&size=${size}&sort=insertDateTime,desc`,
+    );
+    return response.data;
+  } else {
+    const response = await getFromEmployeeServer(
+      `/report/get/by/level/${level}/employeeId/${employeeId}?start=${dateRangeValue.start}&end=${dateRangeValue.end}&page=${page}&size=${size}&sort=insertDateTime,desc`,
+    );
+
+    return response.data;
+  }
 }
 
 export async function getReportsByLevelAndName(

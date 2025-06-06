@@ -1,7 +1,8 @@
-import { createContext, ReactNode, useContext } from "react";
+import { createContext, ReactNode, useContext, useEffect } from "react";
 import { EmployeeType } from "../model/employee";
 import { useQuery } from "@tanstack/react-query";
 import { me } from "../api/sign";
+import { useNavigate } from "react-router-dom";
 
 const UserContext = createContext<{
   user: EmployeeType | null;
@@ -10,6 +11,7 @@ const UserContext = createContext<{
 } | null>(null);
 
 export function UserContextProvider({ children }: { children: ReactNode }) {
+  const navigate = useNavigate();
   const {
     data: user,
     isLoading,
@@ -18,7 +20,14 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
     queryKey: ["me"],
     queryFn: () => me(),
     refetchInterval: 5000,
+    retry: false,
   });
+
+  useEffect(() => {
+    if (isError) {
+      navigate("/login");
+    }
+  }, [isError, navigate]);
 
   return (
     <UserContext.Provider value={{ user: user ?? null, isLoading, isError }}>

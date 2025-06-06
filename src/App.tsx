@@ -8,13 +8,12 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Dashboard } from "./Page/Dashboard";
 import { DashboardMenuType } from "./model/menu";
 import { Header } from "./components/layouts/Header";
-import { GlobalStyled } from "./components/layouts/Frames/FrameLayouts";
 import { SignIn } from "./Page/Sign";
 import { Toaster } from "react-hot-toast";
 import { UserContextProvider } from "./context/UserContext";
 import { WindowContextProvider } from "./context/WindowContext";
 import { Chat } from "./components/Chat/Chat";
-import { EmployeeReview } from "./Page/manage/EmployeeReview";
+import { GlobalStyled } from "./components/layouts/Frames";
 
 const QUERY_CLIENT = new QueryClient();
 
@@ -32,8 +31,8 @@ function App() {
     <ThemeProvider theme={darkMode ? darkTheme : defaultTheme}>
       <QueryClientProvider client={QUERY_CLIENT}>
         <WindowContextProvider>
-          <UserContextProvider>
-            <BrowserRouter>
+          <BrowserRouter>
+            <UserContextProvider>
               <Header activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
               <Routes>
                 <Route
@@ -41,15 +40,13 @@ function App() {
                   element={<Dashboard activeMenu={activeMenu} />}
                 />
                 <Route path="/login" element={<SignIn />} />
-                <Route path="/write/:type" element={<></>} />
-                <Route path="test" element={<EmployeeReview />}></Route>
               </Routes>
               <Chat />
-            </BrowserRouter>
-            <GlobalStyled />
-            <Toaster />
-            <footer style={{ height: "20px" }}></footer>
-          </UserContextProvider>
+              <GlobalStyled />
+              <Toaster />
+              <footer style={{ height: "20px" }}></footer>
+            </UserContextProvider>
+          </BrowserRouter>
         </WindowContextProvider>
       </QueryClientProvider>
     </ThemeProvider>
