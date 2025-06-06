@@ -487,6 +487,9 @@ const StyledAccordion = styled(Accordion)<{ theme: Theme }>(
     background-color: ${theme.mode.cardBackground};
 
     --Paper-shadow: none !important;
+    svg {
+      fill: ${theme.mode.textPrimary};
+    }
   `,
 );
 
