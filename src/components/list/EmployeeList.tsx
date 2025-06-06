@@ -35,12 +35,13 @@ import EditIcon from "@mui/icons-material/Edit";
 import { getAllEmployeeList } from "../../api/employee";
 
 export function EmployeeList(props: {
+  user: EmployeeType;
   selectedIdState: {
     selectedId: number;
     setSelectedId: Dispatch<SetStateAction<number>>;
   };
 }) {
-  const { selectedIdState } = props;
+  const { user, selectedIdState } = props;
   const { setSelectedId } = selectedIdState;
   const theme = useTheme();
   const [columnResizeMode] = useState<ColumnResizeMode>("onChange");
@@ -220,7 +221,7 @@ export function EmployeeList(props: {
         <CustomModal
           open={open}
           close={close}
-          children={<SignUp close={close} refetch={refetch} />}
+          children={<SignUp close={close} refetch={refetch} user={user} />}
         />
       </StyledContainer>
     </>

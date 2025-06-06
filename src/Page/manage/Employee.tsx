@@ -14,6 +14,7 @@ export function Employee() {
     <>
       <EmployeeAnalysisPanel user={user} employeeId={selectedId} />
       <EmployeeList
+        user={user}
         selectedIdState={{
           selectedId,
           setSelectedId,
