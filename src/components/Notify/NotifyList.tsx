@@ -9,16 +9,15 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { NotifyType } from "../../model/notify";
 import {
   EmployeeType,
-  levelLabelMap,
-  levelList,
-  LevelType,
+  getLevelNameByRank,
+  getRankByLevelName,
 } from "../../model/employee";
 import { iso8601ToYYMMDDHHMM } from "../styled/Date/DateFomatter";
-import { Container } from "../layouts/Frames/FrameLayouts";
+import { Container } from "../layouts/Frames";
 import { css, Theme, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { FuncItem, PlusButton } from "../styled/Button";
@@ -26,19 +25,18 @@ import {
   EllipsisCase,
   EmailSearch,
   HorizontalDivider,
-} from "../layouts/Layouts";
+  VerticalDivider,
+} from "../layouts";
 import { Pagination, TableBody, TableHeader } from "../Table";
-import {
-  CustomModal,
-  EditorModalContainer,
-  ModalHeaderLine,
-} from "../Modal/Modal";
-import { createNotify } from "../../api/notify";
-import { ErrorAlert, SuccessAlert } from "../Alert/Alerts";
+import { CustomModal, EditorModalContainer, ModalHeaderLine } from "../Modal";
+import { createNotify, readNotify } from "../../api/notify";
+import { ErrorAlert, SuccessAlert } from "../Alert";
 import { LexicalEditor } from "../../modules/lexical-editor/lexical/src/LexicalEditor";
 import { Viewer } from "../Lexical/Editor";
 import { useWindowContext } from "../../context/WindowContext";
 import { useProportionHook } from "../../hooks/useWindowHooks";
+import { DateTime } from "luxon";
+import Switch from "@mui/material/Switch";
 
 export function ViewNotify(props: { notify: NotifyType; close: () => void }) {
   const { notify } = props;
@@ -65,6 +63,7 @@ function WriteNotify(props: {
   width: number;
 }) {
   const { user, close, width } = props;
+
   const [title, setTitle] = useState<string>("");
   const [contents, setContents] = useState<string>("");
   const theme = useTheme();
@@ -72,10 +71,13 @@ function WriteNotify(props: {
   const saveNotify = () => {
     const notify: NotifyType = {
       id: 0,
-      level: user.level,
+      rank: getRankByLevelName(user.level),
       writer: user.name,
       title,
       contents,
+      insertDateTime: DateTime.now()
+        .setZone("Asia/Seoul")
+        .toISO({ includeOffset: false })!,
     };
 
     createNotify(notify)
@@ -134,9 +136,20 @@ const StyledInput = styled.input<{
 export function NotifyList(props: {
   user: EmployeeType;
   notifyList: NotifyType[];
+  notifyTypeState: {
+    notifyType: "read" | "unread";
+    setNotifyType: Dispatch<SetStateAction<"read" | "unread">>;
+  };
+  allState: {
+    all: boolean;
+    setAll: Dispatch<SetStateAction<boolean>>;
+  };
 }) {
-  const { user, notifyList } = props;
+  const { user, notifyList, notifyTypeState, allState } = props;
+  const { notifyType, setNotifyType } = notifyTypeState;
+  const { all, setAll } = allState;
   const theme = useTheme();
+
   const [selectedNotify, setSelectedNotify] = useState<NotifyType>(
     notifyList[0],
   );
@@ -162,12 +175,10 @@ export function NotifyList(props: {
         accessorKey: "id",
       },
       {
-        id: "level",
+        id: "rank",
         header: "직급",
-        accessorKey: "level",
-        cell: ({ row }) => (
-          <span>{levelLabelMap[row.getValue("level") as LevelType]}</span>
-        ),
+        accessorKey: "rank",
+        cell: ({ row }) => <span>{getLevelNameByRank(row.original.rank)}</span>,
       },
       {
         id: "writer",
@@ -193,6 +204,7 @@ export function NotifyList(props: {
             func={() => {
               setSelectedNotify(row.original);
               setViewerOpen(true);
+              readNotify(row.original.id, user.id).then();
             }}
             text={row.getValue("title")}
             testAlign="center"
@@ -210,7 +222,7 @@ export function NotifyList(props: {
         ),
       },
     ],
-    [],
+    [user.id],
   );
 
   const table = useReactTable<NotifyType>({
@@ -230,13 +242,6 @@ export function NotifyList(props: {
     debugColumns: true,
   });
 
-  const safeGetColumn = (value: string) => {
-    if (table.getColumn(value)) {
-      return table.getColumn(value);
-    } else {
-    }
-  };
-
   return (
     <>
       <StyledContainer theme={theme}>
@@ -249,25 +254,43 @@ export function NotifyList(props: {
               justify-content: flex-start;
             `}
           >
+            <div
+              css={css`
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+              `}
+            >
+              <span>전체보기</span>
+              <Switch
+                checked={all}
+                onChange={(event) => setAll(event.target.checked)}
+              />
+            </div>
+            <VerticalDivider
+              height={80}
+              css={css`
+                margin: 0 10px;
+              `}
+            />
             <select
               css={css`
                 border: none;
                 font-size: 16px;
                 margin-right: 20px;
               `}
-              value={safeGetColumn("level")?.getFilterValue() as string}
-              onChange={(e) =>
-                table
-                  .getColumn("level")
-                  ?.setFilterValue(e.target.value || undefined)
-              }
+              defaultValue={notifyType}
+              value={notifyType}
+              onClick={() => ErrorAlert("전체보기를 해제하세요.")}
+              onChange={(e) => {
+                if (!all) {
+                  setNotifyType(e.target.value as "read" | "unread");
+                }
+              }}
             >
-              <option value="">전체 부서</option>
-              {levelList.map((value) => (
-                <option key={value} value={value}>
-                  {levelLabelMap[value as LevelType]}
-                </option>
-              ))}
+              <option value="unread">읽지 않음</option>
+              <option value="read">읽음</option>
             </select>
             <EmailSearch
               placeholder="이름 검색"

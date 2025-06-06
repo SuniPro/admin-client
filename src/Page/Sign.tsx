@@ -74,6 +74,9 @@ export function SignIn() {
           onChange={(e) =>
             setSignInInfo((prev) => ({ ...prev, password: e.target.value }))
           }
+          onKeyDown={(e) => {
+            if (e.key === "Enter") signIn();
+          }}
           theme={theme}
         />
       </InputLine>

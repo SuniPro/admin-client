@@ -64,3 +64,39 @@ export const levelLabelMap: Record<LevelType, string> = {
   CTO: "기술책임자",
   CEO: "대표",
 };
+
+export function getLevelNameByRank(rank: number): string | undefined {
+  const levelMap: Record<number, string> = {
+    1: "STAFF",
+    2: "ASSOCIATE",
+    3: "SENIORMANAGER",
+    4: "OFFICEMANAGER",
+    5: "MANAGER",
+    6: "CTO",
+    7: "CDO",
+    8: "CIO",
+    9: "CFO",
+    10: "COO",
+    11: "CEO",
+  };
+
+  return levelMap[rank as number];
+}
+
+export function getRankByLevelName(levelName: string): number {
+  const nameToRankMap: Record<string, number> = {
+    STAFF: 1,
+    ASSOCIATE: 2,
+    SENIORMANAGER: 3,
+    OFFICEMANAGER: 4,
+    MANAGER: 5,
+    CTO: 6,
+    CDO: 7,
+    CIO: 8,
+    CFO: 9,
+    COO: 10,
+    CEO: 11,
+  };
+
+  return nameToRankMap[levelName.toUpperCase()];
+}
