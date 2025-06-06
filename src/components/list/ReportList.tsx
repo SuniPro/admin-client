@@ -248,7 +248,7 @@ export function ReportList(props: { user: EmployeeType }) {
         ),
       },
     ],
-    [setSelectedReport],
+    [refetch],
   );
 
   const table = useReactTable<ReportType>({
