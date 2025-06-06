@@ -22,7 +22,11 @@ import { Container } from "../layouts/Frames/FrameLayouts";
 import { css, Theme, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { FuncItem, PlusButton } from "../styled/Button";
-import { EllipsisCase, HorizontalDivider } from "../layouts/Layouts";
+import {
+  EllipsisCase,
+  EmailSearch,
+  HorizontalDivider,
+} from "../layouts/Layouts";
 import { Pagination, TableBody, TableHeader } from "../Table";
 import {
   CustomModal,
@@ -120,7 +124,7 @@ const StyledInput = styled.input<{
     padding: 0 15px;
     font-family: ${theme.mode.font.component.itemTitle};
     font-weight: 600;
-
+    background-color: ${theme.mode.cardBackground};
     &:focus-visible {
       outline: none;
     }
@@ -265,16 +269,13 @@ export function NotifyList(props: {
                 </option>
               ))}
             </select>
-            <input
-              css={css`
-                border: none;
-                font-size: 16px;
-              `}
+            <EmailSearch
               placeholder="이름 검색"
               value={table.getColumn("writer")?.getFilterValue() as string}
               onChange={(e) =>
                 table.getColumn("writer")?.setFilterValue(e.target.value)
               }
+              theme={theme}
             />
           </div>
           <AddNotifyButton
