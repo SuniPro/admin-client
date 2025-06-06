@@ -414,6 +414,15 @@ export function ReportList(props: { user: EmployeeType }) {
               justify-content: center;
               align-items: center;
               gap: 10px;
+              .rs-input-group {
+                border: none;
+                color: ${theme.mode.textPrimary} !important;
+                background-color: ${theme.mode.cardBackground} !important;
+              }
+              .rs-input {
+                color: ${theme.mode.textPrimary} !important;
+                background-color: ${theme.mode.cardBackground} !important;
+              }
             `}
           >
             <DateRangePicker
@@ -471,6 +480,7 @@ const StyledAccordion = styled(Accordion)<{ theme: Theme }>(
     height: 100%;
     align-items: center;
     justify-content: center;
+    color: ${theme.mode.textPrimary};
 
     border-radius: ${theme.borderRadius.softBox};
 
@@ -487,6 +497,7 @@ const StyledInput = styled.input<{
     width: 98%;
     font-size: 18px;
     color: ${theme.mode.textPrimary};
+    background-color: ${theme.mode.cardBackground};
     box-sizing: border-box;
     padding: 10px 1vw;
     font-family: ${theme.mode.font.component.itemDescription};

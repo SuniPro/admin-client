@@ -407,6 +407,15 @@ export function TetherDeposit(props: { user: EmployeeType }) {
             justify-content: center;
             align-items: center;
             gap: 10px;
+            .rs-input-group {
+              border: none;
+              color: ${theme.mode.textPrimary} !important;
+              background-color: ${theme.mode.cardBackground} !important;
+            }
+            .rs-input {
+              color: ${theme.mode.textPrimary} !important;
+              background-color: ${theme.mode.cardBackground} !important;
+            }
           `}
         >
           <DateRangePicker
