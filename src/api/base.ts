@@ -49,10 +49,16 @@ export async function getFromEmployeeServer(
   init: InitOptions = { skipError: false },
 ): Promise<AxiosResponse> {
   const token = localStorage.getItem("access-token");
+
+  if (!token || token.trim() === "") {
+    throw new Error("access-token이 localStorage에 없습니다");
+  }
+
   const server = import.meta.env.VITE_EMPLOYEE_SERVER_PREFIX;
   const serverUrl = server + url;
   return axios
     .get(serverUrl, {
+      withCredentials: true,
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,

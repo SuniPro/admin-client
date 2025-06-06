@@ -4,23 +4,22 @@ import { Employee } from "./manage/Employee";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import { css, Theme, useTheme } from "@emotion/react";
 import { useUserContext } from "../context/UserContext";
-import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ContentsContainer } from "../components/layouts";
 import { DashboardMenuType } from "../model/menu";
 import { Notify } from "./Notify";
 import { useQuery } from "@tanstack/react-query";
 import { getLatestNotify } from "../api/notify";
-import { CustomModal } from "../components/Modal/Modal";
+import { CustomModal } from "../components/Modal";
 import { ViewNotify } from "../components/Notify/NotifyList";
 import { WorkTable } from "./WorkTable";
 import { Reports } from "./work/Report";
 
 export function Dashboard(props: { activeMenu: DashboardMenuType }) {
   const { activeMenu } = props;
+
   const [notifyOpen, setNotifyOpen] = useState<boolean>(false);
   const { user } = useUserContext();
-  const navigate = useNavigate();
   const theme = useTheme();
 
   const { data: lastNotify } = useQuery({
@@ -28,12 +27,6 @@ export function Dashboard(props: { activeMenu: DashboardMenuType }) {
     queryFn: () => getLatestNotify(),
     refetchInterval: 10000,
   });
-
-  useEffect(() => {
-    if (!user) {
-      navigate("/login");
-    }
-  }, [navigate, user]);
 
   if (!user) return;
 

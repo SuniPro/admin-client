@@ -9,7 +9,7 @@ import {
   levelLabelMap,
   LevelType,
 } from "../../model/employee";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -52,6 +52,7 @@ import { Container } from "../layouts/Frames";
 import { CustomModal, ModalHeaderLine } from "../Modal";
 import { LexicalViewer } from "../../modules/lexical-editor/lexical/src/Editor";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useDebounceCallback } from "usehooks-ts";
 
 export function ViewReport(props: { report: ReportType; close: () => void }) {
   const { report } = props;
@@ -105,6 +106,16 @@ export function ReportList(props: { user: EmployeeType }) {
 
   const [expanded, setExpanded] = useState<boolean>(false);
 
+  const [selectDepartment, setSelectDepartment] = useState<DepartmentType>();
+
+  const [searchName, setSearchName] = useState<string | undefined>();
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // 검색 실행 함수
+  const handleSearch = useDebounceCallback((email: string) => {
+    setSearchName(email); // 실제 검색 상태 업데이트
+  }, 800);
+
   const [title, setTitle] = useState<string>("");
   const [contents, setContents] = useState<string>("");
 
@@ -118,9 +129,24 @@ export function ReportList(props: { user: EmployeeType }) {
   ]);
 
   const { data, refetch } = useQuery<PaginationResponse<ReportType>>({
-    queryKey: ["getReportsByLevel", pageIndex, pageSize, dateRange],
+    queryKey: [
+      "getReportsByLevel",
+      searchName,
+      pageIndex,
+      pageSize,
+      dateRange,
+      selectDepartment,
+    ],
     queryFn: () =>
-      getReportsByLevel(user.level, user.id, pageIndex, pageSize, dateRange),
+      getReportsByLevel(
+        user.level,
+        user.id,
+        pageIndex,
+        pageSize,
+        dateRange,
+        searchName,
+        selectDepartment,
+      ),
     refetchInterval: 10000,
   });
 
@@ -205,7 +231,19 @@ export function ReportList(props: { user: EmployeeType }) {
         size: 50,
         cell: ({ row }) => (
           <TableFunctionLine>
-            <DeleteIcon onClick={() => deleteReport(row.getValue("id"))} />
+            <DeleteIcon
+              css={css`
+                cursor: pointer;
+              `}
+              onClick={() =>
+                ConfirmAlert("삭제하시겠습니까?", () =>
+                  deleteReport(row.original.id).then(() => {
+                    SuccessAlert("삭제 완료");
+                    refetch().then();
+                  }),
+                )
+              }
+            />
           </TableFunctionLine>
         ),
       },
@@ -346,11 +384,11 @@ export function ReportList(props: { user: EmployeeType }) {
                 margin-right: 20px;
                 background-color: ${theme.mode.cardBackground};
               `}
-              value={safeGetColumn("department")?.getFilterValue() as string}
+              value={
+                safeGetColumn("department")?.getFilterValue() as DepartmentType
+              }
               onChange={(e) =>
-                table
-                  .getColumn("department")
-                  ?.setFilterValue(e.target.value || undefined)
+                setSelectDepartment(e.target.value as DepartmentType)
               }
             >
               <option value="">전체 부서</option>
@@ -361,12 +399,11 @@ export function ReportList(props: { user: EmployeeType }) {
               ))}
             </select>
             <EmailSearch
-              theme={theme}
+              ref={searchInputRef}
+              defaultValue={searchName} // 초기값만 설정
               placeholder="이름 검색"
-              value={table.getColumn("writer")?.getFilterValue() as string}
-              onChange={(e) =>
-                table.getColumn("writer")?.setFilterValue(e.target.value)
-              }
+              onChange={(e) => handleSearch(e.target.value)}
+              theme={theme}
             />
           </div>
           <div

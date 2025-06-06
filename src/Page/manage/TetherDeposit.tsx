@@ -46,11 +46,7 @@ import {
   TableHeaderFuncButton,
   TableWrapper,
 } from "../../components/Table";
-import {
-  ConfirmAlert,
-  ErrorAlert,
-  SuccessAlert,
-} from "../../components/Alert/Alerts";
+import { ConfirmAlert, ErrorAlert, SuccessAlert } from "../../components/Alert";
 import Switch from "@mui/material/Switch";
 import { Navigation } from "../../components/Navigation";
 import { useWindowContext } from "../../context/WindowContext";
@@ -64,12 +60,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import useSound from "use-sound";
 import alertSound from "../../assets/sound/alert/alert.mp3";
 import DateRangePicker, { ValueType } from "rsuite/DateRangePicker";
-import {
-  EmailSearch,
-  HorizontalDivider,
-} from "../../components/layouts/Layouts";
+import { EmailSearch, HorizontalDivider } from "../../components/layouts";
 import { useDebounceCallback } from "usehooks-ts";
-import { CustomModal } from "../../components/Modal/Modal";
+import { CustomModal } from "../../components/Modal";
 import styled from "@emotion/styled";
 import { Decimal } from "decimal.js";
 import { WriteTetherMemo } from "../../components/financial/Memo";
@@ -92,7 +85,6 @@ export function TetherDeposit(props: { user: EmployeeType }) {
   const [memoViewOpen, setWriteOpen] = useState(false);
 
   const [searchEmail, setSearchEmail] = useState<string | undefined>();
-
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   // 검색 실행 함수

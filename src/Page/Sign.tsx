@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
-import { Container } from "../components/layouts/Frames/FrameLayouts";
-import { useEffect, useRef, useState } from "react";
+import { Container } from "../components/layouts/Frames";
+import { useRef, useState } from "react";
 import { css, Theme, useTheme } from "@emotion/react";
 import {
   departmentLabelMap,
@@ -13,20 +13,16 @@ import {
   SignUpFormType,
 } from "../model/employee";
 import { FingerPrint } from "../components/styled/Button";
-import { ErrorAlert, SuccessAlert } from "../components/Alert/Alerts";
+import { ErrorAlert, SuccessAlert } from "../components/Alert";
 import { createEmployee } from "../api/employee";
 import { SignInType } from "../model/sign";
 import { login } from "../api/sign";
 import { LogoText } from "../components/Logo/Logo";
-import { useNavigate } from "react-router-dom";
-import { useUserContext } from "../context/UserContext";
 import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
 import { PaginationResponse } from "../model/pagination";
 
 export function SignIn() {
-  const { user } = useUserContext();
   const theme = useTheme();
-  const navigate = useNavigate();
   const [signInInfo, setSignInInfo] = useState<SignInType>({
     name: "",
     password: "",
@@ -42,18 +38,12 @@ export function SignIn() {
   const signIn = () => {
     login(signInInfo)
       .then((response) => {
-        navigate("/");
         localStorage.setItem("access-token", response);
         SuccessAlert("로그인 되었습니다.");
+        window.location.href = "/";
       })
       .catch(() => ErrorAlert("로그인 실패"));
   };
-
-  useEffect(() => {
-    if (user) {
-      navigate("/", { replace: true });
-    }
-  }, [navigate, user]);
 
   return (
     <SignContainer theme={theme} height={80}>
