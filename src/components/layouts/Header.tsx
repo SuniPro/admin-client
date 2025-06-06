@@ -1,5 +1,5 @@
 import { DashboardMenu, DashboardMenuType } from "../../model/menu";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { css, Theme, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { LogoContainer, LogoText } from "../Logo/Logo";
@@ -14,6 +14,8 @@ import { useQuery } from "@tanstack/react-query";
 import { getCountUnReadAboutNotify } from "../../api/notify";
 import { ConfirmAlert, SuccessAlert } from "../Alert";
 import { logout } from "../../api/sign";
+import notifyAlert from "../../assets/sound/alert/notify.wav";
+import useSound from "use-sound";
 
 export function Header(props: {
   activeMenu: DashboardMenuType;
@@ -29,6 +31,13 @@ export function Header(props: {
     refetchInterval: 10000,
     enabled: Boolean(user),
   });
+
+  const [play] = useSound(notifyAlert);
+  useEffect(() => {
+    if (notifyCount && notifyCount > 0) {
+      play(); // depositStatus가 PENDING이고 depositList 길이가 0이 아니면 항상 play 실행
+    }
+  }, [notifyCount, play]);
 
   const theme = useTheme();
 
