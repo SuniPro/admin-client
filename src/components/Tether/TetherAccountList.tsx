@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { useNavigate } from "react-router-dom";
 import { EmployeeType } from "../../model/employee";
-import { ConfirmAlert, ErrorAlert, SuccessAlert } from "../Alert/Alerts";
+import { ConfirmAlert, ErrorAlert, SuccessAlert } from "../Alert";
 import { css, Theme, useTheme } from "@emotion/react";
 import { useWindowContext } from "../../context/WindowContext";
 import {
@@ -36,10 +36,10 @@ import {
   TableHeaderFuncButton,
   TableWrapper,
 } from "../Table";
-import { EmailSearch, HorizontalDivider } from "../layouts/Layouts";
-import { CustomModal } from "../Modal/Modal";
+import { EmailSearch, HorizontalDivider } from "../layouts";
+import { CustomModal } from "../Modal";
 import styled from "@emotion/styled";
-import { Container } from "../layouts/Frames/FrameLayouts";
+import { Container } from "../layouts/Frames";
 import { PlusButton } from "../styled/Button";
 import { useDebounceCallback } from "usehooks-ts";
 import { WriteTetherMemo } from "../financial/Memo";

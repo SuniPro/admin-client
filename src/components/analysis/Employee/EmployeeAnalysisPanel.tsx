@@ -41,20 +41,20 @@ export function convertToRadarData(
 
 export function EmployeeAnalysisPanel(props: {
   user: EmployeeType;
-  employeeId: number;
+  employee: EmployeeType;
 }) {
-  const { user, employeeId } = props;
+  const { user, employee } = props;
   const theme = useTheme();
   const { windowWidth } = useWindowContext();
 
   const { data: abilityList } = useQuery({
-    queryKey: ["getAbilitySet", employeeId],
-    queryFn: () => getAbilitySet(employeeId),
+    queryKey: ["getAbilitySet", employee.id],
+    queryFn: () => getAbilitySet(employee.id),
   });
 
   const { data: commuteList } = useQuery({
-    queryKey: ["getCommutes", employeeId],
-    queryFn: () => getCommutes(employeeId),
+    queryKey: ["getCommutes", employee.id],
+    queryFn: () => getCommutes(employee.id),
   });
 
   const isWide = windowWidth >= theme.windowSize.HD;

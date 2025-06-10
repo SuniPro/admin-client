@@ -4,11 +4,23 @@ export interface EmployeeType {
   level: LevelType;
   name: string;
   insertName: string;
-  insertDateTime: Date;
+  insertDateTime: string;
   updateName: string;
-  updateDateTime: Date;
+  updateDateTime: string;
   deleteName: string;
-  deleteDateTime: Date;
+  deleteDateTime: string;
+}
+
+export interface UpdateEmployeeType {
+  id: number;
+  department: DepartmentType;
+  level: LevelType;
+  name: string;
+  password: string;
+  insertName: string;
+  insertDateTime: string;
+  updateName: string;
+  updateDateTime: string;
 }
 
 export interface SignUpFormType {

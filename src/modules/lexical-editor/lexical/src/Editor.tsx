@@ -72,6 +72,7 @@ import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { ErrorAlert } from "../../../../components/Alert";
 
 export default function Editor(props: {
+  contents?: string;
   setContents: Dispatch<SetStateAction<string>>;
 }): JSX.Element {
   const {
@@ -94,6 +95,7 @@ export default function Editor(props: {
       listStrictIndent,
     },
   } = useSettings();
+
   const isEditable = useLexicalEditable();
   const placeholder = isCollab
     ? "Enter some collaborative rich text..."
@@ -107,6 +109,14 @@ export default function Editor(props: {
   const [editor] = useLexicalComposerContext();
   const [activeEditor, setActiveEditor] = useState(editor);
   const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);
+
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (props.contents && editor) {
+      const newEditorState = editor.parseEditorState(props.contents);
+      editor.setEditorState(newEditorState);
+    }
+  }, [props.contents, editor]);
 
   const onRef = (_floatingAnchorElem: HTMLDivElement) => {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition

@@ -419,6 +419,9 @@ export function TetherDeposit(props: { user: EmployeeType }) {
           `}
         >
           <DateRangePicker
+            css={css`
+              width: 240px;
+            `}
             container={document.getElementById("date-area")!}
             format="yyyy.MM.dd"
             showOneCalendar

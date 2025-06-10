@@ -7,6 +7,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  Row,
   useReactTable,
 } from "@tanstack/react-table";
 import {
@@ -16,38 +17,42 @@ import {
   EmployeeType,
   levelLabelMap,
   LevelType,
-} from "../../model/employee";
+} from "../../../model/employee";
 import styled from "@emotion/styled";
 import { css, Theme, useTheme } from "@emotion/react";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
-import { useWindowContext } from "../../context/WindowContext";
+import { useWindowContext } from "../../../context/WindowContext";
 import { useQuery } from "@tanstack/react-query";
-import { PaginationResponse } from "../../model/pagination";
-import { iso8601ToYYMMDDHHMM } from "../styled/Date/DateFomatter";
-import { FuncItem } from "../styled/Button";
-import { Container } from "../layouts/Frames";
-import { SignUp } from "../../Page/Sign";
-import { Pagination, TableBody, TableHeader } from "../Table";
-import { CustomModal } from "../Modal";
-import { EmailSearch, HorizontalDivider } from "../layouts";
+import { PaginationResponse } from "../../../model/pagination";
+import { iso8601ToYYMMDDHHMM } from "../../styled/Date/DateFomatter";
+import { FuncItem } from "../../styled/Button";
+import { Container } from "../../layouts/Frames";
+import { SignUp, UpdateEmployee } from "../../../Page/Sign";
+import { Pagination, TableBody, TableHeader } from "../../Table";
+import { CustomModal } from "../../Modal";
+import { EmailSearch, HorizontalDivider } from "../../layouts";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import { getAllEmployeeList } from "../../api/employee";
+import { deleteEmployee, getAllEmployeeList } from "../../../api/employee";
+import { ConfirmAlert, ErrorAlert, SuccessAlert } from "../../Alert";
 
 export function EmployeeList(props: {
   user: EmployeeType;
-  selectedIdState: {
-    selectedId: number;
-    setSelectedId: Dispatch<SetStateAction<number>>;
+  selectedEmployeeState: {
+    selectedEmployee: EmployeeType;
+    setSelectedEmployee: Dispatch<SetStateAction<EmployeeType>>;
   };
 }) {
-  const { user, selectedIdState } = props;
-  const { setSelectedId } = selectedIdState;
+  const { user, selectedEmployeeState } = props;
+  const { selectedEmployee, setSelectedEmployee } = selectedEmployeeState;
   const theme = useTheme();
   const [columnResizeMode] = useState<ColumnResizeMode>("onChange");
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [open, setOpen] = useState<boolean>(false);
   const close = () => setOpen(false);
+
+  const [updateOpen, setUpdateOpen] = useState(false);
+
   const { windowWidth } = useWindowContext();
 
   const [pageIndex, setPageIndex] = useState(0);
@@ -59,6 +64,8 @@ export function EmployeeList(props: {
   });
 
   const employeeList = data?.content;
+
+  const isManager = user.level === "MANAGER" || user.level === "CEO";
 
   const columns = useMemo<ColumnDef<EmployeeType>[]>(
     () => [
@@ -91,7 +98,7 @@ export function EmployeeList(props: {
         header: "이름",
         accessorKey: "name",
         cell: ({ row }) => (
-          <span onClick={() => setSelectedId(row.getValue("id"))}>
+          <span onClick={() => setSelectedEmployee(row.original)}>
             {row.getValue("name")}
           </span>
         ),
@@ -105,19 +112,39 @@ export function EmployeeList(props: {
           <span>{iso8601ToYYMMDDHHMM(row.getValue("insertDateTime"))}</span>
         ),
       },
-      {
-        id: "func",
-        header: "기능",
-        size: 50,
-        cell: () => (
-          <TableFunctionLine>
-            <EditIcon />
-            <DeleteIcon />
-          </TableFunctionLine>
-        ),
-      },
+      ...(isManager
+        ? [
+            {
+              id: "func",
+              header: "기능",
+              size: 50,
+              cell: ({ row }: { row: Row<EmployeeType> }) => (
+                <TableFunctionLine>
+                  <EditIcon
+                    onClick={() => {
+                      setUpdateOpen(true);
+                      setSelectedEmployee(row.original);
+                    }}
+                  />
+                  <DeleteIcon
+                    onClick={() =>
+                      ConfirmAlert("삭제하시겠습니까?", () =>
+                        deleteEmployee(row.original.id)
+                          .then(() => {
+                            refetch().then();
+                            SuccessAlert("삭제완료");
+                          })
+                          .catch(() => ErrorAlert("삭제실패")),
+                      )
+                    }
+                  />
+                </TableFunctionLine>
+              ),
+            },
+          ]
+        : []),
     ],
-    [setSelectedId],
+    [isManager, refetch, setSelectedEmployee],
   );
 
   const table = useReactTable<EmployeeType>({
@@ -199,14 +226,16 @@ export function EmployeeList(props: {
               }
             />
           </div>
-          <AddEmployeeButton
-            label="직원 추가"
-            isActive={true}
-            activeBackgroundColor={theme.mode.cardBackground}
-            inActiveBackgroundColor={theme.mode.cardBackground}
-            func={() => setOpen(true)}
-            theme={theme}
-          />
+          {isManager ? (
+            <AddEmployeeButton
+              label="직원 추가"
+              isActive={true}
+              activeBackgroundColor={theme.mode.cardBackground}
+              inActiveBackgroundColor={theme.mode.cardBackground}
+              func={() => setOpen(true)}
+              theme={theme}
+            />
+          ) : null}
         </HeaderLine>
         <HorizontalDivider width={95} />
         <TableContainer width={(windowWidth / 100) * 92}>
@@ -218,6 +247,18 @@ export function EmployeeList(props: {
           <TableBody table={table} />
         </TableContainer>
         <Pagination table={table} />
+        <CustomModal
+          open={updateOpen}
+          close={() => setUpdateOpen(false)}
+          children={
+            <UpdateEmployee
+              close={() => setUpdateOpen(false)}
+              refetch={refetch}
+              user={user}
+              targetEmployee={selectedEmployee}
+            />
+          }
+        />
         <CustomModal
           open={open}
           close={close}

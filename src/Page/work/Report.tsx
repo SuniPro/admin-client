@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { useUserContext } from "../../context/UserContext";
-import { ReportList } from "../../components/list/ReportList";
+import { ReportList } from "../../components/list/report/ReportList";
 
 export function Reports() {
   const { user } = useUserContext();

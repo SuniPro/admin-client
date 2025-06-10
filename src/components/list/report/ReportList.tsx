@@ -8,7 +8,7 @@ import {
   EmployeeType,
   levelLabelMap,
   LevelType,
-} from "../../model/employee";
+} from "../../../model/employee";
 import { useMemo, useRef, useState } from "react";
 import {
   ColumnDef,
@@ -20,17 +20,17 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useWindowContext } from "../../context/WindowContext";
+import { useWindowContext } from "../../../context/WindowContext";
 import { useQuery } from "@tanstack/react-query";
-import { PaginationResponse } from "../../model/pagination";
+import { PaginationResponse } from "../../../model/pagination";
 import {
   createReport,
   deleteReport,
   getReportsByLevel,
-} from "../../api/report";
+} from "../../../api/report";
 import DateRangePicker, { ValueType } from "rsuite/DateRangePicker";
-import { ReportType } from "../../model/report";
-import { iso8601ToYYMMDDHHMM } from "../styled/Date/DateFomatter";
+import { ReportType } from "../../../model/report";
+import { iso8601ToYYMMDDHHMM } from "../../styled/Date/DateFomatter";
 import {
   HeaderLine,
   Pagination,
@@ -40,58 +40,19 @@ import {
   TableFunctionLine,
   TableHeader,
   TableHeaderFuncButton,
-} from "../Table";
-import { EmailSearch, HorizontalDivider } from "../layouts";
+} from "../../Table";
+import { EmailSearch, HorizontalDivider } from "../../layouts";
 import { Accordion, AccordionSummary } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { ConfirmAlert, SuccessAlert } from "../Alert";
+import { ConfirmAlert, SuccessAlert } from "../../Alert";
 import { DateTime } from "luxon";
-import { LexicalEditor } from "../../modules/lexical-editor/lexical/src/LexicalEditor";
-import { PlusButton } from "../styled/Button";
-import { Container } from "../layouts/Frames";
-import { CustomModal, ModalHeaderLine } from "../Modal";
-import { LexicalViewer } from "../../modules/lexical-editor/lexical/src/Editor";
+import { LexicalEditor } from "../../../modules/lexical-editor/lexical/src/LexicalEditor";
+import { PlusButton } from "../../styled/Button";
+import { CustomModal } from "../../Modal";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useDebounceCallback } from "usehooks-ts";
-
-export function ViewReport(props: { report: ReportType; close: () => void }) {
-  const { report } = props;
-  const theme = useTheme();
-
-  return (
-    <ViewerModalContainer>
-      <ModalHeaderLine
-        css={css`
-          position: absolute;
-          gap: 1vw;
-          justify-content: flex-end;
-          top: 4%;
-          right: 2%;
-          font-size: 1.2em;
-        `}
-      >
-        <span>
-          {departmentLabelMap[report.employee.department as DepartmentType]}
-        </span>
-        <span>{levelLabelMap[report.employee.level as LevelType]}</span>
-        <span>{report.employee.name}</span>
-        <span>{iso8601ToYYMMDDHHMM(report.insertDateTime)}</span>
-      </ModalHeaderLine>
-      <ModalHeaderLine>
-        <StyledInput
-          theme={theme}
-          placeholder="제목을 입력해주세요."
-          value={report.title}
-          css={css`
-            border: none;
-          `}
-          readOnly
-        />
-      </ModalHeaderLine>
-      <LexicalViewer initialEditorState={report.reportContents} />
-    </ViewerModalContainer>
-  );
-}
+import { EditNoteIcon } from "../../styled/icons";
+import { EditReport, ViewReport } from "./modal";
 
 export function ReportList(props: { user: EmployeeType }) {
   const { user } = props;
@@ -99,8 +60,10 @@ export function ReportList(props: { user: EmployeeType }) {
 
   const [columnResizeMode] = useState<ColumnResizeMode>("onChange");
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [open, setOpen] = useState<boolean>(false);
-  const close = () => setOpen(false);
+  const [viewerOpen, setViewerOpen] = useState<boolean>(false);
+  const viewerClose = () => setViewerOpen(false);
+
+  const [editorOpen, setEditorOpen] = useState<boolean>(false);
 
   const { windowWidth } = useWindowContext();
 
@@ -152,13 +115,9 @@ export function ReportList(props: { user: EmployeeType }) {
 
   const reportList = data?.content;
 
-  const [selectedReport, setSelectedReport] = useState<ReportType>({
-    id: 0,
-    employee: user,
-    title: "",
-    reportContents: "",
-    insertDateTime: "",
-  });
+  const [selectedReport, setSelectedReport] = useState<ReportType | undefined>(
+    undefined,
+  );
 
   const columns = useMemo<ColumnDef<ReportType>[]>(
     () => [
@@ -176,7 +135,7 @@ export function ReportList(props: { user: EmployeeType }) {
           <span
             onClick={() => {
               setSelectedReport(row.original);
-              setOpen(true);
+              setViewerOpen(true);
             }}
           >
             {row.getValue("title")}
@@ -231,6 +190,12 @@ export function ReportList(props: { user: EmployeeType }) {
         size: 50,
         cell: ({ row }) => (
           <TableFunctionLine>
+            <EditNoteIcon
+              onClick={() => {
+                setSelectedReport(row.original);
+                setEditorOpen(true);
+              }}
+            />
             <DeleteIcon
               css={css`
                 cursor: pointer;
@@ -319,6 +284,7 @@ export function ReportList(props: { user: EmployeeType }) {
             padding: 1vw;
             box-sizing: border-box;
             gap: 2vh;
+
             > div {
               width: 100%;
               margin: 0;
@@ -336,7 +302,7 @@ export function ReportList(props: { user: EmployeeType }) {
               align-items: center;
             `}
           >
-            <StyledInput
+            <StyledTitleInput
               theme={theme}
               placeholder="제목을 입력하세요."
               value={title}
@@ -414,11 +380,13 @@ export function ReportList(props: { user: EmployeeType }) {
               justify-content: center;
               align-items: center;
               gap: 10px;
+
               .rs-input-group {
                 border: none;
                 color: ${theme.mode.textPrimary} !important;
                 background-color: ${theme.mode.cardBackground} !important;
               }
+
               .rs-input {
                 color: ${theme.mode.textPrimary} !important;
                 background-color: ${theme.mode.cardBackground} !important;
@@ -426,6 +394,9 @@ export function ReportList(props: { user: EmployeeType }) {
             `}
           >
             <DateRangePicker
+              css={css`
+                width: 240px;
+              `}
               container={document.getElementById("date-area")!}
               format="yyyy.MM.dd"
               showOneCalendar
@@ -465,9 +436,22 @@ export function ReportList(props: { user: EmployeeType }) {
       </StyledContainer>
       <StyledModal
         width={windowWidth * 0.8}
-        open={open}
-        close={close}
-        children={<ViewReport close={close} report={selectedReport} />}
+        open={viewerOpen}
+        close={viewerClose}
+        children={<ViewReport close={viewerClose} report={selectedReport} />}
+      />
+      <StyledModal
+        width={windowWidth * 0.8}
+        open={editorOpen}
+        close={() => setEditorOpen(false)}
+        children={
+          <EditReport
+            close={() => setEditorOpen(false)}
+            report={selectedReport}
+            user={user}
+            refetch={refetch}
+          />
+        }
       />
     </>
   );
@@ -493,7 +477,7 @@ const StyledAccordion = styled(Accordion)<{ theme: Theme }>(
   `,
 );
 
-const StyledInput = styled.input<{
+export const StyledTitleInput = styled.input<{
   theme: Theme;
 }>(
   ({ theme }) => css`
@@ -516,12 +500,6 @@ const StyledInput = styled.input<{
 
 const StyledPlusButton = styled(PlusButton)`
   position: relative;
-`;
-
-export const ViewerModalContainer = styled(Container)`
-  width: 100%;
-  flex-direction: column;
-  justify-content: center;
 `;
 
 const StyledModal = styled(CustomModal)`
