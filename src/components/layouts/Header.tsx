@@ -76,7 +76,12 @@ export function Header(props: {
           {user.name} {levelLabelMap[user.level]}
         </UserProfile>
         <IconButton>
-          <StyledNotifyIcon fontSize="medium" color="success" theme={theme} />
+          <StyledNotifyIcon
+            fontSize="medium"
+            color="success"
+            theme={theme}
+            onClick={() => setActiveMenu("notice")}
+          />
           <StyledBadge
             badgeContent={notifyCount ? notifyCount : 0}
             color="error"
