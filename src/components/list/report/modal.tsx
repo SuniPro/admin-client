@@ -16,7 +16,7 @@ import { StyledTitleInput } from "./ReportList";
 import { LexicalViewer } from "../../../modules/lexical-editor/lexical/src/Editor";
 import { useState } from "react";
 import { PlusButton } from "../../styled/Button";
-import { ConfirmAlert, SuccessAlert } from "../../Alert";
+import { ConfirmAlert, ErrorAlert, SuccessAlert } from "../../Alert";
 import { updateReport } from "../../../api/report";
 import { DateTime } from "luxon";
 import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
@@ -58,15 +58,18 @@ export function EditReport(props: {
           padding: 1vw;
           box-sizing: border-box;
           gap: 2vh;
+
           > div {
             width: 100%;
             margin: 0;
             border: 1px solid ${theme.mode.textSecondary};
             border-radius: ${theme.borderRadius.softBox};
           }
+
           .editor-shell {
             max-width: none !important;
           }
+
           .actions {
             margin: 0 !important;
           }
@@ -122,6 +125,14 @@ export function ViewReport(props: { report?: ReportType; close: () => void }) {
   const theme = useTheme();
 
   if (!report) return;
+
+  try {
+    JSON.parse(report.reportContents);
+    // eslint-disable-next-line no-unused-vars
+  } catch (_) {
+    ErrorAlert("리포트 내용을 불러오는 데 실패했습니다.");
+    return null;
+  }
 
   return (
     <ModalContainer>
