@@ -144,7 +144,7 @@ export function EmployeeList(props: {
           ]
         : []),
     ],
-    [refetch, setSelectedEmployee, user.level],
+    [isManager, refetch, setSelectedEmployee],
   );
 
   const table = useReactTable<EmployeeType>({
