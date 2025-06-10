@@ -16,7 +16,7 @@ export async function createReport(report: ReportType) {
 }
 
 export async function updateReport(report: ReportType) {
-  const response = await putToEmployeeServer(`/report/create`, report);
+  const response = await putToEmployeeServer(`/report/update`, report);
 
   return response.data;
 }

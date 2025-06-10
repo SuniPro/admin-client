@@ -11,15 +11,17 @@ import {
   levelList,
   LevelType,
   SignUpFormType,
+  UpdateEmployeeType,
 } from "../model/employee";
 import { FingerPrint } from "../components/styled/Button";
 import { ErrorAlert, SuccessAlert } from "../components/Alert";
-import { createEmployee } from "../api/employee";
+import { createEmployee, updateEmployee } from "../api/employee";
 import { SignInType } from "../model/sign";
 import { login } from "../api/sign";
 import { LogoText } from "../components/Logo/Logo";
 import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
 import { PaginationResponse } from "../model/pagination";
+import { DateTime } from "luxon";
 
 export function SignIn() {
   const theme = useTheme();
@@ -191,6 +193,126 @@ export function SignUp(props: {
         </StyledSelect>
       </InputLine>
       <FingerPrint checkFunc={check} mainFunc={register} />
+    </SignContainer>
+  );
+}
+
+export function UpdateEmployee(props: {
+  user: EmployeeType;
+  targetEmployee: EmployeeType;
+  close: () => void;
+  refetch: (
+    _options?: RefetchOptions,
+  ) => Promise<QueryObserverResult<PaginationResponse<EmployeeType>, Error>>;
+}) {
+  const { user, targetEmployee, close, refetch } = props;
+  const theme = useTheme();
+  const [passwordCorrect, setPasswordCorrect] = useState<string>("");
+  const [employee, setEmployee] = useState<UpdateEmployeeType>({
+    id: targetEmployee.id,
+    name: targetEmployee.name,
+    password: "",
+    department: targetEmployee.department,
+    level: targetEmployee.level,
+    insertName: targetEmployee.insertName,
+    insertDateTime: targetEmployee.insertDateTime,
+    updateName: user.name,
+    updateDateTime: DateTime.now()
+      .setZone("Asia/Singapore")
+      .toISO({ includeOffset: false })!,
+  });
+
+  const check = () => {
+    if (employee.password !== "" && passwordCorrect.length < 8) {
+      ErrorAlert("비밀번호가 8자 미만입니다.");
+    } else if (employee.name.length < 2) {
+      ErrorAlert("이름은 최소 2글자 이상이어야합니다.");
+    }
+  };
+
+  const update = () => {
+    updateEmployee(employee)
+      .then(() => {
+        close();
+        refetch().then(() => SuccessAlert("수정되었습니다."));
+      })
+      .catch((e) => ErrorAlert(e.message));
+  };
+
+  return (
+    <SignContainer theme={theme}>
+      <InputLine>
+        <Label>이름</Label>
+        <StyledInput
+          maxLength={20}
+          defaultValue={targetEmployee.name}
+          onChange={(e) =>
+            setEmployee((prev) => ({ ...prev, name: e.target.value }))
+          }
+          isCorrect={employee.name.length > 1}
+          placeholder="사용할 이름을 작성하세요."
+          theme={theme}
+        />
+      </InputLine>
+      <InputLine>
+        <Label>비밀번호</Label>
+        <StyledInput
+          type="password"
+          placeholder="비밀번호는 8자 이상으로 작성하세요."
+          isCorrect={employee.password.length > 7}
+          onChange={(e) => {
+            setEmployee((prev) => ({ ...prev, password: e.target.value }));
+          }}
+          theme={theme}
+        />
+      </InputLine>
+      <InputLine>
+        <Label>비밀번호 확인</Label>
+        <StyledInput
+          type="password"
+          placeholder="비밀번호를 한번 더 작성하세요."
+          onChange={(e) => setPasswordCorrect(e.target.value)}
+          isCorrect={passwordCorrect === employee.password}
+          theme={theme}
+        />
+      </InputLine>
+      <InputLine>
+        <Label>부서</Label>
+        <StyledSelect
+          theme={theme}
+          defaultValue={targetEmployee.department}
+          onChange={(e) =>
+            setEmployee((prev) => ({
+              ...prev,
+              department: e.target.value as DepartmentType,
+            }))
+          }
+        >
+          {departmentList.map((value) => (
+            <option value={value}>
+              {departmentLabelMap[value as DepartmentType]}
+            </option>
+          ))}
+        </StyledSelect>
+      </InputLine>
+      <InputLine>
+        <Label>직책</Label>
+        <StyledSelect
+          theme={theme}
+          defaultValue={targetEmployee.level}
+          onChange={(e) =>
+            setEmployee((prev) => ({
+              ...prev,
+              level: e.target.value as LevelType,
+            }))
+          }
+        >
+          {levelList.map((value) => (
+            <option value={value}>{levelLabelMap[value as LevelType]}</option>
+          ))}
+        </StyledSelect>
+      </InputLine>
+      <FingerPrint checkFunc={check} mainFunc={update} />
     </SignContainer>
   );
 }

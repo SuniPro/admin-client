@@ -3,6 +3,7 @@ import {
   EmployeeType,
   LevelType,
   SignUpFormType,
+  UpdateEmployeeType,
 } from "../model/employee";
 import { PaginationResponse } from "../model/pagination";
 import {
@@ -86,7 +87,7 @@ export async function getEmployeeListByLevelGreaterThenEqual(
 }
 
 export async function updateEmployee(
-  employee: EmployeeType,
+  employee: UpdateEmployeeType,
 ): Promise<EmployeeType> {
   const response = await updateToEmployeeServer("/employee/update", employee);
 

@@ -6,12 +6,13 @@
  *
  */
 
-import type { Dispatch, JSX, SetStateAction } from "react";
+import { type Dispatch, type JSX, type SetStateAction } from "react";
 
 import { $createLinkNode } from "@lexical/link";
 import { $createListItemNode, $createListNode } from "@lexical/list";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { $createHeadingNode, $createQuoteNode } from "@lexical/rich-text";
+import type { LexicalEditor as TLexicalEditor } from "lexical";
 import {
   $createParagraphNode,
   $createTextNode,
@@ -178,18 +179,26 @@ function buildImportMap(): DOMConversionMap {
 }
 
 export function LexicalEditor(props: {
+  contents?: string;
   setContents: Dispatch<SetStateAction<string>>;
 }): JSX.Element {
   const {
     settings: { isCollab, emptyEditor },
   } = useSettings();
 
+  const { contents, setContents } = props;
+
   const initialConfig = {
-    editorState: isCollab
-      ? null
-      : emptyEditor
-      ? undefined
-      : $prepopulatedRichText,
+    editorState: props.contents
+      ? (editor: TLexicalEditor) => {
+          const parsed = editor.parseEditorState(props.contents!);
+          editor.setEditorState(parsed);
+        }
+      : isCollab
+        ? null
+        : emptyEditor
+          ? undefined
+          : $prepopulatedRichText,
     html: { import: buildImportMap() },
     namespace: "Playground",
     nodes: [...PlaygroundNodes],
@@ -206,7 +215,7 @@ export function LexicalEditor(props: {
           <TableContext>
             <ToolbarContext>
               <div className="editor-shell" style={{ isolation: "isolate" }}>
-                <Editor setContents={props.setContents} />
+                <Editor contents={contents} setContents={setContents} />
               </div>
             </ToolbarContext>
           </TableContext>
