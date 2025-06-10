@@ -195,10 +195,10 @@ export function LexicalEditor(props: {
           editor.setEditorState(parsed);
         }
       : isCollab
-        ? null
-        : emptyEditor
-          ? undefined
-          : $prepopulatedRichText,
+      ? null
+      : emptyEditor
+      ? undefined
+      : $prepopulatedRichText,
     html: { import: buildImportMap() },
     namespace: "Playground",
     nodes: [...PlaygroundNodes],
