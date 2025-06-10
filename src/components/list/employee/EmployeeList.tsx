@@ -7,6 +7,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  Row,
   useReactTable,
 } from "@tanstack/react-table";
 import {
@@ -64,6 +65,8 @@ export function EmployeeList(props: {
 
   const employeeList = data?.content;
 
+  const isManager = user.level === "MANAGER" || user.level === "CEO";
+
   const columns = useMemo<ColumnDef<EmployeeType>[]>(
     () => [
       {
@@ -109,35 +112,39 @@ export function EmployeeList(props: {
           <span>{iso8601ToYYMMDDHHMM(row.getValue("insertDateTime"))}</span>
         ),
       },
-      {
-        id: "func",
-        header: "기능",
-        size: 50,
-        cell: ({ row }) => (
-          <TableFunctionLine>
-            <EditIcon
-              onClick={() => {
-                setUpdateOpen(true);
-                setSelectedEmployee(row.original);
-              }}
-            />
-            <DeleteIcon
-              onClick={() =>
-                ConfirmAlert("삭제하시겠습니까?", () =>
-                  deleteEmployee(row.original.id)
-                    .then(() => {
-                      refetch().then();
-                      SuccessAlert("삭제완료");
-                    })
-                    .catch(() => ErrorAlert("삭제실패")),
-                )
-              }
-            />
-          </TableFunctionLine>
-        ),
-      },
+      ...(isManager
+        ? [
+            {
+              id: "func",
+              header: "기능",
+              size: 50,
+              cell: ({ row }: { row: Row<EmployeeType> }) => (
+                <TableFunctionLine>
+                  <EditIcon
+                    onClick={() => {
+                      setUpdateOpen(true);
+                      setSelectedEmployee(row.original);
+                    }}
+                  />
+                  <DeleteIcon
+                    onClick={() =>
+                      ConfirmAlert("삭제하시겠습니까?", () =>
+                        deleteEmployee(row.original.id)
+                          .then(() => {
+                            refetch().then();
+                            SuccessAlert("삭제완료");
+                          })
+                          .catch(() => ErrorAlert("삭제실패")),
+                      )
+                    }
+                  />
+                </TableFunctionLine>
+              ),
+            },
+          ]
+        : []),
     ],
-    [refetch, setSelectedEmployee],
+    [refetch, setSelectedEmployee, user.level],
   );
 
   const table = useReactTable<EmployeeType>({
@@ -219,14 +226,16 @@ export function EmployeeList(props: {
               }
             />
           </div>
-          <AddEmployeeButton
-            label="직원 추가"
-            isActive={true}
-            activeBackgroundColor={theme.mode.cardBackground}
-            inActiveBackgroundColor={theme.mode.cardBackground}
-            func={() => setOpen(true)}
-            theme={theme}
-          />
+          {isManager ? (
+            <AddEmployeeButton
+              label="직원 추가"
+              isActive={true}
+              activeBackgroundColor={theme.mode.cardBackground}
+              inActiveBackgroundColor={theme.mode.cardBackground}
+              func={() => setOpen(true)}
+              theme={theme}
+            />
+          ) : null}
         </HeaderLine>
         <HorizontalDivider width={95} />
         <TableContainer width={(windowWidth / 100) * 92}>
