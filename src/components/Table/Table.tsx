@@ -149,8 +149,15 @@ export function Pagination(props: {
             theme={theme}
           />
         </PaginationButtonCase>
-        <span>
-          <PageListArea ref={pageListAreaRef}>
+        <PaginationListWrapper>
+          <PageListArea
+            ref={pageListAreaRef}
+            pageLength={
+              generateNumberArray(
+                table.getPageCount() === 0 ? 1 : table.getPageCount(),
+              ).length + 1
+            }
+          >
             {generateNumberArray(
               table.getPageCount() === 0 ? 1 : table.getPageCount(),
             ).map((index) => (
@@ -167,7 +174,7 @@ export function Pagination(props: {
               </PageList>
             ))}
           </PageListArea>
-        </span>
+        </PaginationListWrapper>
         <PaginationButtonCase className="not-drag">
           <PaginationButton
             func={() => {
@@ -291,16 +298,18 @@ export const PageList = styled.li<{ isActive: boolean; theme: Theme }>(
   `,
 );
 
-export const PageListArea = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-  width: 180px;
-  height: 100%;
-  overflow-x: scroll;
-`;
+export const PageListArea = styled.div<{ pageLength: number }>(
+  ({ pageLength }) => css`
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 5px;
+    width: ${pageLength > 20 ? 20 * 12 : pageLength * 18}px;
+    height: 100%;
+    overflow-x: scroll;
+  `,
+);
 
 export const PageViewSelector = styled.select<{ theme: Theme }>(
   ({ theme }) => css`
@@ -325,6 +334,8 @@ const PaginationButton = styled(FuncIconItem)<{ theme: Theme }>(
     }
   `,
 );
+
+const PaginationListWrapper = styled.div``;
 
 export const StyledContainer = styled(Container)<{ theme: Theme }>(
   ({ theme }) => css`
