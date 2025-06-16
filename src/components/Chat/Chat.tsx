@@ -1,9 +1,8 @@
 import { css, Theme, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-import { SendIcon } from "../styled/icons";
-import { badgeClasses } from "@mui/material";
-import { StyledBadge } from "../layouts/Layouts";
-import { Container } from "../layouts/Frames/FrameLayouts";
+import { SendIcon } from "../styled/icons"; // import { badgeClasses } from "@mui/material";
+// import { StyledBadge } from "../layouts/Layouts";
+import { Container } from "../layouts/Frames";
 import Button from "@mui/material/Button";
 
 export function Chat() {
@@ -13,7 +12,7 @@ export function Chat() {
     <ChatContainer>
       <DMButton theme={theme}>
         <StyledSendIcon theme={theme} />
-        <NotifyBadge badgeContent={2} color="error" overlap="circular" />
+        {/*<NotifyBadge badgeContent={2} color="error" overlap="circular" />*/}
       </DMButton>
     </ChatContainer>
   );
@@ -29,14 +28,14 @@ const StyledSendIcon = styled(SendIcon)<{ theme: Theme }>(
   `,
 );
 
-const NotifyBadge = styled(StyledBadge)`
-  & .${badgeClasses.badge} {
-    font-size: 12px;
-    position: absolute;
-    top: -24px;
-    right: -16px;
-  }
-`;
+// const NotifyBadge = styled(StyledBadge)`
+//   & .${badgeClasses.badge} {
+//     font-size: 12px;
+//     position: absolute;
+//     top: -24px;
+//     right: -16px;
+//   }
+// `;
 
 const DMButton = styled(Button)<{ theme: Theme }>(
   ({ theme }) => css`
