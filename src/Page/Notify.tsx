@@ -5,11 +5,11 @@ import {
   getNotifyListByUnReadEmployee,
 } from "../api/notify";
 import { NotifyList } from "../components/Notify/NotifyList";
-import { useUserContext } from "../context/UserContext";
+import { useEmployeeContext } from "../context/UserContext";
 import { useState } from "react";
 
 export function Notify() {
-  const { user } = useUserContext();
+  const { employee } = useEmployeeContext();
 
   const [all, setAll] = useState<boolean>(false);
   const [notifyType, setNotifyType] = useState<"read" | "unread">("unread");
@@ -21,22 +21,22 @@ export function Notify() {
         return getAllNotifyList();
       } else {
         if (notifyType === "read") {
-          return getNotifyListByReadEmployee(user!.id, user!.level);
+          return getNotifyListByReadEmployee();
         } else {
-          return getNotifyListByUnReadEmployee(user!.id, user!.level);
+          return getNotifyListByUnReadEmployee();
         }
       }
     },
-    refetchInterval: 10000,
-    enabled: Boolean(user),
+    refetchInterval: 300000,
+    enabled: Boolean(employee),
   });
 
-  if (!notifyListByLevel || !user) return;
+  if (!notifyListByLevel || !employee) return;
 
   return (
     <>
       <NotifyList
-        user={user}
+        employee={employee}
         notifyList={notifyListByLevel}
         notifyTypeState={{ notifyType, setNotifyType }}
         allState={{ all, setAll }}

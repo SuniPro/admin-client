@@ -10,12 +10,12 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
-import { NotifyType } from "../../model/notify";
+import { NotifyType } from "@/model/notify";
 import {
-  EmployeeType,
+  EmployeeInfoType,
   getLevelNameByRank,
   getRankByLevelName,
-} from "../../model/employee";
+} from "@/model/employee";
 import { iso8601ToYYMMDDHHMM } from "../styled/Date/DateFomatter";
 import { Container } from "../layouts/Frames";
 import { css, Theme, useTheme } from "@emotion/react";
@@ -29,7 +29,7 @@ import {
 } from "../layouts";
 import { Pagination, TableBody, TableHeader } from "../Table";
 import { CustomModal, EditorModalContainer, ModalHeaderLine } from "../Modal";
-import { createNotify, readNotify } from "../../api/notify";
+import { createNotify, readNotify } from "@/api/notify";
 import { ErrorAlert, SuccessAlert } from "../Alert";
 import { LexicalEditor } from "../../modules/lexical-editor/lexical/src/LexicalEditor";
 import { Viewer } from "../Lexical/Editor";
@@ -58,11 +58,11 @@ export function ViewNotify(props: { notify: NotifyType; close: () => void }) {
 }
 
 function WriteNotify(props: {
-  user: EmployeeType;
+  employee: EmployeeInfoType;
   close: () => void;
   width: number;
 }) {
-  const { user, close, width } = props;
+  const { employee, close, width } = props;
 
   const [title, setTitle] = useState<string>("");
   const [contents, setContents] = useState<string>("");
@@ -71,10 +71,11 @@ function WriteNotify(props: {
   const saveNotify = () => {
     const notify: NotifyType = {
       id: 0,
-      rank: getRankByLevelName(user.level),
-      writer: user.name,
+      rank: getRankByLevelName(employee.level),
+      writer: employee.name,
       title,
       contents,
+      site: employee.site,
       insertDateTime: DateTime.now()
         .setZone("Asia/Seoul")
         .toISO({ includeOffset: false })!,
@@ -134,7 +135,7 @@ const StyledInput = styled.input<{
 );
 
 export function NotifyList(props: {
-  user: EmployeeType;
+  employee: EmployeeInfoType;
   notifyList: NotifyType[];
   notifyTypeState: {
     notifyType: "read" | "unread";
@@ -145,7 +146,7 @@ export function NotifyList(props: {
     setAll: Dispatch<SetStateAction<boolean>>;
   };
 }) {
-  const { user, notifyList, notifyTypeState, allState } = props;
+  const { employee, notifyList, notifyTypeState, allState } = props;
   const { notifyType, setNotifyType } = notifyTypeState;
   const { all, setAll } = allState;
   const theme = useTheme();
@@ -204,7 +205,7 @@ export function NotifyList(props: {
             func={() => {
               setSelectedNotify(row.original);
               setViewerOpen(true);
-              readNotify(row.original.id, user.id).then();
+              readNotify(row.original.id).then();
             }}
             text={row.getValue("title")}
             testAlign="center"
@@ -222,7 +223,7 @@ export function NotifyList(props: {
         ),
       },
     ],
-    [user.id],
+    [],
   );
 
   const table = useReactTable<NotifyType>({
@@ -269,7 +270,7 @@ export function NotifyList(props: {
               />
             </div>
             <VerticalDivider
-              height={80}
+              height={20}
               css={css`
                 margin: 0 10px;
               `}
@@ -340,7 +341,7 @@ export function NotifyList(props: {
           close={() => setWriteOpen(false)}
           children={
             <WriteNotify
-              user={user}
+              employee={employee}
               close={() => setWriteOpen(false)}
               width={size}
             />
