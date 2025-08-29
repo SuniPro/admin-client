@@ -302,7 +302,7 @@ export const PageListArea = styled.div<{ pageLength: number }>(
   ({ pageLength }) => css`
     display: flex;
     flex-direction: row;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
     gap: 5px;
     width: ${pageLength > 20 ? 20 * 12 : pageLength * 18}px;
