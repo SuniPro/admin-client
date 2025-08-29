@@ -291,7 +291,7 @@ function hex2rgb(hex: string): RGB {
     hex
       .replace(
         /^#?([a-f\d])([a-f\d])([a-f\d])$/i,
-        (m, r, g, b) => "#" + r + r + g + g + b + b,
+        (_m, r, g, b) => "#" + r + r + g + g + b + b,
       )
       .substring(1)
       .match(/.{2}/g) || []
@@ -316,8 +316,8 @@ function rgb2hsv({ r, g, b }: RGB): HSV {
     ? (max === r
         ? (g - b) / d + (g < b ? 6 : 0)
         : max === g
-        ? 2 + (b - r) / d
-        : 4 + (r - g) / d) * 60
+          ? 2 + (b - r) / d
+          : 4 + (r - g) / d) * 60
     : 0;
   const s = max ? (d / max) * 100 : 0;
   const v = max * 100;
