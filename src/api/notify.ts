@@ -28,10 +28,8 @@ export async function getNotifyById(id: number): Promise<NotifyType> {
   return response.data;
 }
 
-export async function getNotifyByLevel(
-  level: LevelType,
-): Promise<NotifyType[]> {
-  const response = await getFromEmployeeServer(`/notify/get/by/level/${level}`);
+export async function getNotifyByLevel(): Promise<NotifyType[]> {
+  const response = await getFromEmployeeServer(`/notify/get/by/level`);
   return response.data;
 }
 
@@ -56,14 +54,8 @@ export async function deleteNotify(id: number): Promise<void> {
   return response.data;
 }
 
-export async function readNotify(
-  id: number,
-  employeeId: number,
-): Promise<void> {
-  const response = await patchToEmployeeServer(
-    `/notify/read/${id}/${employeeId}`,
-    null,
-  );
+export async function readNotify(id: number): Promise<void> {
+  const response = await patchToEmployeeServer(`/notify/read/${id}`, null);
   return response.data;
 }
 
@@ -78,34 +70,19 @@ export async function isNotifyRead(
   return response.data;
 }
 
-export async function getCountUnReadAboutNotify(
-  id: number,
-  level: LevelType,
-): Promise<number> {
-  const response = await getFromEmployeeServer(
-    `/notify/count/notify/${id}/${level}`,
-  );
+export async function getUnreadNotifyCount(): Promise<number> {
+  const response = await getFromEmployeeServer(`/notify/count/notify`);
   return response.data;
 }
 
-export async function getNotifyListByReadEmployee(
-  employeeId: number,
-  level: LevelType,
-): Promise<NotifyType[]> {
-  const response = await getFromEmployeeServer(
-    `/notify/get/read/${employeeId}/${level}`,
-  );
+export async function getNotifyListByReadEmployee(): Promise<NotifyType[]> {
+  const response = await getFromEmployeeServer(`/notify/get/read`);
 
   return response.data;
 }
 
-export async function getNotifyListByUnReadEmployee(
-  employeeId: number,
-  level: LevelType,
-): Promise<NotifyType[]> {
-  const response = await getFromEmployeeServer(
-    `/notify/get/unread/${employeeId}/${level}`,
-  );
+export async function getNotifyListByUnReadEmployee(): Promise<NotifyType[]> {
+  const response = await getFromEmployeeServer(`/notify/get/unread/list`);
 
   return response.data;
 }
