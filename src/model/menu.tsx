@@ -1,21 +1,21 @@
 export type DashboardMenuType =
-  | "employeeList"
-  | "workTable"
   | "notice"
-  | "report";
+  | "userManage"
+  | "depositManage"
+  | "siteManage";
 
 export interface DashBoardMenuType {
   label: string;
   type: DashboardMenuType;
 }
 
+/** 유저관리는 CryptoAccount Management를 일컫음. */
 export const DashboardMenu: DashBoardMenuType[] = [
   { label: "공지사항", type: "notice" },
   {
-    label: "직원관리",
-    type: "employeeList",
+    label: "유저관리",
+    type: "userManage",
   },
-  { label: "업무관리", type: "workTable" },
-  { label: "일일보고", type: "report" },
-  { label: "스케쥴", type: "employeeList" },
+  { label: "입금관리", type: "depositManage" },
+  { label: "지갑관리", type: "siteManage" },
 ];
