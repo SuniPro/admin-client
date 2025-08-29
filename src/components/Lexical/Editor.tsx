@@ -15,8 +15,6 @@ import { CodeHighlightNode, CodeNode } from "@lexical/code";
 import { AutoLinkNode, LinkNode } from "@lexical/link";
 import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
-import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
-import { TRANSFORMERS } from "@lexical/markdown";
 import { EDITOR_THEME } from "./theme/EditorTheme";
 import { ToolbarPlugin } from "./plugIn/ToolbarPlugin";
 import { CodeHighlightPlugin } from "./plugIn/CodeHighlightPlugin";
@@ -86,7 +84,6 @@ export function Editor(props: {
           <LinkPlugin />
           <PlaygroundAutoLinkPlugin />
           <ListMaxIndentLevelPlugin maxDepth={7} />
-          <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
         </div>
       </div>
     </LexicalComposer>
