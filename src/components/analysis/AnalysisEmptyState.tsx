@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import styled from "@emotion/styled";
-import { OutLine } from "../layouts/Layouts";
+import { OutLine } from "../layouts";
 import WarningIcon from "@mui/icons-material/Warning";
 
 export function AnalysisEmptyState() {
