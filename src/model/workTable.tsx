@@ -11,8 +11,8 @@ export interface WorkTableType {
 export const workMenuList = [
   "MANAGE_EMPLOYEE",
   "REVIEW_EMPLOYEE",
-  "MANAGE_TETHER",
-  "MANAGE_TETHER_DEPOSIT",
+  "MANAGE_CRYPTO",
+  "MANAGE_CRYPTO_DEPOSIT",
   "NOTIFY",
 ] as const;
 
@@ -23,7 +23,7 @@ export type WorkMenuListType = (typeof workMenuList)[number];
 export const WorkMenuLabelMap: Record<WorkMenuListType, string> = {
   MANAGE_EMPLOYEE: "직원관리",
   REVIEW_EMPLOYEE: "직원평가",
-  MANAGE_TETHER: "테더관리",
-  MANAGE_TETHER_DEPOSIT: "테더 입금관리",
+  MANAGE_CRYPTO: "테더관리",
+  MANAGE_CRYPTO_DEPOSIT: "테더 입금관리",
   NOTIFY: "공지사항",
 };
