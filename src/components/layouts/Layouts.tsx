@@ -28,15 +28,15 @@ export function VerticalDivider(props: { height: number; className?: string }) {
 const VerticalLine = styled.div<{ theme: Theme; height: number }>(
   ({ theme, height }) => css`
     width: 1px;
-    height: ${height}%;
-    border-left: 1px solid ${theme.mode.textSecondary};
+    height: ${height}px;
+    border-left: 1px solid ${theme.mode.borderSecondary};
   `,
 );
 
 const HorizontalLine = styled.div<{ theme: Theme; width: number }>(
   ({ theme, width }) => css`
     width: ${width}%;
-    border-bottom: 1px solid ${theme.mode.textSecondary};
+    border-bottom: 1px solid ${theme.mode.borderSecondary};
   `,
 );
 
@@ -65,8 +65,15 @@ export function OutLine(props: {
   title?: string;
   children: ReactNode;
   alignItems?: "center" | "flex-start";
+  titleAlign?: "left" | "center";
 }) {
-  const { className, title, alignItems = "center", children } = props;
+  const {
+    className,
+    title,
+    alignItems = "center",
+    titleAlign = "center",
+    children,
+  } = props;
   const theme = useTheme();
   return (
     <OutLineContainer
@@ -74,7 +81,11 @@ export function OutLine(props: {
       theme={theme}
       alignItems={alignItems}
     >
-      {title && <OutLineTitle>{title}</OutLineTitle>}
+      {title && (
+        <OutLineTitle textAlign={titleAlign} theme={theme}>
+          {title}
+        </OutLineTitle>
+      )}
       {children}
     </OutLineContainer>
   );
@@ -92,15 +103,16 @@ const OutLineContainer = styled.div<{
     align-items: ${alignItems};
     width: 100%;
     height: auto;
-    border: 1px solid ${theme.mode.textSecondary};
+    border: 1px solid ${theme.mode.borderSecondary};
     border-radius: ${theme.borderRadius.softBox};
     background: ${theme.mode.cardBackground};
     box-sizing: border-box;
   `,
 );
 
-const OutLineTitle = styled.div(
-  ({ theme }) => css`
+const OutLineTitle = styled.div<{ theme: Theme; textAlign: string }>(
+  ({ theme, textAlign }) => css`
+    text-align: ${textAlign};
     width: 100%;
     color: ${theme.mode.textPrimary};
     /* Default/Label/12px-Eb */
