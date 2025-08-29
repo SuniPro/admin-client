@@ -44,16 +44,24 @@ export const rangeFormatter = (
   }
 };
 
+export async function getFromCryptoTrackerServer(
+  url: string,
+  init: InitOptions = { skipError: false },
+): Promise<AxiosResponse> {
+  const server = import.meta.env.VITE_CRYPTO_TRACKER_SERVER_PREFIX;
+  const serverUrl = server + url;
+  return axios
+    .get(serverUrl, {
+      headers: { "Content-Type": "application/json" },
+    })
+    .then((response) => responseHandler(response, serverUrl, init))
+    .catch(errorHandler);
+}
+
 export async function getFromEmployeeServer(
   url: string,
   init: InitOptions = { skipError: false },
 ): Promise<AxiosResponse> {
-  const token = localStorage.getItem("access-token");
-
-  if (!token || token.trim() === "") {
-    throw new Error("access-token이 localStorage에 없습니다");
-  }
-
   const server = import.meta.env.VITE_EMPLOYEE_SERVER_PREFIX;
   const serverUrl = server + url;
   return axios
@@ -61,7 +69,6 @@ export async function getFromEmployeeServer(
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
     })
     .then((response) => responseHandler(response, serverUrl, init))
@@ -74,14 +81,12 @@ export async function postToEmployeeServer(
   param: any,
   init: RequestInit & { skipError?: boolean } = {},
 ): Promise<AxiosResponse> {
-  const token = localStorage.getItem("access-token");
   const server = import.meta.env.VITE_EMPLOYEE_SERVER_PREFIX;
   const serverUrl = server + url;
   return axios
     .post(serverUrl, param, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
     })
     .catch(errorHandler)
@@ -94,14 +99,12 @@ export async function putToEmployeeServer(
   param: any,
   init: RequestInit & { skipError?: boolean } = {},
 ): Promise<AxiosResponse> {
-  const token = localStorage.getItem("access-token");
   const server = import.meta.env.VITE_EMPLOYEE_SERVER_PREFIX;
   const serverUrl = server + url;
   return axios
     .put(serverUrl, param, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
     })
     .catch(errorHandler)
@@ -114,14 +117,12 @@ export async function patchToEmployeeServer(
   param: any,
   init: RequestInit & { skipError?: boolean } = {},
 ): Promise<AxiosResponse> {
-  const token = localStorage.getItem("access-token");
   const server = import.meta.env.VITE_EMPLOYEE_SERVER_PREFIX;
   const serverUrl = server + url;
   return axios
     .patch(serverUrl, param, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
     })
     .catch(errorHandler)
@@ -136,14 +137,12 @@ export async function updateToEmployeeServer(
     skipError?: boolean;
   } = {},
 ): Promise<AxiosResponse> {
-  const token = localStorage.getItem("access-token");
   const server = import.meta.env.VITE_EMPLOYEE_SERVER_PREFIX;
   const serverUrl = server + url;
   return axios
     .put(serverUrl, param, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
     })
     .catch(errorHandler)
@@ -154,14 +153,12 @@ export async function deleteToEmployeeServer(
   url: string,
   init: InitOptions = { skipError: false },
 ): Promise<AxiosResponse> {
-  const token = localStorage.getItem("access-token");
   const server = import.meta.env.VITE_EMPLOYEE_SERVER_PREFIX;
   const serverUrl = server + url;
   return axios
     .delete(serverUrl, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
     })
     .then((response) => responseHandler(response, serverUrl, init))
@@ -172,14 +169,12 @@ export async function getFromUserServer(
   url: string,
   init: InitOptions = { skipError: false },
 ): Promise<AxiosResponse> {
-  const token = localStorage.getItem("access-token");
   const server = import.meta.env.VITE_USER_SERVER_PREFIX;
   const serverUrl = server + url;
   return axios
     .get(serverUrl, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
     })
     .then((response) => responseHandler(response, serverUrl, init))
@@ -192,14 +187,12 @@ export async function postToUserServer(
   param: any,
   init: RequestInit & { skipError?: boolean } = {},
 ): Promise<AxiosResponse> {
-  const token = localStorage.getItem("access-token");
   const server = import.meta.env.VITE_EMPLOYEE_SERVER_PREFIX;
   const serverUrl = server + url;
   return axios
     .post(serverUrl, param, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
     })
     .catch(errorHandler)
@@ -212,14 +205,12 @@ export async function putToUserServer(
   param: any,
   init: RequestInit & { skipError?: boolean } = {},
 ): Promise<AxiosResponse> {
-  const token = localStorage.getItem("access-token");
   const server = import.meta.env.VITE_EMPLOYEE_SERVER_PREFIX;
   const serverUrl = server + url;
   return axios
     .put(serverUrl, param, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
     })
     .catch(errorHandler)
@@ -232,14 +223,12 @@ export async function patchToUserServer(
   param: any,
   init: RequestInit & { skipError?: boolean } = {},
 ): Promise<AxiosResponse> {
-  const token = localStorage.getItem("access-token");
   const server = import.meta.env.VITE_EMPLOYEE_SERVER_PREFIX;
   const serverUrl = server + url;
   return axios
     .patch(serverUrl, param, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
     })
     .catch(errorHandler)
@@ -254,14 +243,12 @@ export async function updateToUserServer(
     skipError?: boolean;
   } = {},
 ): Promise<AxiosResponse> {
-  const token = localStorage.getItem("access-token");
   const server = import.meta.env.VITE_EMPLOYEE_SERVER_PREFIX;
   const serverUrl = server + url;
   return axios
     .put(serverUrl, param, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
     })
     .catch(errorHandler)
@@ -272,14 +259,12 @@ export async function deleteToUserServer(
   url: string,
   init: InitOptions = { skipError: false },
 ): Promise<AxiosResponse> {
-  const token = localStorage.getItem("access-token");
   const server = import.meta.env.VITE_EMPLOYEE_SERVER_PREFIX;
   const serverUrl = server + url;
   return axios
     .delete(serverUrl, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
     })
     .then((response) => responseHandler(response, serverUrl, init))
