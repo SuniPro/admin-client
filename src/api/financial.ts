@@ -1,14 +1,16 @@
+import { Chain } from "@/hooks/useDetectChain";
 import {
-  TetherAccountType,
-  TetherAccountUpdateType,
-  TetherDepositChangeStatusType,
-  TetherDepositSummaryType,
-  TetherDepositType,
+  AccountSummaryInfoType,
+  ChainType,
+  CryptoAccountType,
+  CryptoDepositType,
+  NormalizedTransfer,
   TransactionStatusType,
 } from "../model/financial";
 import { PaginationResponse } from "../model/pagination";
 import {
   deleteToEmployeeServer,
+  getFromCryptoTrackerServer,
   getFromEmployeeServer,
   getFromUserServer,
   patchToEmployeeServer,
@@ -16,194 +18,87 @@ import {
 } from "./base";
 import { ValueType } from "rsuite/DateRangePicker";
 
-export async function updateSite(
-  updateInfo: TetherAccountUpdateType,
-): Promise<void> {
-  await patchToEmployeeServer("/financial/tether/update/site", updateInfo);
-}
-
-export async function updateMemo(
-  updateInfo: TetherAccountUpdateType,
-): Promise<void> {
+export async function updateMemo(updateInfo: CryptoAccountType): Promise<void> {
   await patchToEmployeeServer("/financial/tether/update/memo", updateInfo);
 }
 
-export async function getTetherAccount(
+export async function getAllCryptoAccountBySite(
+  site: string,
   page: number,
   size: number,
-  email: string | null | undefined,
-): Promise<PaginationResponse<TetherAccountType>> {
-  if (email) {
+): Promise<PaginationResponse<CryptoAccountType>> {
+  const response = await getFromEmployeeServer(
+    `/financial/get/crypto/account/by/site/${site}?page=${page}&size=${size}&sort=insertDateTime,desc`,
+  );
+  return response.data;
+}
+
+export async function getCryptoAccountByEmailAndSite(
+  email: string,
+  site: string,
+): Promise<CryptoAccountType[]> {
+  const response = await getFromEmployeeServer(
+    `/financial/get/crypto/account/email/${email}/by/site/${site}`,
+  );
+  return response.data;
+}
+
+export async function getSendDepositsBySite(
+  send: boolean,
+  site: string,
+  page: number,
+  size: number,
+): Promise<PaginationResponse<CryptoDepositType>> {
+  const response = await getFromEmployeeServer(
+    `/financial/get/crypto/deposit/send/${send}/by/site/${site}?page=${page}&size=${size}&sort=requestedAt,desc`,
+  );
+
+  return response.data;
+}
+
+export async function getDepositByAddressAndRangeAndSite(
+  address: string,
+  type: "to" | "from",
+  isSend: boolean,
+  site: string,
+  page: number,
+  size: number,
+  range: ValueType,
+) {
+  const dateRangeValue = rangeFormatter(range);
+  if (!dateRangeValue) return;
+  if (address.length !== 0 && type === "to") {
     const response = await getFromEmployeeServer(
-      `/financial/tether/get/account/by/email/${email}?page=${page}&size=${size}&sort=insertDateTime,desc`,
+      `/financial/get/crypto/account/range/address/to/${address}/send/${isSend}/by/site/${site}?start=${dateRangeValue.start}&end=${dateRangeValue.end}&page=${page}&size=${size}&sort=requestedAt,desc`,
     );
     return response.data;
-  } else {
+  } else if (address.length !== 0 && type === "from") {
     const response = await getFromEmployeeServer(
-      `/financial/tether/get/account/all?page=${page}&size=${size}&sort=insertDateTime,desc`,
+      `/financial/get/crypto/account/range/address/from/${address}/send/${isSend}/by/site/${site}?start=${dateRangeValue.start}&end=${dateRangeValue.end}&page=${page}&size=${size}&sort=requestedAt,desc`,
     );
     return response.data;
   }
-}
 
-export async function updateTetherWallet(
-  id: number,
-  tetherWallet: string,
-): Promise<TetherAccountType> {
-  const response = await patchToEmployeeServer(
-    "/financial/tether/update/wallet",
-    { id, tetherWallet },
-  );
-  return response.data;
-}
-
-export async function approveDeposit(
-  acceptRequest: TetherDepositChangeStatusType,
-): Promise<boolean> {
-  const response = await patchToEmployeeServer(
-    "/financial/tether/accept/deposit",
-    acceptRequest,
-  );
-
-  return response.data;
-}
-
-export async function cancelDeposit(
-  cancelRequest: TetherDepositChangeStatusType,
-): Promise<boolean> {
-  const response = await patchToEmployeeServer(
-    "/financial/tether/cancel/deposit",
-    cancelRequest,
-  );
-
-  return response.data;
-}
-
-export async function getDepositsByAccountId(
-  id: number,
-): Promise<TetherDepositType[]> {
   const response = await getFromEmployeeServer(
-    `/financial/tether/get/deposits/by/id/${id}`,
-  );
-
-  return response.data;
-}
-
-export async function getDepositsByStatusOrEmailOrRange(
-  status: TransactionStatusType,
-  page: number,
-  size: number,
-  email: string | null | undefined,
-  range: ValueType,
-): Promise<PaginationResponse<TetherDepositType>> {
-  const dateRangeValue = rangeFormatter(range);
-  if (email && range?.length == 0) {
-    const response = await getFromEmployeeServer(
-      `financial/tether/get/deposits/by/status/${status}/email/${email}`,
-    );
-    return response.data;
-  } else if (!email && dateRangeValue) {
-    const response = await getFromEmployeeServer(
-      `/financial/tether/get/deposits/range/by/status/${status}?start=${dateRangeValue.start}&end=${dateRangeValue.end}&page=${page}&size=${size}&sort=requestedAt,desc`,
-    );
-    return response.data;
-  } else if (email && dateRangeValue) {
-    const response = await getFromEmployeeServer(
-      `/financial/tether/get/deposits/range/by/status/${status}/email/${email}?start=${dateRangeValue.start}&end=${dateRangeValue.end}&page=${page}&size=${size}&sort=requestedAt,desc`,
-    );
-    return response.data;
-  } else {
-    const response = await getFromEmployeeServer(
-      `/financial/tether/get/deposits/by/status/${status}?page=${page}&size=${size}&sort=requestedAt,desc`,
-    );
-    return response.data;
-  }
-}
-
-export async function getDepositsByAccountIdAndStatus(
-  id: number,
-  status: TransactionStatusType,
-): Promise<TetherDepositType[]> {
-  const response = await getFromEmployeeServer(
-    `/financial/tether/get/${status}/deposits/by/id/${id}`,
+    `/financial/get/crypto/account/range/by/site/${site}?start=${dateRangeValue.start}&end=${dateRangeValue.end}&page=${page}&size=${size}&sort=requestedAt,desc`,
   );
   return response.data;
 }
 
-export async function getApprovedDepositsByTetherWallet(
-  tetherWallet: string,
-): Promise<TetherDepositType[]> {
-  const response = await getFromEmployeeServer(
-    `/financial/tether/get/approved/deposits/by/tether/wallet/${tetherWallet}`,
-  );
+export async function updateSend(id: number, isSend: boolean) {
+  const response = await patchToEmployeeServer("/financial/update/send", {
+    id,
+    isSend,
+  });
 
   return response.data;
 }
 
-export async function getNonApprovedDepositsByTetherWallet(
-  tetherWallet: string,
-): Promise<TetherDepositType[]> {
-  const response = await getFromEmployeeServer(
-    `/financial/tether/get/non/approved/deposits/by/tether/wallet/${tetherWallet}`,
-  );
-  return response.data;
-}
+export async function updateCryptoWallet(cryptoWallet: string) {
+  const response = await patchToEmployeeServer("/financial/update/wallet", {
+    cryptoWallet,
+  });
 
-export async function getLatestDeposit(id: number): Promise<TetherDepositType> {
-  const response = await getFromEmployeeServer(
-    `/financial/tether/get/latest/deposit/by/id/${id}`,
-  );
-  return response.data;
-}
-
-export async function getLatestDepositByWallet(
-  tetherWallet: string,
-): Promise<TetherDepositType> {
-  const response = await getFromEmployeeServer(
-    `/financial/tether/get/latest/deposit/by/tether/wallet/${tetherWallet}`,
-  );
-  return response.data;
-}
-
-export async function getDepositsByDateRange(
-  startDate: string,
-  endDate: string,
-): Promise<TetherDepositType[]> {
-  const response = await getFromEmployeeServer(
-    `/financial/tether/get/deposits/range?startDate=${startDate}&endDate=${endDate}`,
-  );
-  return response.data;
-}
-
-export async function getDepositsByWalletAndDateRange(
-  tetherWallet: string,
-  startDate: Date,
-  endDate: Date,
-): Promise<TetherDepositType[]> {
-  const response = await getFromEmployeeServer(
-    `/financial/tether/get/deposits/range/by/wallet/${tetherWallet}?startDate=${startDate}&endDate=${endDate}`,
-  );
-  return response.data;
-}
-
-export async function getTotalDepositSummaryByStatusAndEmail(
-  status: TransactionStatusType,
-  email: string | null | undefined,
-  range: ValueType,
-): Promise<TetherDepositSummaryType> {
-  const dateRangeValue = rangeFormatter(range);
-
-  // 1. email 정규화 (null/undefined → "null" 문자열로 통일)
-  const normalizedEmail = email ?? "null";
-
-  // 2. URL 동적 생성
-  const baseUrl = `/financial/tether/get/total/deposit/amount/by/status/${status}/email/${normalizedEmail}`;
-  const queryParams = dateRangeValue
-    ? `?start=${dateRangeValue.start}&end=${dateRangeValue.end}`
-    : "";
-
-  // 3. API 호출
-  const response = await getFromEmployeeServer(`${baseUrl}${queryParams}`);
   return response.data;
 }
 
@@ -226,6 +121,30 @@ export async function deleteDepositById(depositId: number): Promise<void> {
 
 export async function getExchangeInfo(): Promise<number> {
   const response = await getFromUserServer("/financial/exchange");
+
+  return response.data;
+}
+
+/* Transfer List */
+export async function getTransferList(
+  address: string,
+  chain: Chain,
+): Promise<NormalizedTransfer[]> {
+  const response = await getFromCryptoTrackerServer(
+    `/transfer/get?chain=${chain}&address=${address}`,
+  );
+
+  return response.data;
+}
+
+export async function getAccountSummaryInfoBySite(
+  chain: ChainType,
+  cryptoWallet: string,
+  site: string,
+): Promise<AccountSummaryInfoType> {
+  const response = await getFromEmployeeServer(
+    `/financial/get/crypto/account/info/chain/${chain}/wallet/${cryptoWallet}/by/site/${site}`,
+  );
 
   return response.data;
 }
