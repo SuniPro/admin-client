@@ -10,17 +10,17 @@ import { DashboardMenuType } from "./model/menu";
 import { Header } from "./components/layouts/Header";
 import { SignIn } from "./Page/Sign";
 import { Toaster } from "react-hot-toast";
-import { UserContextProvider } from "./context/UserContext";
+import { EmployeeContextProvider } from "./context/UserContext";
 import { WindowContextProvider } from "./context/WindowContext";
 import { Chat } from "./components/Chat/Chat";
 import { GlobalStyled } from "./components/layouts/Frames";
+import { Provider } from "./provider";
 
 const QUERY_CLIENT = new QueryClient();
 
 function App() {
   const [darkMode, setDarkMode] = useState<boolean>(false);
-  const [activeMenu, setActiveMenu] =
-    useState<DashboardMenuType>("employeeList");
+  const [activeMenu, setActiveMenu] = useState<DashboardMenuType>("userManage");
   const { isDarkMode } = useDarkMode();
 
   useEffect(() => {
@@ -32,20 +32,22 @@ function App() {
       <QueryClientProvider client={QUERY_CLIENT}>
         <WindowContextProvider>
           <BrowserRouter>
-            <UserContextProvider>
-              <Header activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
-              <Routes>
-                <Route
-                  path="/"
-                  element={<Dashboard activeMenu={activeMenu} />}
-                />
-                <Route path="/login" element={<SignIn />} />
-              </Routes>
+            <EmployeeContextProvider>
+              <Provider>
+                <Header activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
+                <Routes>
+                  <Route
+                    path="/"
+                    element={<Dashboard activeMenu={activeMenu} />}
+                  />
+                  <Route path="/login" element={<SignIn />} />
+                </Routes>
+              </Provider>
               <Chat />
               <GlobalStyled />
               <Toaster />
               <footer style={{ height: "20px" }}></footer>
-            </UserContextProvider>
+            </EmployeeContextProvider>
           </BrowserRouter>
         </WindowContextProvider>
       </QueryClientProvider>
