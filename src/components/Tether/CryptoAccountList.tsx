@@ -1,7 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { useNavigate } from "react-router-dom";
-import { EmployeeType } from "../../model/employee";
-import { ConfirmAlert, ErrorAlert, SuccessAlert } from "../Alert";
+import { EmployeeInfoType } from "../../model/employee";
 import { css, Theme, useTheme } from "@emotion/react";
 import { useWindowContext } from "../../context/WindowContext";
 import {
@@ -14,15 +12,14 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { Dispatch, SetStateAction, useMemo, useState } from "react";
-import {
-  QueryObserverResult,
-  RefetchOptions,
-  useQuery,
-} from "@tanstack/react-query";
+import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { PaginationResponse } from "../../model/pagination";
-import { TetherAccountType } from "../../model/financial";
-import { getTetherAccount, updateTetherWallet } from "../../api/financial";
+import { CryptoAccountType } from "../../model/financial";
+import {
+  getAllCryptoAccountBySite,
+  getCryptoAccountByEmailAndSite,
+} from "../../api/financial";
 import { iso8601ToYYMMDDHHMM } from "../styled/Date/DateFomatter";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
@@ -41,37 +38,23 @@ import { CustomModal } from "../Modal";
 import styled from "@emotion/styled";
 import { Container } from "../layouts/Frames";
 import { PlusButton } from "../styled/Button";
-import { useDebounceCallback } from "usehooks-ts";
-import { WriteTetherMemo } from "../financial/Memo";
 import { EditNoteIcon } from "../styled/icons";
 
-export function TetherAccountList(props: {
-  user: EmployeeType;
-  selectedAccountState: {
-    selectedAccount: TetherAccountType;
-    setSelectedAccount: Dispatch<SetStateAction<TetherAccountType>>;
-  };
-}) {
-  const { user, selectedAccountState } = props;
-  const { selectedAccount, setSelectedAccount } = selectedAccountState;
-  const navigate = useNavigate();
-
-  if (user.level === "STAFF" || user.level === "ASSOCIATE") {
-    navigate("/");
-    ErrorAlert("현재 업무관리는 차장급 이상만 접근 가능합니다.");
-  }
+export function CryptoAccountList(props: { employee: EmployeeInfoType }) {
+  const { employee } = props;
 
   const theme = useTheme();
 
   const { windowWidth } = useWindowContext();
 
-  const [searchEmail, setSearchEmail] = useState<string | undefined>();
-  const debounced = useDebounceCallback(setSearchEmail, 80);
+  const [searchEmail, setSearchEmail] = useState<string>("");
+  const [searchAccount, setSearchAccount] = useState<CryptoAccountType[]>([]);
 
-  const [open, setOpen] = useState<boolean>(false);
-  const close = () => setOpen(false);
-
-  const [writeOpen, setWriteOpen] = useState<boolean>(false);
+  const emailSearch = () => {
+    getCryptoAccountByEmailAndSite(searchEmail, employee.site).then((result) =>
+      setSearchAccount(result),
+    );
+  };
 
   const [columnResizeMode] = useState<ColumnResizeMode>("onChange");
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -79,16 +62,17 @@ export function TetherAccountList(props: {
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
 
-  const { data, refetch } = useQuery<PaginationResponse<TetherAccountType>>({
-    queryKey: ["getAllTetherAccounts", searchEmail, pageIndex, pageSize],
-    queryFn: () => getTetherAccount(pageIndex, pageSize, searchEmail),
+  const { data, refetch } = useQuery<PaginationResponse<CryptoAccountType>>({
+    queryKey: ["getAllTetherAccounts", pageIndex, pageSize],
+    queryFn: () =>
+      getAllCryptoAccountBySite(employee.site, pageIndex, pageSize),
     placeholderData: (previousData) => previousData,
-    refetchInterval: 60000,
+    refetchInterval: 300000,
   });
 
   const tetherAccountList = data?.content;
 
-  const columns = useMemo<ColumnDef<TetherAccountType>[]>(
+  const columns = useMemo<ColumnDef<CryptoAccountType>[]>(
     () => [
       {
         id: "No.",
@@ -97,10 +81,10 @@ export function TetherAccountList(props: {
         accessorKey: "id",
       },
       {
-        id: "site",
-        header: "사이트",
+        id: "chainType",
+        header: "체인",
         size: 50,
-        accessorKey: "site",
+        accessorKey: "chainType",
       },
       {
         id: "email",
@@ -108,19 +92,9 @@ export function TetherAccountList(props: {
         accessorKey: "email",
       },
       {
-        id: "tetherWallet",
+        id: "cryptoWallet",
         header: "지갑주소",
-        accessorKey: "tetherWallet",
-        cell: ({ row }) => (
-          <span
-            onClick={() => {
-              setSelectedAccount(row.original);
-              setOpen(true);
-            }}
-          >
-            {row.getValue("tetherWallet")}
-          </span>
-        ),
+        accessorKey: "cryptoWallet",
       },
       {
         id: "insertDateTime",
@@ -152,21 +126,27 @@ export function TetherAccountList(props: {
           <TableFunctionLine>
             <EditNoteIcon
               color={row.original.memo !== null ? "primary" : "disabled"}
-              onClick={() => {
-                setSelectedAccount(row.original);
-                setWriteOpen(true);
-              }}
             />
             <DeleteIcon />
           </TableFunctionLine>
         ),
       },
     ],
-    [setSelectedAccount],
+    [],
   );
 
-  const table = useReactTable<TetherAccountType>({
-    data: tetherAccountList ?? [],
+  const tableRowHandle = () => {
+    if (searchAccount.length !== 0) {
+      return searchAccount;
+    } else if (tetherAccountList) {
+      return tetherAccountList;
+    } else {
+      return [];
+    }
+  };
+
+  const table = useReactTable<CryptoAccountType>({
+    data: tableRowHandle(),
     columns,
     pageCount: data?.totalPages ?? 0,
     state: {
@@ -211,25 +191,49 @@ export function TetherAccountList(props: {
             <EmailSearch
               value={searchEmail}
               placeholder="이메일 검색"
-              onChange={(e) => debounced(e.target.value)}
+              onChange={(e) => setSearchEmail(e.target.value)}
               theme={theme}
             />
           </div>
-          <TableHeaderFuncButton
-            label="초기화"
-            func={() => {
-              setSearchEmail(undefined);
-            }}
-            theme={theme}
+          <div
             css={css`
-              font-size: 12px;
-              border: 1px solid ${theme.mode.textSecondary};
-
-              &:hover {
-                color: ${theme.mode.textRevers};
-              }
+              display: flex;
+              flex-direction: row;
+              flex-wrap: nowrap;
+              gap: 10px;
             `}
-          />
+          >
+            <TableHeaderFuncButton
+              label="검색"
+              func={emailSearch}
+              theme={theme}
+              css={css`
+                font-size: 12px;
+                border: 1px solid ${theme.mode.textSecondary};
+
+                &:hover {
+                  color: ${theme.mode.textRevers};
+                }
+              `}
+            />
+            <TableHeaderFuncButton
+              label="초기화"
+              func={() => {
+                setSearchEmail("");
+                setSearchAccount([]);
+                refetch().then();
+              }}
+              theme={theme}
+              css={css`
+                font-size: 12px;
+                border: 1px solid ${theme.mode.textSecondary};
+
+                &:hover {
+                  color: ${theme.mode.textRevers};
+                }
+              `}
+            />
+          </div>
         </HeaderLine>
         <HorizontalDivider width={95} />
         <TableWrapper width={(windowWidth / 100) * 92} theme={theme}>
@@ -243,80 +247,80 @@ export function TetherAccountList(props: {
           </TableContainer>
         </TableWrapper>
         <Pagination table={table} viewSizeBox={true} />
-        <CustomModal
-          open={open}
-          close={close}
-          css={css`
-            height: 100px;
-            padding: 0 20px;
-          `}
-          children={
-            <ChangeTetherWallet
-              close={close}
-              refetch={refetch}
-              accountId={selectedAccount.id}
-            />
-          }
-        />
-        <StyledModal
-          open={writeOpen}
-          close={() => setWriteOpen(false)}
-          children={
-            <WriteTetherMemo
-              accountId={selectedAccount.id}
-              close={() => setWriteOpen(false)}
-              prevContents={selectedAccount.memo}
-              refetch={refetch}
-            />
-          }
-        />
+        {/*<CustomModal*/}
+        {/*  open={open}*/}
+        {/*  close={close}*/}
+        {/*  css={css`*/}
+        {/*    height: 100px;*/}
+        {/*    padding: 0 20px;*/}
+        {/*  `}*/}
+        {/*  children={*/}
+        {/*    <ChangeTetherWallet*/}
+        {/*      close={close}*/}
+        {/*      refetch={refetch}*/}
+        {/*      accountId={selectedAccount.id}*/}
+        {/*    />*/}
+        {/*  }*/}
+        {/*/>*/}
+        {/*<StyledModal*/}
+        {/*  open={writeOpen}*/}
+        {/*  close={() => setWriteOpen(false)}*/}
+        {/*  children={*/}
+        {/*    <WriteTetherMemo*/}
+        {/*      accountId={selectedAccount.id}*/}
+        {/*      close={() => setWriteOpen(false)}*/}
+        {/*      prevContents={selectedAccount.memo}*/}
+        {/*      refetch={refetch}*/}
+        {/*    />*/}
+        {/*  }*/}
+        {/*/>*/}
       </StyledContainer>
     </>
   );
 }
 
-function ChangeTetherWallet(props: {
-  accountId: number;
-  close: () => void;
-  refetch: (
-    _options?: RefetchOptions,
-  ) => Promise<
-    QueryObserverResult<PaginationResponse<TetherAccountType>, Error>
-  >;
-}) {
-  const { accountId, close, refetch } = props;
-  const [newWallet, setNewWallet] = useState<string>("");
-
-  const theme = useTheme();
-
-  return (
-    <ChangeTetherWalletContainer theme={theme}>
-      <InputLine>
-        <Label>주소</Label>
-        <ChangeWalletInput
-          maxLength={100}
-          onChange={(e) => setNewWallet(e.target.value)}
-          theme={theme}
-          placeholder="변경할 지갑 주소를 입력하세요."
-        />
-        <StyledPlusButton
-          func={() =>
-            ConfirmAlert("정말 변경하시겠습니까?", () =>
-              updateTetherWallet(accountId, newWallet)
-                .then(() => {
-                  close();
-                  refetch().then();
-                  SuccessAlert("변경 완료");
-                })
-                .catch((e) => ErrorAlert(e.message)),
-            )
-          }
-          theme={theme}
-        />
-      </InputLine>
-    </ChangeTetherWalletContainer>
-  );
-}
+// function ChangeTetherWallet(props: {
+//   accountId: number;
+//   close: () => void;
+//   refetch: (
+//     _options?: RefetchOptions,
+//   ) => Promise<
+//     QueryObserverResult<PaginationResponse<CryptoAccountType>, Error>
+//   >;
+// }) {
+//   const { accountId, close, refetch } = props;
+//   const [newWallet, setNewWallet] = useState<string>("");
+//
+//   const theme = useTheme();
+//
+//   return (
+//     <ChangeTetherWalletContainer theme={theme}>
+//       <InputLine>
+//         <Label>주소</Label>
+//         <ChangeWalletInput
+//           maxLength={100}
+//           onChange={(e) => setNewWallet(e.target.value)}
+//           theme={theme}
+//           placeholder="변경할 지갑 주소를 입력하세요."
+//         />
+//         <StyledPlusButton
+//           func={() =>
+//             ConfirmAlert("정말 변경하시겠습니까?", () =>
+//               updateTetherWallet(accountId, newWallet)
+//                 .then(() => {
+//                   close();
+//                   refetch().then();
+//                   SuccessAlert("변경 완료");
+//                 })
+//                 .catch((e) => ErrorAlert(e.message)),
+//             )
+//           }
+//           theme={theme}
+//         />
+//       </InputLine>
+//     </ChangeTetherWalletContainer>
+//   );
+// }
 
 const Label = styled.span``;
 
