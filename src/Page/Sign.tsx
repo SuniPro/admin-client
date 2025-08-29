@@ -22,6 +22,7 @@ import { LogoText } from "../components/Logo/Logo";
 import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
 import { PaginationResponse } from "../model/pagination";
 import { DateTime } from "luxon";
+import { useNavigate } from "react-router-dom";
 
 export function SignIn() {
   const theme = useTheme();
@@ -29,6 +30,8 @@ export function SignIn() {
     name: "",
     password: "",
   });
+
+  const navigate = useNavigate();
 
   const pwRef = useRef<HTMLInputElement>(null);
 
@@ -39,10 +42,9 @@ export function SignIn() {
 
   const signIn = () => {
     login(signInInfo)
-      .then((response) => {
-        localStorage.setItem("access-token", response);
+      .then(() => {
         SuccessAlert("로그인 되었습니다.");
-        window.location.href = "/";
+        navigate("/");
       })
       .catch(() => ErrorAlert("로그인 실패"));
   };
