@@ -1,9 +1,9 @@
-import { EmployeeType } from "../model/employee";
+import { EmployeeInfoType } from "@/model/employee";
 import { SignInType } from "../model/sign";
 import { getFromEmployeeServer, postToEmployeeServer } from "./base";
 
-export async function me(): Promise<EmployeeType> {
-  const response = await getFromEmployeeServer("/me");
+export async function check(): Promise<EmployeeInfoType> {
+  const response = await getFromEmployeeServer("/check");
   return response.data;
 }
 
