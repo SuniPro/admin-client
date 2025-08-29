@@ -1,65 +1,64 @@
 /** @jsxImportSource @emotion/react */
 import styled from "@emotion/styled";
-import { Employee } from "./manage/Employee";
-import CampaignIcon from "@mui/icons-material/Campaign";
 import { css, Theme, useTheme } from "@emotion/react";
-import { useUserContext } from "../context/UserContext";
-import { useState } from "react";
-import { ContentsContainer } from "../components/layouts";
+import { useEmployeeContext } from "../context/UserContext";
+import { ContentsContainer } from "@/components/layouts";
 import { DashboardMenuType } from "../model/menu";
+import { CustomModal } from "@/components/Modal";
+import { CryptoAccount } from "./manage/CryptoAccount";
+import { CryptoDeposit } from "./manage/CryptoDeposit";
+import { Site } from "./manage/Site";
 import { Notify } from "./Notify";
+import { getLatestNotify } from "@/api/notify";
 import { useQuery } from "@tanstack/react-query";
-import { getLatestNotify } from "../api/notify";
-import { CustomModal } from "../components/Modal";
-import { ViewNotify } from "../components/Notify/NotifyList";
-import { WorkTable } from "./WorkTable";
-import { Reports } from "./work/Report";
-import { iso8601ToYYMMDDHHMM } from "../components/styled/Date/DateFomatter";
+import CampaignIcon from "@mui/icons-material/Campaign";
+import { useState } from "react";
+import { iso8601ToYYMMDDHHMM } from "@/components/styled/Date/DateFomatter";
+import { ViewNotify } from "@/components/Notify/NotifyList";
 
 export function Dashboard(props: { activeMenu: DashboardMenuType }) {
   const { activeMenu } = props;
 
   const [notifyOpen, setNotifyOpen] = useState<boolean>(false);
-  const { user } = useUserContext();
+  const { employee } = useEmployeeContext();
   const theme = useTheme();
 
   const { data: lastNotify } = useQuery({
     queryKey: ["getLatestNotify"],
     queryFn: () => getLatestNotify(),
-    refetchInterval: 10000,
+    refetchInterval: 300000,
   });
 
-  if (!user) return;
+  if (!employee) return;
 
   const menuMatcher = () => {
     switch (activeMenu) {
-      case "employeeList":
-        return <Employee />;
+      case "userManage":
+        return <CryptoAccount />;
 
+      case "depositManage":
+        return <CryptoDeposit />;
+
+      case "siteManage":
+        return <Site employee={employee} />;
       case "notice":
         return <Notify />;
-
-      case "workTable":
-        return <WorkTable user={user} />;
-
-      case "report":
-        return <Reports />;
     }
   };
   return (
     <DashboardContainer>
       <ContentsContainer>
-        <NotifyContainer theme={theme} onClick={() => setNotifyOpen(true)}>
-          <NotifyArea>
-            <i>
-              <CampaignIcon color="error" />
-            </i>
-            <span>{lastNotify?.title}</span>
-          </NotifyArea>
-          <div>
-            {iso8601ToYYMMDDHHMM(lastNotify ? lastNotify.insertDateTime : "")}
-          </div>
-        </NotifyContainer>
+        {lastNotify && (
+          <NotifyContainer theme={theme} onClick={() => setNotifyOpen(true)}>
+            <NotifyArea>
+              <i>
+                <CampaignIcon color="error" />
+              </i>
+              <span>{lastNotify.title}</span>
+            </NotifyArea>
+            <div>{iso8601ToYYMMDDHHMM(lastNotify.insertDateTime)}</div>
+          </NotifyContainer>
+        )}
       </ContentsContainer>
       <ContentsContainer>{menuMatcher()}</ContentsContainer>
       {lastNotify && (
