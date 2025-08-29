@@ -1,26 +1,28 @@
 import { createContext, ReactNode, useContext, useEffect } from "react";
-import { EmployeeType } from "../model/employee";
+import { EmployeeInfoType } from "../model/employee";
 import { useQuery } from "@tanstack/react-query";
-import { me } from "../api/sign";
-import { useNavigate } from "react-router-dom";
+import { check } from "../api/sign";
+import { useLocation, useNavigate } from "react-router-dom";
 
-const UserContext = createContext<{
-  user: EmployeeType | null;
+const EmployeeContext = createContext<{
+  employee: EmployeeInfoType | null;
   isLoading: boolean;
   isError: boolean;
 } | null>(null);
 
-export function UserContextProvider({ children }: { children: ReactNode }) {
+export function EmployeeContextProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
+
+  const location = useLocation();
   const {
-    data: user,
+    data: employee,
     isLoading,
     isError,
-  } = useQuery<EmployeeType | null>({
-    queryKey: ["me"],
-    queryFn: () => me(),
-    refetchInterval: 5000,
-    retry: false,
+  } = useQuery<EmployeeInfoType | null>({
+    queryKey: ["check"],
+    queryFn: () => check(),
+    refetchInterval: 300000,
+    enabled: !location.pathname.includes("login"),
   });
 
   useEffect(() => {
@@ -30,14 +32,16 @@ export function UserContextProvider({ children }: { children: ReactNode }) {
   }, [isError, navigate]);
 
   return (
-    <UserContext.Provider value={{ user: user ?? null, isLoading, isError }}>
+    <EmployeeContext.Provider
+      value={{ employee: employee ?? null, isLoading, isError }}
+    >
       {children}
-    </UserContext.Provider>
+    </EmployeeContext.Provider>
   );
 }
 
-export function useUserContext() {
-  const context = useContext(UserContext);
+export function useEmployeeContext() {
+  const context = useContext(EmployeeContext);
   if (!context) {
     throw new Error("useUserContext must be used within the context");
   }
