@@ -155,7 +155,7 @@ const defaultMode = {
 
   // 텍스트
   textPrimary: colors.black,
-  textSecondary: colors.ashGray,
+  textSecondary: colors.steelGray,
   textAccent: colors.azure, // ✅ 여기
   textDisable: colors.steelGray,
   textRevers: colors.white,
@@ -178,6 +178,7 @@ const defaultMode = {
 
   // 테두리
   borderColor: colors.graniteGray,
+  borderSecondary: colors.ashGray,
   dividerColor: colors.steelGray,
 
   // 입력 필드
@@ -257,6 +258,7 @@ const darkMode = {
   linkHover: colors.bleuDeFrance,
 
   borderColor: colors.graniteGray,
+  borderSecondary: colors.ashGray,
   inputBackground: colors.darkCharcoal,
   inputText: colors.white,
   inputPlaceholder: colors.lightGray,
