@@ -5,15 +5,15 @@ import styled from "@emotion/styled";
 import { LogoContainer, LogoText } from "../Logo/Logo";
 import { FuncItem } from "../styled/Button";
 import { useNavigate } from "react-router-dom";
-import { useUserContext } from "../../context/UserContext";
-import { levelLabelMap } from "../../model/employee";
+import { useEmployeeContext } from "../../context/UserContext";
+import { levelLabelMap } from "@/model/employee";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { IconButton } from "@mui/material";
 import { StyledBadge } from "./Layouts";
 import { useQuery } from "@tanstack/react-query";
-import { getCountUnReadAboutNotify } from "../../api/notify";
+import { getUnreadNotifyCount } from "@/api/notify";
 import { ConfirmAlert, SuccessAlert } from "../Alert";
-import { logout } from "../../api/sign";
+import { logout } from "@/api/sign";
 import notifyAlert from "../../assets/sound/alert/notify.wav";
 import useSound from "use-sound";
 
@@ -22,14 +22,14 @@ export function Header(props: {
   setActiveMenu: Dispatch<SetStateAction<DashboardMenuType>>;
 }) {
   const { activeMenu, setActiveMenu } = props;
-  const { user, isError } = useUserContext();
+  const { employee, isError } = useEmployeeContext();
   const navigate = useNavigate();
 
   const { data: notifyCount } = useQuery({
     queryKey: ["getCountUnReadAboutNotify"],
-    queryFn: () => getCountUnReadAboutNotify(user!.id, user!.level),
-    refetchInterval: 10000,
-    enabled: Boolean(user),
+    queryFn: () => getUnreadNotifyCount(),
+    refetchInterval: 300000,
+    enabled: Boolean(employee),
   });
 
   const [play] = useSound(notifyAlert);
@@ -41,13 +41,13 @@ export function Header(props: {
 
   const theme = useTheme();
 
-  if (!user) return;
+  if (!employee) return;
 
   if (isError) return;
 
   return (
     <HeaderWrapper theme={theme}>
-      <LogoContainer width={40 * 1.3} height={40} onClick={() => navigate("/")}>
+      <LogoContainer width={130} height={40} onClick={() => navigate("/")}>
         <LogoText />
       </LogoContainer>
       <MenuLine>
@@ -73,7 +73,7 @@ export function Header(props: {
             )
           }
         >
-          {user.name} {levelLabelMap[user.level]}
+          {employee.name} {levelLabelMap[employee.level]}
         </UserProfile>
         <IconButton>
           <StyledNotifyIcon
