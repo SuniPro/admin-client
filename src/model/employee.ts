@@ -1,3 +1,10 @@
+export interface EmployeeInfoType {
+  name: string;
+  department: DepartmentType;
+  level: LevelType;
+  site: string;
+}
+
 export interface EmployeeType {
   id: number;
   department: DepartmentType;
@@ -47,11 +54,7 @@ export const levelList = [
   "SENIORMANAGER",
   "OFFICEMANAGER",
   "MANAGER",
-  "COO",
-  "CFO",
-  "CDO",
-  "CTO",
-  "CEO",
+  "ADMINISTRATOR",
 ] as const;
 
 export type LevelType = (typeof levelList)[number];
@@ -70,11 +73,7 @@ export const levelLabelMap: Record<LevelType, string> = {
   SENIORMANAGER: "차장",
   OFFICEMANAGER: "팀장",
   MANAGER: "총괄팀장",
-  COO: "운영책임자",
-  CFO: "재무책임자",
-  CDO: "기술운영책임자",
-  CTO: "기술책임자",
-  CEO: "대표",
+  ADMINISTRATOR: "관리자",
 };
 
 export function getLevelNameByRank(rank: number): string | undefined {
@@ -84,12 +83,7 @@ export function getLevelNameByRank(rank: number): string | undefined {
     3: "SENIORMANAGER",
     4: "OFFICEMANAGER",
     5: "MANAGER",
-    6: "CTO",
-    7: "CDO",
-    8: "CIO",
-    9: "CFO",
-    10: "COO",
-    11: "CEO",
+    6: "ADMINISTRATOR",
   };
 
   return levelMap[rank as number];
