@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import "rsuite/dist/rsuite.css";
 import { CryptoDepositSendList } from "../../components/list/financial/CryptoDepositSendList";
-import { useEmployeeContext } from "../../context/UserContext";
+import { useEmployeeContext } from "../../context/EmployeeContext";
 import { CryptoDepositList } from "@/components/list/financial/CryptoDepositList";
 
 export function CryptoDeposit() {

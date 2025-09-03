@@ -4,7 +4,7 @@ import { css, Theme, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { FuncItem } from "../styled/Button";
 import { useNavigate } from "react-router-dom";
-import { useEmployeeContext } from "../../context/UserContext";
+import { useEmployeeContext } from "../../context/EmployeeContext";
 import { levelLabelMap } from "@/model/employee";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { IconButton } from "@mui/material";

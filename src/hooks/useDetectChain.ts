@@ -51,7 +51,8 @@ async function verifyBase58Check(addr: string): Promise<Uint8Array | null> {
   const payload = decoded.subarray(0, decoded.length - 4);
   const checksum = decoded.subarray(decoded.length - 4);
   const hash = await doubleSha256(payload);
-  for (let i = 0; i < 4; i++) if (checksum[i] !== hash[i]) return null;
+  for (let i = 0; i < 4; i++)
+    if (checksum[i as number] !== hash[i as number]) return null;
   return decoded; // [version|payload|checksum]
 }
 
@@ -67,7 +68,7 @@ function bech32Polymod(values: number[]) {
   for (const v of values) {
     const top = chk >>> 25;
     chk = ((chk & 0x1ffffff) << 5) ^ v;
-    for (let i = 0; i < 5; i++) if ((top >>> i) & 1) chk ^= GEN[i];
+    for (let i = 0; i < 5; i++) if ((top >>> i) & 1) chk ^= GEN[i as number];
   }
   return chk >>> 0;
 }
@@ -140,8 +141,7 @@ function isValidBtcBech32(addr: string): boolean {
   if (version === 0 && !(prog.length === 20 || prog.length === 32))
     return false;
   if (version === 1 && prog.length !== 32) return false;
-  if (prog.length < 2 || prog.length > 40) return false;
-  return true;
+  return !(prog.length < 2 || prog.length > 40);
 }
 
 /* ---------- ETH ---------- */

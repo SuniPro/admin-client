@@ -5,7 +5,7 @@ import {
   getNotifyListByUnReadEmployee,
 } from "../api/notify";
 import { NotifyList } from "../components/Notify/NotifyList";
-import { useEmployeeContext } from "../context/UserContext";
+import { useEmployeeContext } from "../context/EmployeeContext";
 import { useState } from "react";
 
 export function Notify() {

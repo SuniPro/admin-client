@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import styled from "@emotion/styled";
 import { css, Theme, useTheme } from "@emotion/react";
-import { useEmployeeContext } from "../context/UserContext";
+import { useEmployeeContext } from "../context/EmployeeContext";
 import { ContentsContainer } from "@/components/layouts";
 import { DashboardMenuType } from "../model/menu";
 import { CustomModal } from "@/components/Modal";

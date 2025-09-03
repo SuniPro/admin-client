@@ -170,7 +170,7 @@ export function EmployeeList(props: { employee: EmployeeInfoType }) {
         ),
       },
     ],
-    [],
+    [employee.level, refetch],
   );
 
   const tableRowHandle = () => {
