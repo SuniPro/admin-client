@@ -164,6 +164,7 @@ const defaultMode = {
 
   // 버튼
   buttonBackground: colors.white,
+  buttonDisabled: colors.ashGray,
   buttonHoverBackground: colors.azure,
   buttonText: colors.black,
 
@@ -251,6 +252,7 @@ const darkMode = {
   error: colors.warningRed,
 
   buttonBackground: colors.azure,
+  buttonDisabled: colors.ashGray,
   buttonHoverBackground: colors.trueBlue,
   buttonText: colors.white,
 
