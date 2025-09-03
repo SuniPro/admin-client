@@ -2,7 +2,8 @@ export type DashboardMenuType =
   | "notice"
   | "userManage"
   | "depositManage"
-  | "siteManage";
+  | "siteManage"
+  | "AdminMenu";
 
 export interface DashBoardMenuType {
   label: string;
@@ -18,4 +19,5 @@ export const DashboardMenu: DashBoardMenuType[] = [
   },
   { label: "입금관리", type: "depositManage" },
   { label: "지갑관리", type: "siteManage" },
+  { label: "관리자메뉴", type: "AdminMenu" },
 ];

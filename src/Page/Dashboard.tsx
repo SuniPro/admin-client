@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import styled from "@emotion/styled";
 import { css, Theme, useTheme } from "@emotion/react";
-import { useEmployeeContext } from "../context/UserContext";
+import { useEmployeeContext } from "../context/EmployeeContext";
 import { ContentsContainer } from "@/components/layouts";
 import { DashboardMenuType } from "../model/menu";
 import { CustomModal } from "@/components/Modal";
@@ -15,6 +15,7 @@ import CampaignIcon from "@mui/icons-material/Campaign";
 import { useState } from "react";
 import { iso8601ToYYMMDDHHMM } from "@/components/styled/Date/DateFomatter";
 import { ViewNotify } from "@/components/Notify/NotifyList";
+import { Admin } from "./manage/Admin";
 
 export function Dashboard(props: { activeMenu: DashboardMenuType }) {
   const { activeMenu } = props;
@@ -40,9 +41,13 @@ export function Dashboard(props: { activeMenu: DashboardMenuType }) {
         return <CryptoDeposit />;
 
       case "siteManage":
-        return <Site employee={employee} />;
+        return <Site />;
+
       case "notice":
         return <Notify />;
+
+      case "AdminMenu":
+        return <Admin />;
     }
   };
   return (

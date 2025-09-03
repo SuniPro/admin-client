@@ -1,5 +1,4 @@
 import {
-  DepartmentType,
   EmployeeType,
   LevelType,
   SignUpFormType,
@@ -22,65 +21,31 @@ export async function createEmployee(
 }
 
 export async function getAllEmployeeList(
+  level: LevelType,
+  site: string,
   page: number,
   size: number,
 ): Promise<PaginationResponse<EmployeeType>> {
-  const response = await getFromEmployeeServer(
-    `/employee/get/all?page=${page}&size=${size}&sort=insertDateTime,desc`,
-  );
+  if (level === "ADMINISTRATOR") {
+    const response = await getFromEmployeeServer(
+      `/employee/get/all?page=${page}&size=${size}&sort=insertDateTime,desc`,
+    );
 
-  return response.data;
+    return response.data;
+  } else {
+    const response = await getFromEmployeeServer(
+      `/employee/get/all/${site}?page=${page}&size=${size}&sort=insertDateTime,desc`,
+    );
+
+    return response.data;
+  }
 }
 
-export async function getEmployeeById(id: number): Promise<EmployeeType[]> {
-  const response = await getFromEmployeeServer(`/employee/get/by/${id}`);
-
-  return response.data;
-}
-
-export async function getEmployeeByName(name: string): Promise<EmployeeType[]> {
-  const response = await getFromEmployeeServer(`/employee/get/by/${name}`);
-
-  return response.data;
-}
-
-export async function getEmployeeListByDepartment(
-  department: DepartmentType,
+export async function getEmployeeByNameThroughList(
+  name: string,
 ): Promise<EmployeeType[]> {
   const response = await getFromEmployeeServer(
-    "/employee/get/by?department=" + department,
-  );
-
-  return response.data;
-}
-
-export async function getEmployeeListByLevel(
-  level: LevelType,
-): Promise<EmployeeType[]> {
-  const response = await getFromEmployeeServer(`/employee/get/by/${level}`);
-
-  return response.data;
-}
-
-export async function getEmployeeListByLevelLessThen(
-  level: LevelType,
-  page: number,
-  size: number,
-): Promise<PaginationResponse<EmployeeType>> {
-  const response = await getFromEmployeeServer(
-    `/employee/get/by/${level}/less/then?page=${page}&size=${size}&sort=insert_date_time,desc`,
-  );
-
-  return response.data;
-}
-
-export async function getEmployeeListByLevelGreaterThenEqual(
-  page: number,
-  size: number,
-  level: LevelType,
-): Promise<PaginationResponse<EmployeeType>> {
-  const response = await getFromEmployeeServer(
-    `/employee/get/by/${level}/greater/then?page=${page}&size=${size}&sort=insertDateTime,desc`,
+    `/employee/get/by/${name}/through/list`,
   );
 
   return response.data;

@@ -11,11 +11,7 @@ import {
 } from "@tanstack/react-table";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { NotifyType } from "@/model/notify";
-import {
-  EmployeeInfoType,
-  getLevelNameByRank,
-  getRankByLevelName,
-} from "@/model/employee";
+import { EmployeeInfoType } from "@/model/employee";
 import { iso8601ToYYMMDDHHMM } from "../styled/Date/DateFomatter";
 import { Container } from "../layouts/Frames";
 import { css, Theme, useTheme } from "@emotion/react";
@@ -23,8 +19,8 @@ import styled from "@emotion/styled";
 import { FuncItem, PlusButton } from "../styled/Button";
 import {
   EllipsisCase,
-  EmailSearch,
   HorizontalDivider,
+  TableSearchBar,
   VerticalDivider,
 } from "../layouts";
 import { Pagination, TableBody, TableHeader } from "../Table";
@@ -71,7 +67,7 @@ function WriteNotify(props: {
   const saveNotify = () => {
     const notify: NotifyType = {
       id: 0,
-      rank: getRankByLevelName(employee.level),
+      level: employee.level,
       writer: employee.name,
       title,
       contents,
@@ -179,7 +175,7 @@ export function NotifyList(props: {
         id: "rank",
         header: "직급",
         accessorKey: "rank",
-        cell: ({ row }) => <span>{getLevelNameByRank(row.original.rank)}</span>,
+        cell: ({ row }) => <span>{row.getValue("level")}</span>,
       },
       {
         id: "writer",
@@ -297,7 +293,7 @@ export function NotifyList(props: {
               <option value="unread">읽지 않음</option>
               <option value="read">읽음</option>
             </select>
-            <EmailSearch
+            <TableSearchBar
               placeholder="이름 검색"
               value={table.getColumn("writer")?.getFilterValue() as string}
               onChange={(e) =>

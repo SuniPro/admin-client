@@ -1,18 +1,14 @@
 import { Chain } from "@/hooks/useDetectChain";
 import {
-  AccountSummaryInfoType,
-  ChainType,
   CryptoAccountType,
   CryptoDepositType,
   NormalizedTransfer,
-  TransactionStatusType,
 } from "../model/financial";
 import { PaginationResponse } from "../model/pagination";
 import {
   deleteToEmployeeServer,
   getFromCryptoTrackerServer,
   getFromEmployeeServer,
-  getFromUserServer,
   patchToEmployeeServer,
   rangeFormatter,
 } from "./base";
@@ -94,21 +90,12 @@ export async function updateSend(id: number, isSend: boolean) {
   return response.data;
 }
 
-export async function updateCryptoWallet(cryptoWallet: string) {
+export async function updateCryptoWallet(
+  cryptoWallet: string,
+): Promise<CryptoAccountType> {
   const response = await patchToEmployeeServer("/financial/update/wallet", {
     cryptoWallet,
   });
-
-  return response.data;
-}
-
-export async function getTotalDepositAmountByStatusAndWallet(
-  status: TransactionStatusType,
-  tetherWallet: string,
-): Promise<number> {
-  const response = await getFromEmployeeServer(
-    `/financial/tether/get/total/deposit/amount/by/status/${status}/wallet/${tetherWallet}`,
-  );
 
   return response.data;
 }
@@ -119,12 +106,6 @@ export async function deleteDepositById(depositId: number): Promise<void> {
   );
 }
 
-export async function getExchangeInfo(): Promise<number> {
-  const response = await getFromUserServer("/financial/exchange");
-
-  return response.data;
-}
-
 /* Transfer List */
 export async function getTransferList(
   address: string,
@@ -132,18 +113,6 @@ export async function getTransferList(
 ): Promise<NormalizedTransfer[]> {
   const response = await getFromCryptoTrackerServer(
     `/transfer/get?chain=${chain}&address=${address}`,
-  );
-
-  return response.data;
-}
-
-export async function getAccountSummaryInfoBySite(
-  chain: ChainType,
-  cryptoWallet: string,
-  site: string,
-): Promise<AccountSummaryInfoType> {
-  const response = await getFromEmployeeServer(
-    `/financial/get/crypto/account/info/chain/${chain}/wallet/${cryptoWallet}/by/site/${site}`,
   );
 
   return response.data;

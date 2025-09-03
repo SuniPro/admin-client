@@ -26,10 +26,12 @@ export function EmployeeContextProvider({ children }: { children: ReactNode }) {
   });
 
   useEffect(() => {
-    if (isError) {
+    if (!employee) {
       navigate("/login");
+    } else {
+      navigate("/");
     }
-  }, [isError, navigate]);
+  }, [employee, navigate]);
 
   return (
     <EmployeeContext.Provider

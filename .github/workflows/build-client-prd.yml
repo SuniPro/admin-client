@@ -13,35 +13,37 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-#      - name: Set up .env.production
-#        run: echo "${{ secrets.ENV }}" > .env.production
-#
-#      - name: Set up Docker Buildx
-#        uses: docker/setup-buildx-action@v3
-#
-#
-#      - name: Login to DockerHub
-#        uses: docker/login-action@v3
-#        with:
-#          username: ${{ secrets.DOCKER_USERNAME }}
-#          password: ${{ secrets.DOCKER_HUB_TOKEN }}
-#
-#      - name: Build and Push Docker Image
-#        run: |
-#          docker buildx build --platform linux/amd64 -t perasperaadastra250225/taekang-admin-client:1.0.0 --push .
-#
-#      - name: Deploy to EC2 via SSH
-#        uses: appleboy/ssh-action@v1.0.0
-#        with:
-#          host: ${{ secrets.EC2_HOST }}
-#          username: ${{ secrets.EC2_USER }}
-#          key: ${{ secrets.EC2_KEY }}
-#          script: |
-#            docker pull perasperaadastra250225/taekang-admin-client:1.0.0
-#            docker stop taekang-admin-client || true
-#            docker rm taekang-admin-client || true
-#            docker run -d \
-#              -p 80:80 \
-#              --restart unless-stopped \
-#              --name taekang-admin-client \
-#              perasperaadastra250225/taekang-admin-client:1.0.0
+      - name: Set up .env.production
+        run: echo "${{ secrets.ENV }}" > .env.production
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Build and Push Docker Image
+        run: |
+          docker buildx build --platform linux/amd64 -t ariel250225/icoins-admin-client:1.0.0 --push .
+
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            docker pull ariel250225/icoins-admin-client:1.0.0
+            docker stop icoins-admin-client || true
+            docker rm icoins-admin-client || true
+            docker run -d \
+              -p 80:80 \
+              -p 443:443 \
+              -v /etc/ssl/icoinmanage:/etc/ssl/icoinmanage:ro \
+              --restart unless-stopped \
+              --name icoins-admin-client \
+              ariel250225/icoins-admin-client:1.0.0

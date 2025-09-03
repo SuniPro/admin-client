@@ -2,10 +2,9 @@ import { DashboardMenu, DashboardMenuType } from "../../model/menu";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { css, Theme, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-import { LogoContainer, LogoText } from "../Logo/Logo";
 import { FuncItem } from "../styled/Button";
 import { useNavigate } from "react-router-dom";
-import { useEmployeeContext } from "../../context/UserContext";
+import { useEmployeeContext } from "../../context/EmployeeContext";
 import { levelLabelMap } from "@/model/employee";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { IconButton } from "@mui/material";
@@ -45,13 +44,21 @@ export function Header(props: {
 
   if (isError) return;
 
+  const dashboardMenuHandle = () => {
+    if (employee.level !== "ADMINISTRATOR") {
+      return DashboardMenu.slice(0, 3);
+    } else {
+      return DashboardMenu;
+    }
+  };
+
   return (
     <HeaderWrapper theme={theme}>
-      <LogoContainer width={130} height={40} onClick={() => navigate("/")}>
-        <LogoText />
-      </LogoContainer>
+      <HeaderLogo className="text-3xl" theme={theme}>
+        i coins
+      </HeaderLogo>
       <MenuLine>
-        {DashboardMenu.map((menu) => (
+        {dashboardMenuHandle().map((menu) => (
           <li key={menu.label}>
             <StyledFuncItem
               label={menu.label}
@@ -175,3 +182,13 @@ const UserLine = styled.section`
   flex-direction: row;
   gap: 4px;
 `;
+
+const HeaderLogo = styled.span<{ theme: Theme }>(
+  ({ theme }) => css`
+    font-weight: 800;
+    transform: translateY(6%);
+
+    color: ${theme.colors.azure};
+    font-family: ${theme.mode.font.logo};
+  `,
+);

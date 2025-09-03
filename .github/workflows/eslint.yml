@@ -22,8 +22,13 @@ jobs:
         with:
           node-version: 20.x
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Enable and install pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@latest --activate
+
+      - name: Install dependencies with pnpm
+        run: pnpm install --frozen-lockfile
 
       - name: Install reviewdog
         run: |
@@ -38,28 +43,24 @@ jobs:
           ls -la tsconfig.app.json || echo "tsconfig.app.json 파일이 없음"
           
           echo "📌 Running ESLint with Debug Mode..."
-          npx eslint . --config eslint.config.js --debug || echo "❌ ESLint 실행 실패"
-
+          pnpm exec eslint . --config eslint.config.js --debug || echo "❌ ESLint 실행 실패"
 
       - name: Run ESLint and report with reviewdog
         run: |
-          npx eslint . --config eslint.config.js --format=json > eslint-report.json || true
+          pnpm exec eslint . --config eslint.config.js --format=json > eslint-report.json || true
           echo "📌 ESLint JSON Output:"
-          cat eslint-report.json  # ✅ JSON 결과 출력
+          cat eslint-report.json
           
           cat eslint-report.json | jq -c '.[] | select(.messages != []) | {filePath, messages}' > eslint-compact.json
           
           echo "📌 Processed ESLint Output:"
-          cat eslint-compact.json  # ✅ 변환된 JSON 결과 출력
+          cat eslint-compact.json
 
-          # reviewdog 실행
           cat eslint-compact.json | reviewdog -efm="%f: %l:%c: %m" -name="ESLint" -reporter=github-pr-review -level=error
 
-          # ❌ ESLint 오류가 있는 경우만 CI 실패
           if [ -s eslint-compact.json ]; then
             echo "❌ ESLint 오류가 발견되었습니다. CI 실패"
             exit 1
           fi
         env:
           REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-

@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
-import { EmployeeInfoType } from "../../model/employee";
-import { css, Theme, useTheme } from "@emotion/react";
+import { EmployeeInfoType } from "@/model/employee";
+import { css, useTheme } from "@emotion/react";
 import { useWindowContext } from "../../context/WindowContext";
 import {
   ColumnDef,
@@ -10,16 +10,18 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  SortingState,
   useReactTable,
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { PaginationResponse } from "../../model/pagination";
-import { CryptoAccountType } from "../../model/financial";
+import { PaginationResponse } from "@/model/pagination";
+import { CryptoAccountType } from "@/model/financial";
 import {
   getAllCryptoAccountBySite,
   getCryptoAccountByEmailAndSite,
-} from "../../api/financial";
+  updateCryptoWallet,
+} from "@/api/financial";
 import { iso8601ToYYMMDDHHMM } from "../styled/Date/DateFomatter";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
@@ -33,12 +35,23 @@ import {
   TableHeaderFuncButton,
   TableWrapper,
 } from "../Table";
-import { EmailSearch, HorizontalDivider } from "../layouts";
-import { CustomModal } from "../Modal";
-import styled from "@emotion/styled";
-import { Container } from "../layouts/Frames";
-import { PlusButton } from "../styled/Button";
+import { HorizontalDivider, TableSearchBar } from "../layouts";
 import { EditNoteIcon } from "../styled/icons";
+import { Input } from "@heroui/input";
+import { ErrorAlert } from "../Alert";
+import EditIcon from "@mui/icons-material/Edit";
+import CancelIcon from "@mui/icons-material/Cancel";
+
+type TableMeta = {
+  selectedRows: CryptoAccountType | null;
+  setSelectedRows: (_r: CryptoAccountType | null) => void;
+  changeCryptoWalletSwitch: boolean;
+  setChangeCryptoWalletSwitch: (_b: boolean) => void;
+  newCryptoWallet: string;
+  setNewCryptoWallet: (_newCryptoWallet: string) => void;
+  updateCryptoWallet: (_cryptoWallet: string) => Promise<CryptoAccountType>;
+  refetch: () => Promise<unknown>;
+};
 
 export function CryptoAccountList(props: { employee: EmployeeInfoType }) {
   const { employee } = props;
@@ -47,18 +60,28 @@ export function CryptoAccountList(props: { employee: EmployeeInfoType }) {
 
   const { windowWidth } = useWindowContext();
 
+  const [selectedRows, setSelectedRows] = useState<CryptoAccountType | null>(
+    null,
+  );
+
+  const [changeCryptoWalletSwitch, setChangeCryptoWalletSwitch] =
+    useState<boolean>(false);
+  const [newCryptoWallet, setNewCryptoWallet] = useState<string>("");
+
   const [searchEmail, setSearchEmail] = useState<string>("");
   const [searchAccount, setSearchAccount] = useState<CryptoAccountType[]>([]);
 
   const emailSearch = () => {
-    getCryptoAccountByEmailAndSite(searchEmail, employee.site).then((result) =>
-      setSearchAccount(result),
+    getCryptoAccountByEmailAndSite(searchEmail.trim(), employee.site).then(
+      (result) => setSearchAccount(result),
     );
   };
 
   const [columnResizeMode] = useState<ColumnResizeMode>("onChange");
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: "requestedAt", desc: true },
+  ]);
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
 
@@ -95,6 +118,63 @@ export function CryptoAccountList(props: { employee: EmployeeInfoType }) {
         id: "cryptoWallet",
         header: "지갑주소",
         accessorKey: "cryptoWallet",
+        cell: (ctx) => {
+          const meta = ctx.table.options.meta as TableMeta;
+          const isEditing =
+            meta.selectedRows &&
+            meta.selectedRows.id === ctx.row.original.id &&
+            meta.changeCryptoWalletSwitch;
+
+          if (isEditing) {
+            return (
+              <div
+                css={css`
+                  display: flex;
+                  flex-direction: row;
+                  align-items: center;
+                  justify-content: flex-start;
+                `}
+              >
+                <Input
+                  size="sm"
+                  variant="underlined"
+                  autoFocus
+                  value={meta.newCryptoWallet}
+                  onChange={(e) => meta.setNewCryptoWallet(e.target.value)}
+                />
+                <EditIcon
+                  fontSize="small"
+                  onClick={() =>
+                    meta.updateCryptoWallet(meta.newCryptoWallet).then(() =>
+                      meta
+                        .refetch()
+                        .then(() => meta.setChangeCryptoWalletSwitch(false))
+                        .catch((e) => ErrorAlert(e.message)),
+                    )
+                  }
+                />
+                <CancelIcon
+                  fontSize="small"
+                  onClick={() => setChangeCryptoWalletSwitch(false)}
+                />
+              </div>
+            );
+          }
+
+          return (
+            <span
+              className="cursor-pointer"
+              onClick={() => {
+                meta.setSelectedRows(ctx.row.original);
+                // 편집 시작 시 기존 값을 초기화하고 싶다면 여기서 meta.changeWallet 호출
+                // meta.changeWallet({ target: { value: ctx.row.original.cryptoWallet } } as any);
+                meta.setChangeCryptoWalletSwitch(true);
+              }}
+            >
+              {ctx.row.getValue("cryptoWallet") as string}
+            </span>
+          );
+        },
       },
       {
         id: "insertDateTime",
@@ -126,8 +206,9 @@ export function CryptoAccountList(props: { employee: EmployeeInfoType }) {
           <TableFunctionLine>
             <EditNoteIcon
               color={row.original.memo !== null ? "primary" : "disabled"}
+              fontSize="small"
             />
-            <DeleteIcon />
+            <DeleteIcon fontSize="small" />
           </TableFunctionLine>
         ),
       },
@@ -149,7 +230,18 @@ export function CryptoAccountList(props: { employee: EmployeeInfoType }) {
     data: tableRowHandle(),
     columns,
     pageCount: data?.totalPages ?? 0,
+    meta: {
+      selectedRows,
+      setSelectedRows,
+      changeCryptoWalletSwitch,
+      setChangeCryptoWalletSwitch,
+      newCryptoWallet,
+      setNewCryptoWallet,
+      updateCryptoWallet,
+      refetch,
+    } satisfies TableMeta,
     state: {
+      sorting,
       columnFilters,
       pagination: {
         pageIndex,
@@ -157,6 +249,7 @@ export function CryptoAccountList(props: { employee: EmployeeInfoType }) {
       },
     },
     manualPagination: true,
+    onSortingChange: setSorting,
     onPaginationChange: (updater) => {
       const next =
         typeof updater === "function"
@@ -188,7 +281,7 @@ export function CryptoAccountList(props: { employee: EmployeeInfoType }) {
               justify-content: space-between;
             `}
           >
-            <EmailSearch
+            <TableSearchBar
               value={searchEmail}
               placeholder="이메일 검색"
               onChange={(e) => setSearchEmail(e.target.value)}
@@ -247,143 +340,7 @@ export function CryptoAccountList(props: { employee: EmployeeInfoType }) {
           </TableContainer>
         </TableWrapper>
         <Pagination table={table} viewSizeBox={true} />
-        {/*<CustomModal*/}
-        {/*  open={open}*/}
-        {/*  close={close}*/}
-        {/*  css={css`*/}
-        {/*    height: 100px;*/}
-        {/*    padding: 0 20px;*/}
-        {/*  `}*/}
-        {/*  children={*/}
-        {/*    <ChangeTetherWallet*/}
-        {/*      close={close}*/}
-        {/*      refetch={refetch}*/}
-        {/*      accountId={selectedAccount.id}*/}
-        {/*    />*/}
-        {/*  }*/}
-        {/*/>*/}
-        {/*<StyledModal*/}
-        {/*  open={writeOpen}*/}
-        {/*  close={() => setWriteOpen(false)}*/}
-        {/*  children={*/}
-        {/*    <WriteTetherMemo*/}
-        {/*      accountId={selectedAccount.id}*/}
-        {/*      close={() => setWriteOpen(false)}*/}
-        {/*      prevContents={selectedAccount.memo}*/}
-        {/*      refetch={refetch}*/}
-        {/*    />*/}
-        {/*  }*/}
-        {/*/>*/}
       </StyledContainer>
     </>
   );
 }
-
-// function ChangeTetherWallet(props: {
-//   accountId: number;
-//   close: () => void;
-//   refetch: (
-//     _options?: RefetchOptions,
-//   ) => Promise<
-//     QueryObserverResult<PaginationResponse<CryptoAccountType>, Error>
-//   >;
-// }) {
-//   const { accountId, close, refetch } = props;
-//   const [newWallet, setNewWallet] = useState<string>("");
-//
-//   const theme = useTheme();
-//
-//   return (
-//     <ChangeTetherWalletContainer theme={theme}>
-//       <InputLine>
-//         <Label>주소</Label>
-//         <ChangeWalletInput
-//           maxLength={100}
-//           onChange={(e) => setNewWallet(e.target.value)}
-//           theme={theme}
-//           placeholder="변경할 지갑 주소를 입력하세요."
-//         />
-//         <StyledPlusButton
-//           func={() =>
-//             ConfirmAlert("정말 변경하시겠습니까?", () =>
-//               updateTetherWallet(accountId, newWallet)
-//                 .then(() => {
-//                   close();
-//                   refetch().then();
-//                   SuccessAlert("변경 완료");
-//                 })
-//                 .catch((e) => ErrorAlert(e.message)),
-//             )
-//           }
-//           theme={theme}
-//         />
-//       </InputLine>
-//     </ChangeTetherWalletContainer>
-//   );
-// }
-
-const Label = styled.span``;
-
-const InputLine = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  align-items: center;
-  justify-content: space-between;
-
-  width: 100%;
-`;
-
-const ChangeWalletInput = styled.input<{
-  theme: Theme;
-}>(
-  ({ theme }) => css`
-    width: 80%;
-    border: none;
-    font-size: 18px;
-    color: ${theme.mode.textPrimary};
-    box-sizing: border-box;
-    padding: 0 15px;
-    font-family: ${theme.mode.font.component.itemTitle};
-    font-weight: 600;
-
-    &:focus-visible {
-      outline: none;
-    }
-  `,
-);
-
-const ChangeTetherWalletContainer = styled(Container)<{
-  theme: Theme;
-  height?: number;
-}>(
-  ({ theme, height }) => css`
-    width: 100%;
-    height: ${height}vh;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    font-family: ${theme.mode.font.component.itemDescription};
-
-    font-size: 18px;
-
-    gap: 20px;
-  `,
-);
-
-const StyledPlusButton = styled(PlusButton)<{ theme: Theme }>(
-  ({ theme }) => css`
-    position: relative;
-    right: 10px;
-
-    circle {
-      fill: ${theme.mode.textSecondary} !important;
-    }
-  `,
-);
-
-const StyledModal = styled(CustomModal)`
-  justify-content: flex-start;
-  align-items: center;
-`;

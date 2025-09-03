@@ -1,19 +1,19 @@
 # First Stage: Build
-FROM node:20 AS build
+FROM node:22 AS build
 
 WORKDIR /app
 
-COPY package*.json ./
+# Install pnpm globally
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
-# Optional deps 설치 + rollup native 바이너리 직접 설치
-RUN npm ci --include=optional \
-  && npm install --save-dev @rollup/rollup-linux-x64-gnu
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 
 COPY .env.production .env
 COPY . .
 
-# Vite 빌드
-RUN npm run build
+
+RUN pnpm build
 
 # Second Stage: Serve with Nginx
 FROM nginx:alpine
@@ -26,6 +26,6 @@ COPY nginx.conf /etc/nginx/nginx.conf
 
 RUN mkdir -p /var/log/nginx
 
-EXPOSE 5010
+EXPOSE 80
 
 CMD ["nginx", "-g", "daemon off;"]

@@ -36,14 +36,13 @@ import { BigNumber } from "bignumber.js";
 import { EmptyState } from "../EmptyState";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { Switch } from "@heroui/react";
+import { ConfirmAlert } from "@/components/Alert";
 
 export function CryptoDepositSendList(props: { employee: EmployeeInfoType }) {
   const { employee } = props;
 
   const theme = useTheme();
   const { windowWidth } = useWindowContext();
-
-  const [isSend, setIsSend] = useState<boolean>(false);
 
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
@@ -146,10 +145,11 @@ export function CryptoDepositSendList(props: { employee: EmployeeInfoType }) {
             size="sm"
             isSelected={row.getValue("isSend")}
             onChange={() => {
-              updateSend(row.original.id, true).then((response) => {
-                refetch().then();
-                setIsSend(response.isSend);
-              });
+              ConfirmAlert("송금을 완료하셨습니까?", () =>
+                updateSend(row.original.id, true).then(() => {
+                  refetch().then();
+                }),
+              );
             }}
           />
         ),

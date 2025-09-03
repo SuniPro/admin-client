@@ -9,7 +9,7 @@ import { FuncIconItem, FuncItem } from "../styled/Button";
 import { useHorizontalScroll } from "../../hooks/useWheel";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
-import { Container } from "../layouts/Frames/FrameLayouts";
+import { Container } from "@/components/layouts/Frames";
 
 export function generateNumberArray(upTo: number): number[] {
   if (upTo < 1) {
@@ -352,9 +352,11 @@ export const StyledContainer = styled(Container)<{ theme: Theme }>(
 );
 
 export const TableWrapper = styled.section<{ theme: Theme; width: number }>(
-  ({ theme, width }) => css`
+  ({ width }) => css`
     width: ${width}px;
     overflow-x: scroll;
+
+    font-size: clamp(12px, 1.2cqi, 14px);
 
     tr {
       white-space: nowrap;
@@ -364,27 +366,15 @@ export const TableWrapper = styled.section<{ theme: Theme; width: number }>(
       white-space: nowrap;
     }
 
-    @media ${theme.deviceSize.tablet} {
-      tr {
-        font-size: 12px;
-      }
-      tbody {
-        td {
-          font-size: 12px;
-        }
+    tr {
+      font-size: clamp(12px, 1.2cqi, 14px);
+    }
+    tbody {
+      td {
+        font-size: clamp(12px, 1.2cqi, 14px);
       }
     }
-
-    @media ${theme.deviceSize.phone} {
-      tr {
-        font-size: 12px;
-      }
-      tbody {
-        td {
-          font-size: 12px;
-        }
-      }
-    }
+  }
   `,
 );
 
@@ -428,5 +418,5 @@ export const TableFunctionLine = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 4px;
 `;

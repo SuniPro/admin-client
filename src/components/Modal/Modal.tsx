@@ -16,7 +16,7 @@ export function CustomModal(props: {
   className?: string;
   width?: number;
 }) {
-  const { open, close, children, className, width = 600 } = props;
+  const { open, close, children, className, width = 500 } = props;
   const { windowWidth } = useWindowContext();
   const theme = useTheme();
 
@@ -50,7 +50,6 @@ export const ModalContainer = styled.div<{ width: number; theme: Theme }>(
     left: 50%;
     transform: translate(-50%, -50%);
     width: ${width}px;
-    height: 450px;
     border: 1px solid ${theme.mode.textSecondary};
     border-radius: ${theme.borderRadius.softBox};
     color: ${theme.mode.textPrimary};
@@ -58,7 +57,6 @@ export const ModalContainer = styled.div<{ width: number; theme: Theme }>(
     overflow-x: hidden;
     overflow-y: scroll;
     box-sizing: border-box;
-    padding: 20px;
 
     display: flex;
     flex-direction: column;
