@@ -22,17 +22,3 @@ const LogoTextCase = styled.span<{ fontSize: number; theme: Theme }>(
     letter-spacing: -0.07em;
   `,
 );
-
-export const LogoContainer = styled.div<{
-  width: number;
-  height: number;
-}>(
-  ({ width, height }) => css`
-    width: ${width}px;
-    height: ${height}px;
-    gap: 4px;
-    align-items: center;
-    display: flex;
-    flex-direction: row;
-  `,
-);
