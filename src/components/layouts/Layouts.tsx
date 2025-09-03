@@ -193,7 +193,7 @@ export const Text = styled.span<{ width?: number; textAlign: string }>(
   `,
 );
 
-export const EmailSearch = styled.input<{ theme: Theme }>(
+export const TableSearchBar = styled.input<{ theme: Theme }>(
   ({ theme }) => css`
     background-color: ${theme.mode.cardBackground};
     border: none;

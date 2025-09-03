@@ -23,7 +23,7 @@ import {
 import { DateTime } from "luxon";
 import { useMemo, useState } from "react";
 import { formatDateToYYMMDDHHMM } from "@/components/styled/Date/DateFomatter";
-import { EmailSearch, HorizontalDivider } from "@/components/layouts";
+import { HorizontalDivider, TableSearchBar } from "@/components/layouts";
 import { formatUnits } from "@/utils/bigNumberConvert";
 
 export function CryptoTransferList(props: {
@@ -129,7 +129,7 @@ export function CryptoTransferList(props: {
               justify-content: flex-start;
             `}
           >
-            <EmailSearch
+            <TableSearchBar
               theme={theme}
               placeholder="보낸 주소 검색"
               value={table.getColumn("fromAddress")?.getFilterValue() as string}
