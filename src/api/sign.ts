@@ -18,3 +18,7 @@ export async function logout(): Promise<number> {
 
   return response.data;
 }
+
+export async function refreshToken(): Promise<void> {
+  await postToEmployeeServer("/auth/refresh", {});
+}
