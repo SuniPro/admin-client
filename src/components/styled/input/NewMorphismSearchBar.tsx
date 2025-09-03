@@ -56,13 +56,15 @@ export function NewMorphismSearchBar(props: {
     searchInputRef.current.disabled = true;
     submitChain(search)
       .then(() => {
-        setProcessing(false);
         searchInputRef.current!.disabled = false;
+        setProcessing(false);
+      })
+      .catch(() => ErrorAlert("지갑 거래내역 조회 실패"))
+      .finally(() => {
         if (search === "") {
           setActive(true);
         }
-      })
-      .catch(() => ErrorAlert("지갑 거래내역 조회 실패"));
+      });
   };
 
   const iconRef = useRef<HTMLDivElement>(null);
