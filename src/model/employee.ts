@@ -1,3 +1,5 @@
+import { ChainType } from "@/model/financial";
+
 export interface EmployeeInfoType {
   name: string;
   department: DepartmentType;
@@ -24,18 +26,20 @@ export interface UpdateEmployeeType {
   level: LevelType;
   name: string;
   password: string;
-  insertName: string;
-  insertDateTime: string;
-  updateName: string;
-  updateDateTime: string;
 }
 
+export type siteWalletType = {
+  id: string;
+  cryptoWallet: string;
+  chainType: ChainType;
+};
 export interface SignUpFormType {
   name: string;
   password: string;
   department: DepartmentType;
   level: LevelType;
-  insertName: string;
+  site: string;
+  siteWalletList: { cryptoWallet: string; chainType: ChainType }[];
 }
 
 export const departmentList = [
@@ -75,34 +79,3 @@ export const levelLabelMap: Record<LevelType, string> = {
   MANAGER: "총괄팀장",
   ADMINISTRATOR: "관리자",
 };
-
-export function getLevelNameByRank(rank: number): string | undefined {
-  const levelMap: Record<number, string> = {
-    1: "STAFF",
-    2: "ASSOCIATE",
-    3: "SENIORMANAGER",
-    4: "OFFICEMANAGER",
-    5: "MANAGER",
-    6: "ADMINISTRATOR",
-  };
-
-  return levelMap[rank as number];
-}
-
-export function getRankByLevelName(levelName: string): number {
-  const nameToRankMap: Record<string, number> = {
-    STAFF: 1,
-    ASSOCIATE: 2,
-    SENIORMANAGER: 3,
-    OFFICEMANAGER: 4,
-    MANAGER: 5,
-    CTO: 6,
-    CDO: 7,
-    CIO: 8,
-    CFO: 9,
-    COO: 10,
-    CEO: 11,
-  };
-
-  return nameToRankMap[levelName.toUpperCase()];
-}
