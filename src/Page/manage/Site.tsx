@@ -248,7 +248,9 @@ export function Site() {
             )}
             unit={cryptoType(siteWalletInfoList[0].chainType)}
             description={`${iso8601ToYYMMDDHHMM(now!)} 부 최신화된 결과입니다.`}
-            postscript={`${cryptoType(siteWalletInfoList[0].chainType)}는 ${utilType(siteWalletInfoList[0].chainType)} 기준입니다.`}
+            postscript={`${cryptoType(
+              siteWalletInfoList[0].chainType,
+            )}는 ${utilType(siteWalletInfoList[0].chainType)} 기준입니다.`}
           />
           <StatisticsCard
             title="사이트 입금 내역"
