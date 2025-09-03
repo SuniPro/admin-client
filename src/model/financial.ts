@@ -115,10 +115,3 @@ export interface NormalizedTransfer {
   acceptedAt: number; // Asia/Seoul 기준 millis
   memo: string; // 예: "success"
 }
-
-export interface AccountSummaryInfoType {
-  balance: string;
-  depositHistoryLength: number;
-  todayDepositAmount: string;
-  weeksDepositAmount: string;
-}
