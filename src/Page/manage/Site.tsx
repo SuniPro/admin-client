@@ -32,7 +32,7 @@ import {
   TableWrapper,
 } from "@/components/Table";
 import { useWindowContext } from "@/context/WindowContext";
-import { EmptyState } from "@/components/list/EmptyState.tsx";
+import { EmptyState } from "@/components/list/EmptyState";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 export const inputCopy = (ref: RefObject<HTMLInputElement | null>) => {
