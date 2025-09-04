@@ -16,7 +16,7 @@ import { iso8601ToYYMMDDHHMM } from "../styled/Date/DateFomatter";
 import { Container } from "../layouts/Frames";
 import { css, Theme, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-import { FuncItem, PlusButton } from "../styled/Button";
+import { PlusButton } from "../styled/Button";
 import {
   EllipsisCase,
   HorizontalDivider,
@@ -394,18 +394,6 @@ const TableContainer = styled.table`
     border: none;
   }
 `;
-
-const AddNotifyButton = styled(FuncItem)<{ theme: Theme }>(
-  ({ theme }) => css`
-    cursor: pointer;
-    font-family: ${theme.mode.font.button.default};
-    color: ${theme.mode.textPrimary};
-
-    &:hover {
-      color: ${theme.mode.textPrimary};
-    }
-  `,
-);
 
 const StyledModal = styled(CustomModal)`
   justify-content: flex-start;
