@@ -211,6 +211,16 @@ export function CryptoDepositList(props: { employee: EmployeeInfoType }) {
           <DateRangePicker
             css={css`
               width: 240px;
+              background-color: black;
+
+              div {
+                background-color: ${theme.mode.cardBackground};
+              }
+
+              input {
+                background-color: ${theme.mode.cardBackground};
+                color: white;
+              }
             `}
             container={document.getElementById("date-area")!}
             format="yyyy.MM.dd"

@@ -46,7 +46,6 @@ export function GlobalStyled() {
           place-items: center;
           min-width: 320px;
           min-height: 100vh;
-          color: ${theme.mode.textPrimary};
           background-color: ${theme.mode.bodyBackground};
         }
 
