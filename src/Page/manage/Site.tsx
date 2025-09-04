@@ -32,6 +32,8 @@ import {
   TableWrapper,
 } from "@/components/Table";
 import { useWindowContext } from "@/context/WindowContext";
+import { EmptyState } from "@/components/list/EmptyState";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 export const inputCopy = (ref: RefObject<HTMLInputElement | null>) => {
   if (!ref.current) return;
@@ -280,8 +282,14 @@ export function Site() {
           />
         </div>
       )}
-      {transferList.length > 0 && (
+      {transferList.length > 0 ? (
         <CryptoTransferList transferList={transferList} />
+      ) : (
+        <EmptyState
+          message="지갑의 거래내역이 없습니다."
+          icon={<CheckCircleIcon color="error" fontSize="large" />}
+          title=""
+        />
       )}
     </>
   );
