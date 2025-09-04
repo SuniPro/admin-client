@@ -95,6 +95,7 @@ const NotifyContainer = styled.div<{ theme: Theme }>(
     border-radius: ${theme.borderRadius.softBox};
     font-family: ${theme.mode.font.component.mainTitle};
     font-weight: bold;
+    height: 50px;
   `,
 );
 
@@ -104,10 +105,6 @@ const NotifyArea = styled.div`
   align-items: center;
   justify-content: flex-start;
   gap: 10px;
-
-  i {
-    transform: translateY(10%);
-  }
 `;
 
 const DashboardContainer = styled.main`
