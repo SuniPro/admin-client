@@ -287,7 +287,7 @@ export function Site() {
       ) : (
         <EmptyState
           message="지갑의 거래내역이 없습니다."
-          icon={<CheckCircleIcon color="error" fontSize="large" />}
+          icon={<CheckCircleIcon color="success" fontSize="large" />}
           title=""
         />
       )}

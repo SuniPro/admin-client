@@ -447,6 +447,11 @@ function EmployeeUpdateModal(props: {
               setDepartment(val);
             }
           }}
+          css={css`
+            span {
+              color: ${theme.mode.textPrimary};
+            }
+          `}
         >
           {departmentList.map((value) => (
             <SelectItem key={value}>
@@ -464,6 +469,11 @@ function EmployeeUpdateModal(props: {
               setLevel(val);
             }
           }}
+          css={css`
+            span {
+              color: ${theme.mode.textPrimary};
+            }
+          `}
         >
           {levelList.slice(0, 3).map((level) => (
             <SelectItem key={level}>
@@ -638,6 +648,11 @@ function EmployeeAddModal(props: {
               setDepartment(val);
             }
           }}
+          css={css`
+            span {
+              color: ${theme.mode.textPrimary};
+            }
+          `}
         >
           {departmentList.map((value) => (
             <SelectItem key={value}>
@@ -655,6 +670,11 @@ function EmployeeAddModal(props: {
               setLevel(val);
             }
           }}
+          css={css`
+            span {
+              color: ${theme.mode.textPrimary};
+            }
+          `}
         >
           {levelList.map((level) => (
             <SelectItem key={level}>
@@ -694,6 +714,8 @@ function SiteWalletAddArea(props: {
 }) {
   const { siteWallet, onChange, onRemove } = props;
 
+  const theme = useTheme();
+
   return (
     <>
       <div
@@ -722,6 +744,11 @@ function SiteWalletAddArea(props: {
             const val = Array.from(keys)[0] as ChainType | undefined;
             if (val) onChange({ ...siteWallet, chainType: val });
           }}
+          css={css`
+            span {
+              color: ${theme.mode.textPrimary};
+            }
+          `}
         >
           {["TRON", "ETH", "BTC"].map((value) => (
             <SelectItem key={value}>{value}</SelectItem>
