@@ -1,3 +1,4 @@
+/** @jsxImportSource @emotion/react */
 import { Dispatch, FormEvent, SetStateAction, useRef, useState } from "react";
 import styled from "@emotion/styled";
 import { css, keyframes, Theme, useTheme } from "@emotion/react";
@@ -115,6 +116,11 @@ export function SearchBar(props: {
                       const val = Array.from(keys)[0] as string | undefined; // keys는 Selection(Set)
                       setSearch((prev) => ({ ...prev, type: val ?? "" }));
                     }}
+                    css={css`
+                      span {
+                        color: ${theme.mode.textPrimary};
+                      }
+                    `}
                   >
                     {searchProps.map((object) => (
                       <SelectItem key={object.key}>{object.label}</SelectItem>
@@ -130,19 +136,22 @@ export function SearchBar(props: {
   );
 }
 
-const Container = styled.div`
-  text-align: center;
-  color: #2c3e50;
-  display: flex;
-  width: 100%;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
+const Container = styled.div(
+  ({ theme }) => css`
+    text-align: center;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 
-  form {
-    transition: all 0.5s;
-  }
-`;
+    color: ${theme.mode.textPrimary};
+
+    form {
+      transition: all 0.5s;
+    }
+  `,
+);
 
 const FinderForm = styled.form`
   flex: 1;
@@ -166,16 +175,19 @@ const FinderOuter = styled.div`
   border-radius: 10px;
 `;
 
-const FinderInner = styled.div`
-  display: flex;
-  align-items: center;
-  position: relative;
-  justify-content: space-between;
-  flex: 1;
-  width: 100%;
-`;
+const FinderInner = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    align-items: center;
+    position: relative;
+    justify-content: space-between;
+    flex: 1;
+    width: 100%;
+    background-color: ${theme.mode.cardBackground};
+  `,
+);
 
-const FinderInput = styled.input<{ theme: Theme }>(
+const FinderInput = styled.input(
   ({ theme }) => css`
     width: 80%;
     height: 30px;
@@ -183,7 +195,6 @@ const FinderInput = styled.input<{ theme: Theme }>(
     background-color: transparent;
     outline: none;
     font-size: 16px;
-
     font-family: ${theme.mode.font.search};
   `,
 );

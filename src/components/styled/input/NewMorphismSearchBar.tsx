@@ -7,9 +7,10 @@ import {
   useState,
 } from "react";
 import styled from "@emotion/styled";
-import { css, keyframes } from "@emotion/react";
+import { css, keyframes, Theme, useTheme } from "@emotion/react";
 import isPropValid from "@emotion/is-prop-valid";
 import { ErrorAlert } from "@/components/Alert";
+import { useDarkMode } from "usehooks-ts";
 
 export interface searchStateProps {
   search: string;
@@ -45,6 +46,8 @@ export function NewMorphismSearchBar(props: {
 }) {
   const { searchInputRef, submitChain } = props;
   const { search, setSearch } = props.searchState;
+  const { isDarkMode } = useDarkMode();
+  const theme = useTheme();
 
   const [active, setActive] = useState<boolean>(false);
   const [processing, setProcessing] = useState<boolean>(false);
@@ -73,8 +76,14 @@ export function NewMorphismSearchBar(props: {
     <>
       <Container>
         <FinderForm autoComplete="off" onSubmit={(e) => searchSubmit(e)}>
-          <Finder className="finder">
-            <FinderOuter className="finder__outer">
+          <Finder className="finder" theme={theme} boxShadow={isDarkMode}>
+            <FinderOuter
+              className="finder__outer"
+              boxShadow={isDarkMode}
+              backgroundColor={
+                isDarkMode ? theme.colors.midnightBlack : undefined
+              }
+            >
               <FinderInner className="finder__inner">
                 <FinderIcon
                   className="finder__icon"
@@ -101,46 +110,61 @@ export function NewMorphismSearchBar(props: {
   );
 }
 
-const Container = styled.div`
-  text-align: center;
-  color: #2c3e50;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
+const Container = styled.div(
+  ({ theme }) => css`
+    text-align: center;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 
-  form {
-    transition: all 0.5s;
-  }
-`;
+    color: ${theme.mode.textPrimary};
+
+    form {
+      transition: all 0.5s;
+    }
+  `,
+);
 
 const FinderForm = styled.form`
   flex: 1;
   width: 100%;
 `;
 
-const Finder = styled.div(
-  ({ theme }) => css`
-    border: 1px solid #fff;
-    background-color: #fff;
+const Finder = styled.div<{ theme: Theme; boxShadow: boolean }>(
+  ({ theme, boxShadow }) => css`
+    border: 1px solid ${theme.mode.cardBackground};
+    background-color: ${theme.mode.cardBackground};
     border-radius: ${theme.borderRadius.softBox};
     padding: 8px;
     width: 100%;
-    box-shadow:
-      1px 1px 16px rgba(189, 189, 189, 0.6),
-      -9px -9px 16px rgba(255, 255, 255, 0.5);
+    ${boxShadow &&
+    css`
+      box-shadow:
+        1px 1px 16px rgba(189, 189, 189, 0.6),
+        -9px -9px 16px rgba(255, 255, 255, 0.5);
+    `}
   `,
 );
 
-const FinderOuter = styled.div`
-  display: flex;
-  padding: 14px 20px;
-  border-radius: 10px;
-  box-shadow:
-    inset 10px 10px 15px -10px #e9e9e9,
-    inset -10px -10px 15px -10px #ffffff;
-`;
+const FinderOuter = styled.div<{
+  backgroundColor?: string;
+  boxShadow: boolean;
+}>(
+  ({ backgroundColor, boxShadow }) => css`
+    display: flex;
+    padding: 14px 20px;
+    border-radius: 10px;
+    background-color: ${backgroundColor};
+    ${boxShadow &&
+    css`
+      box-shadow:
+        inset 10px 10px 15px -10px #e9e9e9,
+        inset -10px -10px 15px -10px #ffffff;
+    `}
+  `,
+);
 
 const FinderInner = styled.div`
   display: flex;
@@ -158,7 +182,6 @@ const FinderInput = styled.input(
     outline: none;
     font-size: 1.5rem;
     letter-spacing: 0.75px;
-
     font-family: ${theme.mode.font.search};
   `,
 );
