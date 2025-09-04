@@ -280,7 +280,9 @@ export function Site() {
           />
         </div>
       )}
-      <CryptoTransferList transferList={transferList} />
+      {transferList.length > 0 && (
+        <CryptoTransferList transferList={transferList} />
+      )}
     </>
   );
 }
