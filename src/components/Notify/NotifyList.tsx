@@ -16,14 +16,19 @@ import { iso8601ToYYMMDDHHMM } from "../styled/Date/DateFomatter";
 import { Container } from "../layouts/Frames";
 import { css, Theme, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-import { FuncItem, PlusButton } from "../styled/Button";
+import { PlusButton } from "../styled/Button";
 import {
   EllipsisCase,
   HorizontalDivider,
   TableSearchBar,
   VerticalDivider,
 } from "../layouts";
-import { Pagination, TableBody, TableHeader } from "../Table";
+import {
+  Pagination,
+  TableBody,
+  TableHeader,
+  TableHeaderFuncButton,
+} from "../Table";
 import { CustomModal, EditorModalContainer, ModalHeaderLine } from "../Modal";
 import { createNotify, readNotify } from "@/api/notify";
 import { ErrorAlert, SuccessAlert } from "../Alert";
@@ -302,13 +307,18 @@ export function NotifyList(props: {
               theme={theme}
             />
           </div>
-          <AddNotifyButton
-            label="공지 작성"
-            isActive={true}
-            activeBackgroundColor={theme.mode.cardBackground}
-            inActiveBackgroundColor={theme.mode.cardBackground}
+          <TableHeaderFuncButton
+            label="작성"
             func={() => setWriteOpen(true)}
             theme={theme}
+            css={css`
+              font-size: 12px;
+              border: 1px solid ${theme.mode.textSecondary};
+
+              &:hover {
+                color: ${theme.mode.textRevers};
+              }
+            `}
           />
         </HeaderLine>
         <HorizontalDivider width={95} />
@@ -384,18 +394,6 @@ const TableContainer = styled.table`
     border: none;
   }
 `;
-
-const AddNotifyButton = styled(FuncItem)<{ theme: Theme }>(
-  ({ theme }) => css`
-    cursor: pointer;
-    font-family: ${theme.mode.font.button.default};
-    color: ${theme.mode.textPrimary};
-
-    &:hover {
-      color: ${theme.mode.textPrimary};
-    }
-  `,
-);
 
 const StyledModal = styled(CustomModal)`
   justify-content: flex-start;
