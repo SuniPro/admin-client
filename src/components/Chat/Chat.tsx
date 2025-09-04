@@ -1,32 +1,32 @@
 import { css, Theme, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
-import { SendIcon } from "../styled/icons"; // import { badgeClasses } from "@mui/material";
-// import { StyledBadge } from "../layouts/Layouts";
+import { SendIcon } from "../styled/icons";
 import { Container } from "../layouts/Frames";
 import Button from "@mui/material/Button";
 
 export function Chat() {
   const theme = useTheme();
 
+  const telegramUrl = import.meta.env.VITE_TELEGRAM_URL;
+
+  const telegramOpen = () => {
+    window.open(telegramUrl, "_blank");
+  };
+
   return (
     <ChatContainer>
       <DMButton theme={theme}>
-        <StyledSendIcon theme={theme} />
-        {/*<NotifyBadge badgeContent={2} color="error" overlap="circular" />*/}
+        <label onClick={telegramOpen}>
+          <StyledSendIcon theme={theme} />
+        </label>
       </DMButton>
     </ChatContainer>
   );
 }
 
-const StyledSendIcon = styled(SendIcon)<{ theme: Theme }>(
-  ({ theme }) => css`
-    path {
-      stroke: ${theme.mode.cardBackground};
-    }
-
-    transform: translateX(-3%);
-  `,
-);
+const StyledSendIcon = styled(SendIcon)`
+  transform: translateX(-3%);
+`;
 
 // const NotifyBadge = styled(StyledBadge)`
 //   & .${badgeClasses.badge} {
