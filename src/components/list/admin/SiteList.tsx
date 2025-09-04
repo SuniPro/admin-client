@@ -446,6 +446,11 @@ export function SiteList() {
                       setNewChain(val);
                     }
                   }}
+                  css={css`
+                    span {
+                      color: ${theme.mode.textPrimary};
+                    }
+                  `}
                 >
                   {["BTC", "ETH", "TRON"].map((object) => (
                     <SelectItem key={object}>{object}</SelectItem>

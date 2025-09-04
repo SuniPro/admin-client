@@ -211,7 +211,6 @@ export function CryptoDepositList(props: { employee: EmployeeInfoType }) {
           <DateRangePicker
             css={css`
               width: 240px;
-              background-color: black;
 
               .rs-picker-input-group {
                 background-color: ${theme.mode.cardBackground} !important;

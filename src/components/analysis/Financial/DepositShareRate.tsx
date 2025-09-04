@@ -1,8 +1,8 @@
 import { useTheme } from "@emotion/react";
-import { useWindowContext } from "../../../context/WindowContext";
+import { useWindowContext } from "@/context/WindowContext";
 import { SimpleFunnerChartType } from "../../statistics/visualization/Chart";
 import { SimpleFunnelChart } from "../../statistics/visualization/Chart/Funnel";
-import { OutLine } from "../../layouts/Layouts";
+import { OutLine } from "@/components/layouts";
 
 export function DepositShareRate(props: { data: SimpleFunnerChartType[] }) {
   const theme = useTheme();
