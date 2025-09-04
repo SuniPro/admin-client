@@ -23,15 +23,17 @@ export function GlobalStyled() {
         z-index: -1;
         background-color: ${theme.mode.bodyBackground};
 
+        #root {
+          color: ${theme.mode.textPrimary};
+          background-color: ${theme.mode.bodyBackground};
+        }
+
         :root {
           font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
           line-height: 1.5;
           font-weight: 400;
 
           color-scheme: light dark;
-
-          color: ${theme.mode.textPrimary};
-          background-color: ${theme.mode.bodyBackground};
 
           font-synthesis: none;
           text-rendering: optimizeLegibility;

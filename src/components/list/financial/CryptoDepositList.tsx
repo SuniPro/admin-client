@@ -213,13 +213,13 @@ export function CryptoDepositList(props: { employee: EmployeeInfoType }) {
               width: 240px;
               background-color: black;
 
-              div {
-                background-color: ${theme.mode.cardBackground};
+              .rs-picker-input-group {
+                background-color: ${theme.mode.cardBackground} !important;
               }
 
               input {
                 background-color: ${theme.mode.cardBackground};
-                color: white;
+                color: ${theme.mode.textPrimary};
               }
             `}
             container={document.getElementById("date-area")!}

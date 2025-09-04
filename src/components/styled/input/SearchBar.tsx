@@ -93,6 +93,7 @@ export function SearchBar(props: {
                     className="finder__input"
                     type="text"
                     name="q"
+                    placeholder="지갑주소를 입력하세요."
                     onBlur={() => setActive(false)}
                     onFocus={() => setActive(true)}
                     onChange={(e) =>
@@ -162,7 +163,7 @@ const Finder = styled.div<{ theme: Theme }>(
   ({ theme }) => css`
     border: 1px solid ${theme.mode.textSecondary};
     border-radius: ${theme.borderRadius.softBox};
-    background-color: #fff;
+    background-color: ${theme.mode.cardBackground};
     padding: 2px;
     width: 100%;
     box-sizing: border-box;

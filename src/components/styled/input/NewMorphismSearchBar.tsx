@@ -76,10 +76,10 @@ export function NewMorphismSearchBar(props: {
     <>
       <Container>
         <FinderForm autoComplete="off" onSubmit={(e) => searchSubmit(e)}>
-          <Finder className="finder" theme={theme} boxShadow={isDarkMode}>
+          <Finder className="finder" theme={theme} boxShadow={!isDarkMode}>
             <FinderOuter
               className="finder__outer"
-              boxShadow={isDarkMode}
+              boxShadow={!isDarkMode}
               backgroundColor={
                 isDarkMode ? theme.colors.midnightBlack : undefined
               }
