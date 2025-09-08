@@ -80,7 +80,7 @@ export function CryptoAccountList(props: { employee: EmployeeInfoType }) {
   const [columnResizeMode] = useState<ColumnResizeMode>("onChange");
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([
-    { id: "requestedAt", desc: true },
+    { id: "insertDateTime", desc: true },
   ]);
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);

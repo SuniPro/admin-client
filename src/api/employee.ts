@@ -9,7 +9,7 @@ import {
   deleteToEmployeeServer,
   getFromEmployeeServer,
   postToEmployeeServer,
-  updateToEmployeeServer,
+  putToEmployeeServer,
 } from "./base";
 
 export async function createEmployee(
@@ -26,7 +26,7 @@ export async function getAllEmployeeList(
   page: number,
   size: number,
 ): Promise<PaginationResponse<EmployeeType>> {
-  if (level === "ADMINISTRATOR") {
+  if (level === "ADMINISTRATOR" || level === "DEVELOPER") {
     const response = await getFromEmployeeServer(
       `/employee/get/all?page=${page}&size=${size}&sort=insertDateTime,desc`,
     );
@@ -54,7 +54,7 @@ export async function getEmployeeByNameThroughList(
 export async function updateEmployee(
   employee: UpdateEmployeeType,
 ): Promise<EmployeeType> {
-  const response = await updateToEmployeeServer("/employee/update", employee);
+  const response = await putToEmployeeServer("/employee/update", employee);
 
   return response.data;
 }

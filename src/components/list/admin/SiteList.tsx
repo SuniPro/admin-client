@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { getAll, updateOnlySite, updateOnlyWallet } from "@/api/site";
+import { updateOnlySite, updateOnlyWallet } from "@/api/site";
 import {
   HeaderLine,
   StyledContainer,
@@ -9,7 +9,6 @@ import {
   TableWrapper,
 } from "@/components/Table";
 import { SiteType, SiteWalletType } from "@/model/site";
-import { useQuery } from "@tanstack/react-query";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -32,6 +31,7 @@ import { PatchModal } from "@/components/Modal/PatchModal";
 import { Select, SelectItem, Tooltip } from "@heroui/react";
 import { ChainType } from "@/model/financial";
 import { SuccessAlert } from "@/components/Alert";
+import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
 
 type SiteTableMeta = {
   selectedRows: SiteType | null;
@@ -47,7 +47,13 @@ type WalletTableMeta = {
   setWalletChange: (_r: boolean) => void;
 };
 
-export function SiteList() {
+export function SiteList(props: {
+  siteList: SiteType[];
+  refetch: (
+    _options?: RefetchOptions,
+  ) => Promise<QueryObserverResult<SiteType[], Error>>;
+}) {
+  const { siteList, refetch } = props;
   const theme = useTheme();
   const { windowWidth } = useWindowContext();
 
@@ -72,16 +78,10 @@ export function SiteList() {
     { id: "insertDateTime", desc: true },
   ]);
 
-  const { data: siteList, refetch } = useQuery({
-    queryKey: ["getAllSite"],
-    queryFn: () => getAll(),
-    refetchInterval: 10000,
-  });
-
   const siteListRenderRef = useRef(false);
 
   useEffect(() => {
-    if (!siteList || siteListRenderRef.current) return;
+    if (siteListRenderRef.current) return;
     setSelectedRows(siteList[0]);
     siteListRenderRef.current = true;
   }, [siteList]);
@@ -215,7 +215,7 @@ export function SiteList() {
   );
 
   const table = useReactTable<SiteType>({
-    data: siteList ?? [],
+    data: siteList,
     columns,
     meta: {
       selectedRows,
