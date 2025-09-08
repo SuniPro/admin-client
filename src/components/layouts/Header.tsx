@@ -75,7 +75,8 @@ export function Header(props: {
             ConfirmAlert("로그아웃하시겠습니까?", () =>
               logout().then(() => {
                 SuccessAlert("로그아웃 되었습니다.");
-                navigate("login");
+                navigate("/login");
+                window.location.reload();
               }),
             )
           }
