@@ -53,7 +53,7 @@ export function CryptoDepositSendList(props: { employee: EmployeeInfoType }) {
   ]);
 
   const { data, refetch } = useQuery<PaginationResponse<CryptoDepositType>>({
-    queryKey: ["getDepositsByStatus", false, pageIndex, pageSize],
+    queryKey: ["getDepositsByStatus", pageIndex, pageSize],
     queryFn: () =>
       getSendDepositsBySite(false, employee.site, pageIndex, pageSize),
     placeholderData: (previousData) => previousData,
