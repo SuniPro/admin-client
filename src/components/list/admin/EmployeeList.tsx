@@ -159,10 +159,9 @@ export function EmployeeList(props: { employee: EmployeeInfoType }) {
                 onClick={() =>
                   ConfirmAlert("정말 삭제하시겠습니까?", () =>
                     deleteEmployee(row.original.id)
-                      .then(() => {
-                        refetch();
-                        SuccessAlert("삭제성공");
-                      })
+                      .then(() =>
+                        refetch().then(() => SuccessAlert("삭제성공")),
+                      )
                       .catch((e) => ErrorAlert(e.message)),
                   )
                 }
