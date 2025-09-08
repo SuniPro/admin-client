@@ -159,10 +159,9 @@ export function EmployeeList(props: { employee: EmployeeInfoType }) {
                 onClick={() =>
                   ConfirmAlert("정말 삭제하시겠습니까?", () =>
                     deleteEmployee(row.original.id)
-                      .then(() => {
-                        refetch();
-                        SuccessAlert("삭제성공");
-                      })
+                      .then(() =>
+                        refetch().then(() => SuccessAlert("삭제성공")),
+                      )
                       .catch((e) => ErrorAlert(e.message)),
                   )
                 }
@@ -317,6 +316,7 @@ export function EmployeeList(props: { employee: EmployeeInfoType }) {
             employeeObject={selectedEmployee}
             refetch={refetch}
             close={() => setUpdateOpen(false)}
+            employee={employee}
           />
         </CustomModal>
       )}
@@ -325,11 +325,12 @@ export function EmployeeList(props: { employee: EmployeeInfoType }) {
 }
 
 function EmployeeUpdateModal(props: {
+  employee: EmployeeInfoType;
   employeeObject: EmployeeType;
   refetch: () => void;
   close: () => void;
 }) {
-  const { employeeObject, refetch, close } = props;
+  const { employee, employeeObject, refetch, close } = props;
   const theme = useTheme();
 
   const [name, setName] = useState(employeeObject.name);
@@ -343,6 +344,11 @@ function EmployeeUpdateModal(props: {
       return ErrorAlert("패스워드 변경 미희망 시 비워두세요.");
     } else if (name.length < 6) {
       return ErrorAlert("아이디는 6자 이상이어야합니다.");
+    } else if (
+      employee.level !== "ADMINISTRATOR" &&
+      level === "ADMINISTRATOR"
+    ) {
+      return ErrorAlert("관리자 계정은 관리자만 추가할 수 있습니다.");
     } else {
       updateEmployee({
         id: employeeObject.id,
