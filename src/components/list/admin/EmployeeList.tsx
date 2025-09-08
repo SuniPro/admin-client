@@ -18,9 +18,6 @@ import {
   TableWrapper,
 } from "@/components/Table";
 import {
-  departmentLabelMap,
-  departmentList,
-  DepartmentType,
   EmployeeInfoType,
   EmployeeType,
   levelLabelMap,
@@ -333,7 +330,6 @@ function EmployeeUpdateModal(props: {
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [level, setLevel] = useState<LevelType>("STAFF");
-  const [department, setDepartment] = useState<DepartmentType>("ACCOUNTING");
 
   const submit = () => {
     // eslint-disable-next-line security/detect-possible-timing-attacks
@@ -344,7 +340,7 @@ function EmployeeUpdateModal(props: {
     } else {
       updateEmployee({
         id: employeeObject.id,
-        department,
+        department: "ACCOUNTING",
         level,
         name,
         password,
@@ -437,29 +433,6 @@ function EmployeeUpdateModal(props: {
           onChange={(e) => setPasswordConfirm(e.target.value)}
         />
         <Select
-          className="px-0"
-          variant="underlined"
-          defaultSelectedKeys={[employeeObject.department]}
-          selectedKeys={new Set([department])}
-          onSelectionChange={(keys) => {
-            const val = Array.from(keys)[0] as DepartmentType | undefined; // keys는 Selection(Set)
-            if (val) {
-              setDepartment(val);
-            }
-          }}
-          css={css`
-            span {
-              color: ${theme.mode.textPrimary};
-            }
-          `}
-        >
-          {departmentList.map((value) => (
-            <SelectItem key={value}>
-              {departmentLabelMap[value as DepartmentType]}
-            </SelectItem>
-          ))}
-        </Select>
-        <Select
           variant="underlined"
           defaultSelectedKeys={[employeeObject.level]}
           selectedKeys={new Set([level])}
@@ -498,7 +471,6 @@ function EmployeeAddModal(props: {
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [level, setLevel] = useState<LevelType>("STAFF");
-  const [department, setDepartment] = useState<DepartmentType>("ACCOUNTING");
   const [site, setSite] = useState<string>("");
 
   const makeId = () =>
@@ -542,7 +514,7 @@ function EmployeeAddModal(props: {
       createEmployee({
         name,
         password,
-        department,
+        department: "ACCOUNTING",
         level,
         site,
         siteWalletList: siteWalletList.map((wallet) => ({
@@ -637,29 +609,6 @@ function EmployeeAddModal(props: {
           isInvalid={passwordConfirm !== password}
           onChange={(e) => setPasswordConfirm(e.target.value)}
         />
-        <Select
-          className="px-0"
-          variant="underlined"
-          defaultSelectedKeys={[department]}
-          selectedKeys={new Set([department])}
-          onSelectionChange={(keys) => {
-            const val = Array.from(keys)[0] as DepartmentType | undefined; // keys는 Selection(Set)
-            if (val) {
-              setDepartment(val);
-            }
-          }}
-          css={css`
-            span {
-              color: ${theme.mode.textPrimary};
-            }
-          `}
-        >
-          {departmentList.map((value) => (
-            <SelectItem key={value}>
-              {departmentLabelMap[value as DepartmentType]}
-            </SelectItem>
-          ))}
-        </Select>
         <Select
           variant="underlined"
           defaultSelectedKeys={[level]}

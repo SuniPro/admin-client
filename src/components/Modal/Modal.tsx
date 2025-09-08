@@ -77,4 +77,6 @@ export const EditorModalContainer = styled(Container)`
   width: 100%;
   flex-direction: column;
   justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
 `;
