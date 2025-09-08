@@ -84,7 +84,7 @@ export function EmployeeList(props: { employee: EmployeeInfoType }) {
   };
 
   const { data, refetch } = useQuery({
-    queryKey: ["employee"],
+    queryKey: ["employee", pageIndex, pageSize],
     queryFn: () =>
       getAllEmployeeList(employee!.level, employee!.site, pageIndex, pageSize),
     refetchInterval: 1800000,
@@ -99,6 +99,12 @@ export function EmployeeList(props: { employee: EmployeeInfoType }) {
         header: "번호",
         size: 50,
         accessorKey: "id",
+      },
+      {
+        id: "site",
+        header: "site",
+        size: 50,
+        accessorKey: "site",
       },
       {
         id: "level",
@@ -326,7 +332,7 @@ function EmployeeUpdateModal(props: {
   const { employeeObject, refetch, close } = props;
   const theme = useTheme();
 
-  const [name, setName] = useState("");
+  const [name, setName] = useState(employeeObject.name);
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [level, setLevel] = useState<LevelType>("STAFF");
@@ -393,7 +399,7 @@ function EmployeeUpdateModal(props: {
           정보 변경
         </span>
         <span className="cursor-pointer" onClick={submit}>
-          추가
+          변경
         </span>
       </div>
       <HorizontalDivider width={100} />
@@ -516,7 +522,7 @@ function EmployeeAddModal(props: {
         password,
         department: "ACCOUNTING",
         level,
-        site,
+        site: site.toLowerCase(),
         siteWalletList: siteWalletList.map((wallet) => ({
           cryptoWallet: wallet.cryptoWallet,
           chainType: wallet.chainType,
