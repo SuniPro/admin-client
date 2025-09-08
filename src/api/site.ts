@@ -2,6 +2,7 @@ import { SiteOnlyType, SiteType, SiteWalletInfoType } from "@/model/site";
 import { getFromEmployeeServer, patchToEmployeeServer } from "./base";
 import { PaginationResponse } from "@/model/pagination";
 import { ChainType } from "@/model/financial";
+import { LevelType } from "@/model/employee";
 
 export async function getSite(site: string): Promise<SiteType> {
   const response = await getFromEmployeeServer(`/site/get/${site}`);
@@ -9,10 +10,14 @@ export async function getSite(site: string): Promise<SiteType> {
   return response.data;
 }
 
-export async function getAll(): Promise<SiteType[]> {
-  const response = await getFromEmployeeServer(`/site/get/all`);
-
-  return response.data;
+export async function getAllSite(level: LevelType): Promise<SiteType[]> {
+  if (level === "ADMINISTRATOR" || level === "DEVELOPER") {
+    const response = await getFromEmployeeServer(`/site/get/all`);
+    return response.data;
+  } else {
+    const response = await getFromEmployeeServer("/site/get");
+    return response.data;
+  }
 }
 
 export async function getAllThroughPage(

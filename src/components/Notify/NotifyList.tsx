@@ -23,12 +23,7 @@ import {
   TableSearchBar,
   VerticalDivider,
 } from "../layouts";
-import {
-  Pagination,
-  TableBody,
-  TableHeader,
-  TableHeaderFuncButton,
-} from "../Table";
+import { TableBody, TableHeader, TableHeaderFuncButton } from "../Table";
 import { CustomModal, EditorModalContainer, ModalHeaderLine } from "../Modal";
 import { createNotify, readNotify } from "@/api/notify";
 import { ErrorAlert, SuccessAlert } from "../Alert";
@@ -330,7 +325,6 @@ export function NotifyList(props: {
           />
           <TableBody table={table} />
         </TableContainer>
-        <Pagination table={table} />
         <StyledModal
           open={viewerOpen}
           close={() => setViewerOpen(false)}

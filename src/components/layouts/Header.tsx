@@ -45,10 +45,14 @@ export function Header(props: {
   if (isError) return;
 
   const dashboardMenuHandle = () => {
-    if (employee.level !== "ADMINISTRATOR") {
-      return DashboardMenu.slice(0, 3);
-    } else {
+    if (
+      employee.level === "ADMINISTRATOR" ||
+      employee.level === "DEVELOPER" ||
+      employee.level === "MANAGER"
+    ) {
       return DashboardMenu;
+    } else {
+      return DashboardMenu.slice(0, 3);
     }
   };
 

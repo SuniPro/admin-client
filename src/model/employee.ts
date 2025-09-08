@@ -10,6 +10,7 @@ export interface EmployeeInfoType {
 export interface EmployeeType {
   id: number;
   department: DepartmentType;
+  site: string;
   level: LevelType;
   name: string;
   insertName: string;
@@ -47,7 +48,12 @@ export const departmentList = ["ADMIN", "DEVELOPER", "ACCOUNTING"] as const;
 
 export type DepartmentType = (typeof departmentList)[number];
 
-export const levelList = ["STAFF", "MANAGER", "ADMINISTRATOR"] as const;
+export const levelList = [
+  "STAFF",
+  "MANAGER",
+  "ADMINISTRATOR",
+  "DEVELOPER",
+] as const;
 
 export type LevelType = (typeof levelList)[number];
 
@@ -59,6 +65,7 @@ export const departmentLabelMap: Record<DepartmentType, string> = {
 
 export const levelLabelMap: Record<LevelType, string> = {
   STAFF: "직원",
-  MANAGER: "총괄팀장",
+  MANAGER: "팀장",
   ADMINISTRATOR: "관리자",
+  DEVELOPER: "개발자",
 };
