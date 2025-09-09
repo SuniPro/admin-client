@@ -217,7 +217,7 @@ export function CryptoDepositSendList(props: { employee: EmployeeInfoType }) {
         ),
       },
     ],
-    [refetch],
+    [depositsRefetch, refetch],
   );
 
   const table = useReactTable<CryptoDepositType>({
