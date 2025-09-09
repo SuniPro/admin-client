@@ -16,6 +16,7 @@ import { useState } from "react";
 import { iso8601ToYYMMDDHHMM } from "@/components/styled/Date/DateFomatter";
 import { ViewNotify } from "@/components/Notify/NotifyList";
 import { Admin } from "./manage/Admin";
+import { getSiteWalletInfoBySite } from "@/api/site";
 
 export function Dashboard(props: { activeMenu: DashboardMenuType }) {
   const { activeMenu } = props;
@@ -30,6 +31,12 @@ export function Dashboard(props: { activeMenu: DashboardMenuType }) {
     refetchInterval: 300000,
   });
 
+  const { data: siteWalletInfoList } = useQuery({
+    queryKey: ["getDepositByAddressAndRangeAndSite"],
+    queryFn: () => getSiteWalletInfoBySite(),
+    refetchInterval: 1800000,
+  });
+
   if (!employee) return;
 
   const menuMatcher = () => {
@@ -41,7 +48,13 @@ export function Dashboard(props: { activeMenu: DashboardMenuType }) {
         return <CryptoDeposit />;
 
       case "siteManage":
-        return <Site />;
+        return (
+          <>
+            {siteWalletInfoList && (
+              <Site siteWalletInfoList={siteWalletInfoList} />
+            )}
+          </>
+        );
 
       case "notice":
         return <Notify />;
