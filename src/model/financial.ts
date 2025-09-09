@@ -3,6 +3,11 @@ import type { BigNumber } from "bignumber.js";
 export type ChainType = "TRON" | "ETH" | "BTC";
 export type CryptoType = "USDT" | "ETH" | "BTC";
 
+export interface CryptoMemoUpdateType {
+  id?: number | null;
+  memo: string;
+}
+
 export interface CryptoAccountType {
   id: number;
   cryptoWallet: string;
