@@ -2,6 +2,7 @@ import { Chain } from "@/hooks/useDetectChain";
 import {
   CryptoAccountType,
   CryptoDepositType,
+  ExchangeInfo,
   NormalizedTransfer,
 } from "../model/financial";
 import { PaginationResponse } from "../model/pagination";
@@ -10,9 +11,20 @@ import {
   getFromCryptoTrackerServer,
   getFromEmployeeServer,
   patchToEmployeeServer,
+  postToEmployeeServer,
   rangeFormatter,
 } from "./base";
 import { ValueType } from "rsuite/DateRangePicker";
+
+export async function getExchangeInfo(
+  cryptoType: "USDT" | "BTC" | "ETH",
+): Promise<ExchangeInfo> {
+  const response = await getFromCryptoTrackerServer(
+    `/exchange/get?cryptoType=${cryptoType}`,
+  );
+
+  return response.data;
+}
 
 export async function updateMemo(updateInfo: CryptoAccountType): Promise<void> {
   await patchToEmployeeServer("/financial/tether/update/memo", updateInfo);
@@ -100,10 +112,28 @@ export async function updateCryptoWallet(
   return response.data;
 }
 
-export async function deleteDepositById(depositId: number): Promise<void> {
-  await deleteToEmployeeServer(
-    `/financial/tether/delete/deposit/by/id/${depositId}`,
+export async function createSentDeposit(
+  deposit: CryptoDepositType,
+): Promise<CryptoDepositType> {
+  const response = await postToEmployeeServer(
+    "/financial/create/crypto/deposit/sent",
+    deposit,
   );
+  return response.data;
+}
+
+export async function createNotSentDeposit(
+  deposit: CryptoDepositType,
+): Promise<CryptoDepositType> {
+  const response = await postToEmployeeServer(
+    "/financial/create/crypto/deposit/not/sent",
+    deposit,
+  );
+  return response.data;
+}
+
+export async function deleteDepositById(depositId: number): Promise<void> {
+  await deleteToEmployeeServer(`/financial/delete/deposit/${depositId}`);
 }
 
 /* Transfer List */
