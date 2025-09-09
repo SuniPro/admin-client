@@ -10,13 +10,7 @@ export function HorizontalDivider(props: {
 }) {
   const { className, width } = props;
   const theme = useTheme();
-  return (
-    <HorizontalLine
-      className={className}
-      theme={theme}
-      width={width}
-    ></HorizontalLine>
-  );
+  return <HorizontalLine className={className} theme={theme} width={width} />;
 }
 
 export function VerticalDivider(props: { height: number; className?: string }) {
