@@ -116,7 +116,7 @@ export function CryptoDepositSendList(props: { employee: EmployeeInfoType }) {
       },
       {
         id: "realAmount",
-        header: "실제 입금금액",
+        header: "실 전송 금액",
         accessorKey: "realAmount",
         size: 100,
         cell: ({ row }) => {
@@ -341,6 +341,7 @@ function DepositAddModal(props: {
   const [toAddress, setToAddress] = useState<string>("");
 
   const [amount, setAmount] = useState<BigNumber>(new BigNumber(0));
+  const [krwAmount, setKrwAmount] = useState<BigNumber>(new BigNumber(0));
 
   const { data: exchangeInfo } = useQuery({
     queryKey: ["getExchangeInfo", cryptoType],
@@ -358,7 +359,7 @@ function DepositAddModal(props: {
       fromAddress,
       toAddress,
       amount: amount.toString(),
-      krwAmount: amount.multipliedBy(exchangeInfo.closing_price).toString(),
+      krwAmount: krwAmount.toString(),
       realAmount: amount.toString(),
       accepted: true,
       acceptedAt: new Date().toISOString(),
@@ -469,28 +470,18 @@ function DepositAddModal(props: {
             </div>
           }
         />
-        {exchangeInfo && (
-          <Input
-            className="w-full"
-            variant="underlined"
-            type="text"
-            label="원화 환율"
-            value={
-              amount.comparedTo(0) === 0 || amount.comparedTo(0) === null
-                ? "0"
-                : amount
-                    .multipliedBy(exchangeInfo.closing_price)
-                    .toNumber()
-                    .toLocaleString("ko-KR")
-            }
-            readOnly
-            endContent={
-              <div className="pointer-events-none flex items-center">
-                <span className="text-default-400 text-small">₩</span>
-              </div>
-            }
-          />
-        )}
+        <Input
+          className="w-full"
+          variant="underlined"
+          type="text"
+          label="원화"
+          onChange={(e) => setKrwAmount(BigNumber(e.target.value))}
+          endContent={
+            <div className="pointer-events-none flex items-center">
+              <span className="text-default-400 text-small">₩</span>
+            </div>
+          }
+        />
         <Select
           label="네트워크"
           className="w-full"

@@ -41,6 +41,8 @@ import { Input } from "@heroui/input";
 import { ErrorAlert } from "../Alert";
 import EditIcon from "@mui/icons-material/Edit";
 import CancelIcon from "@mui/icons-material/Cancel";
+import { CustomModal } from "../Modal";
+import { WriteMemo } from "../Lexical/modal/financialModal";
 
 type TableMeta = {
   selectedRows: CryptoAccountType | null;
@@ -59,6 +61,8 @@ export function CryptoAccountList(props: { employee: EmployeeInfoType }) {
   const theme = useTheme();
 
   const { windowWidth } = useWindowContext();
+
+  const [open, setOpen] = useState<boolean>(false);
 
   const [selectedRows, setSelectedRows] = useState<CryptoAccountType | null>(
     null,
@@ -205,6 +209,10 @@ export function CryptoAccountList(props: { employee: EmployeeInfoType }) {
         cell: ({ row }) => (
           <TableFunctionLine>
             <EditNoteIcon
+              onClick={() => {
+                setOpen(true);
+                setSelectedRows(row.original);
+              }}
               color={row.original.memo !== null ? "primary" : "disabled"}
               fontSize="small"
             />
@@ -341,6 +349,16 @@ export function CryptoAccountList(props: { employee: EmployeeInfoType }) {
         </TableWrapper>
         <Pagination table={table} viewSizeBox={true} />
       </StyledContainer>
+      {selectedRows && selectedRows.memo && (
+        <CustomModal open={open} close={() => setOpen(false)}>
+          <WriteMemo
+            account={selectedRows}
+            memo={selectedRows.memo}
+            close={() => setOpen(false)}
+            refetch={refetch}
+          />
+        </CustomModal>
+      )}
     </>
   );
 }

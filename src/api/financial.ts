@@ -2,6 +2,7 @@ import { Chain } from "@/hooks/useDetectChain";
 import {
   CryptoAccountType,
   CryptoDepositType,
+  CryptoMemoUpdateType,
   ExchangeInfo,
   NormalizedTransfer,
 } from "../model/financial";
@@ -26,8 +27,10 @@ export async function getExchangeInfo(
   return response.data;
 }
 
-export async function updateMemo(updateInfo: CryptoAccountType): Promise<void> {
-  await patchToEmployeeServer("/financial/tether/update/memo", updateInfo);
+export async function updateMemo(
+  updateInfo: CryptoMemoUpdateType,
+): Promise<void> {
+  await patchToEmployeeServer("/financial/update/memo", updateInfo);
 }
 
 export async function getAllCryptoAccountBySite(
@@ -37,6 +40,15 @@ export async function getAllCryptoAccountBySite(
 ): Promise<PaginationResponse<CryptoAccountType>> {
   const response = await getFromEmployeeServer(
     `/financial/get/crypto/account/by/site/${site}?page=${page}&size=${size}&sort=insertDateTime,desc`,
+  );
+  return response.data;
+}
+
+export async function getCryptoAccountByCryptoWallet(
+  cryptoWallet: string,
+): Promise<CryptoAccountType> {
+  const response = await getFromEmployeeServer(
+    `/financial/get/crypto/account/wallet/${cryptoWallet}`,
   );
   return response.data;
 }

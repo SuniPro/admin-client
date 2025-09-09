@@ -18,23 +18,30 @@ import {
   SortingState,
   useReactTable,
 } from "@tanstack/react-table";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import DateRangePicker, { ValueType } from "rsuite/DateRangePicker";
 import { useQuery } from "@tanstack/react-query";
-import { getDepositByAddressAndRangeAndSite } from "@/api/financial";
+import {
+  getCryptoAccountByCryptoWallet,
+  getDepositByAddressAndRangeAndSite,
+} from "@/api/financial";
 import { OutLine } from "@/components/layouts";
 import { Spinner, Switch } from "@heroui/react";
-import { CryptoDepositType } from "@/model/financial";
+import { CryptoAccountType, CryptoDepositType } from "@/model/financial";
 import {
   Pagination,
   StyledContainer,
   TableBody,
   TableContainer,
+  TableFunctionLine,
   TableHeader,
   TableWrapper,
 } from "@/components/Table";
 import { iso8601ToYYMMDDHHMM } from "@/components/styled/Date/DateFomatter";
 import { BigNumber } from "bignumber.js";
+import ArticleIcon from "@mui/icons-material/Article";
+import { CustomModal } from "@/components/Modal";
+import { WriteMemo } from "@/components/Lexical/modal/financialModal";
 
 export const DepositSearchValue: searchBarProps[] = [
   { key: "to", label: "받은주소" },
@@ -46,6 +53,19 @@ export function CryptoDepositList(props: { employee: EmployeeInfoType }) {
 
   const theme = useTheme();
   const { windowWidth } = useWindowContext();
+
+  const [open, setOpen] = useState<boolean>(false);
+  const [selectedDeposit, setSelectedDeposit] =
+    useState<CryptoDepositType | null>(null);
+
+  const [account, setAccount] = useState<CryptoAccountType | null>(null);
+
+  useEffect(() => {
+    if (!selectedDeposit) return;
+    getCryptoAccountByCryptoWallet(selectedDeposit.fromAddress).then((r) =>
+      setAccount(r),
+    );
+  }, [open, selectedDeposit]);
 
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(10);
@@ -82,6 +102,10 @@ export function CryptoDepositList(props: { employee: EmployeeInfoType }) {
     enabled: Boolean(employee),
   });
 
+  const accountRefetch = () => {
+    refetch();
+  };
+
   const depositList = data?.content;
 
   const columns = useMemo<ColumnDef<CryptoDepositType>[]>(
@@ -111,6 +135,20 @@ export function CryptoDepositList(props: { employee: EmployeeInfoType }) {
         size: 100,
       },
       {
+        id: "realAmount",
+        header: "실 전송 금액",
+        accessorKey: "realAmount",
+        size: 100,
+        cell: ({ row }) => {
+          const formatted = new BigNumber(row.original.realAmount).toString();
+          return (
+            <span>
+              {formatted} {row.original.cryptoType}
+            </span>
+          );
+        },
+      },
+      {
         id: "amount",
         header: "요청금액",
         accessorKey: "amount",
@@ -126,7 +164,7 @@ export function CryptoDepositList(props: { employee: EmployeeInfoType }) {
       },
       {
         id: "krwAmount",
-        header: "요청금액 (원)",
+        header: "요청금액",
         accessorKey: "krwAmount",
         size: 100,
         cell: ({ row }) => {
@@ -136,7 +174,7 @@ export function CryptoDepositList(props: { employee: EmployeeInfoType }) {
           const formatted = new Intl.NumberFormat("ko-KR").format(
             BigInt(floored.toFixed(0)),
           );
-          return <span>{formatted}</span>;
+          return <span>{formatted} ₩</span>;
         },
       },
       {
@@ -155,6 +193,22 @@ export function CryptoDepositList(props: { employee: EmployeeInfoType }) {
         size: 50,
         cell: ({ row }) => (
           <span>{iso8601ToYYMMDDHHMM(row.getValue("requestedAt"))}</span>
+        ),
+      },
+      {
+        id: "func",
+        header: "메모",
+        size: 50,
+        cell: ({ row }) => (
+          <TableFunctionLine>
+            <ArticleIcon
+              onClick={() => {
+                setSelectedDeposit(row.original);
+                setOpen(true);
+              }}
+              fontSize="small"
+            />
+          </TableFunctionLine>
         ),
       },
     ],
@@ -270,6 +324,16 @@ export function CryptoDepositList(props: { employee: EmployeeInfoType }) {
         </TableWrapper>
         <Pagination table={table} viewSizeBox={true} />
       </StyledContainer>
+      {selectedDeposit && account && account.memo && (
+        <CustomModal open={open} close={() => setOpen(false)}>
+          <WriteMemo
+            account={account}
+            memo={account.memo}
+            close={() => setOpen(false)}
+            refetch={accountRefetch}
+          />
+        </CustomModal>
+      )}
     </>
   );
 }
