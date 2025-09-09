@@ -5,8 +5,6 @@ import { NewMorphismSearchBar } from "@/components/styled/input/NewMorphismSearc
 import { css, useTheme } from "@emotion/react";
 import { DateTime } from "luxon";
 import { RefObject, useMemo, useRef, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { getSiteWalletInfoBySite } from "@/api/site";
 import { ErrorAlert, SuccessAlert } from "@/components/Alert";
 import { detectChain } from "@/hooks/useDetectChain";
 import { getTransferList } from "@/api/financial";
@@ -34,6 +32,7 @@ import {
 import { useWindowContext } from "@/context/WindowContext";
 import { EmptyState } from "@/components/list/EmptyState";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { useExchange } from "@/hooks/useExchange";
 
 export const inputCopy = (ref: RefObject<HTMLInputElement | null>) => {
   if (!ref.current) return;
@@ -48,7 +47,8 @@ export const inputCopy = (ref: RefObject<HTMLInputElement | null>) => {
     });
 };
 
-export function Site() {
+export function Site(props: { siteWalletInfoList: SiteWalletInfoType[] }) {
+  const { siteWalletInfoList } = props;
   const { windowWidth } = useWindowContext();
   const [search, setSearch] = useState<string>("");
   const [transferList, setTransferList] = useState<NormalizedTransfer[]>([]);
@@ -63,12 +63,6 @@ export function Site() {
 
   const theme = useTheme();
   const now = DateTime.now().setZone("Asia/Seoul").toISO();
-
-  const { data: siteWalletInfoList } = useQuery({
-    queryKey: ["getDepositByAddressAndRangeAndSite"],
-    queryFn: () => getSiteWalletInfoBySite(),
-    refetchInterval: 1800000,
-  });
 
   const handleSubmit = async (searchValue: string) => {
     if (!searchValue) return;
@@ -126,6 +120,17 @@ export function Site() {
         return "TronGrid";
     }
   };
+
+  const { todayDepositAmount, chainType, weeksDepositAmount } =
+    siteWalletInfoList[selectedIndex as number];
+
+  const { cryptoAmount, krwAmount } = useExchange(
+    todayDepositAmount,
+    chainType,
+    decimal(chainType),
+  );
+  const { cryptoAmount: weeksCryptoAmount, krwAmount: weeksKrwAmount } =
+    useExchange(weeksDepositAmount, chainType, decimal(chainType));
 
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -197,7 +202,7 @@ export function Site() {
   );
 
   const table = useReactTable<SiteWalletInfoType>({
-    data: siteWalletInfoList ?? [],
+    data: siteWalletInfoList,
     columns,
     state: {
       sorting,
@@ -233,55 +238,49 @@ export function Site() {
           </TableContainer>
         </TableWrapper>
       </StyledContainer>
-      {siteWalletInfoList && (
-        <div
-          css={css`
-            display: grid;
-            width: 100%;
-            grid-template-columns: 1fr 1fr 1fr 1fr;
-            grid-gap: 0.75rem;
-          `}
-        >
-          <StatisticsCard
-            title="지갑 잔액"
-            statistics={formatUnits(
-              siteWalletInfoList[selectedIndex as number].balance,
-              decimal(siteWalletInfoList[0].chainType)!,
-            )}
-            unit={cryptoType(siteWalletInfoList[0].chainType)}
-            description={`${iso8601ToYYMMDDHHMM(now!)} 부 최신화된 결과입니다.`}
-            postscript={`${cryptoType(
-              siteWalletInfoList[0].chainType,
-            )}는 ${utilType(siteWalletInfoList[0].chainType)} 기준입니다.`}
-          />
-          <StatisticsCard
-            title="사이트 입금 내역"
-            statistics={siteWalletInfoList[
-              selectedIndex as number
-            ].depositHistoryLength.toString()}
-            description="Icoins의 모든 입금내역이 포함됩니다."
-            postscript="Icoins 이외의 내역은 아래의 테이블을 확인해주세요."
-          />
-          <StatisticsCard
-            title="금일 입금 금액"
-            statistics={parseInt(
-              siteWalletInfoList[selectedIndex as number].todayDepositAmount,
-            ).toLocaleString("ko-KR")}
-            unit="원"
-            description={`${iso8601ToYYMMDDHHMM(now!)} 부 최신화된 결과입니다.`}
-            postscript="Icoins를 통한 입금내역입니다."
-          />
-          <StatisticsCard
-            title="최근 입금 금액"
-            statistics={parseInt(
-              siteWalletInfoList[selectedIndex as number].weeksDepositAmount,
-            ).toLocaleString("ko-KR")}
-            unit="원"
-            description="금일자로 일주일 기준입니다."
-            postscript="Icoins를 통한 입금내역입니다."
-          />
-        </div>
-      )}
+      <div
+        css={css`
+          display: grid;
+          width: 100%;
+          grid-template-columns: 1fr 1fr 1fr 1fr;
+          grid-gap: 0.75rem;
+        `}
+      >
+        <StatisticsCard
+          title="지갑 잔액"
+          statistics={formatUnits(
+            siteWalletInfoList[selectedIndex as number].balance,
+            decimal(siteWalletInfoList[0].chainType)!,
+          )}
+          unit={cryptoType(siteWalletInfoList[0].chainType)}
+          description={`${iso8601ToYYMMDDHHMM(now!)} 부 최신화된 결과입니다.`}
+          postscript={`${cryptoType(
+            siteWalletInfoList[0].chainType,
+          )}는 ${utilType(siteWalletInfoList[0].chainType)} 기준입니다.`}
+        />
+        <StatisticsCard
+          title="사이트 입금 내역"
+          statistics={siteWalletInfoList[
+            selectedIndex as number
+          ].depositHistoryLength.toString()}
+          description="Icoins의 모든 입금내역이 포함됩니다."
+          postscript="Icoins 이외의 내역은 아래의 테이블을 확인해주세요."
+        />
+        <StatisticsCard
+          title="금일 입금 금액"
+          statistics={cryptoAmount.toString()}
+          unit={cryptoType(chainType)}
+          description={`${krwAmount} 원`}
+          postscript={`${iso8601ToYYMMDDHHMM(now!)} 부 최신화된 결과입니다.`}
+        />
+        <StatisticsCard
+          title="최근 입금 금액"
+          statistics={weeksCryptoAmount.toString()}
+          unit={cryptoType(chainType)}
+          description={`${weeksKrwAmount} 원`}
+          postscript={`${iso8601ToYYMMDDHHMM(now!)} 부 최신화된 결과입니다.`}
+        />
+      </div>
       {transferList.length > 0 ? (
         <CryptoTransferList transferList={transferList} />
       ) : (
