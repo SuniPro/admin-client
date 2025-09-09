@@ -1,0 +1,234 @@
+/** @jsxImportSource @emotion/react */
+import { StatisticsCard } from "@/components/Card/Card";
+import { iso8601ToYYMMDDHHMM } from "@/components/styled/Date/DateFomatter";
+import {
+  StyledContainer,
+  TableBody,
+  TableContainer,
+  TableHeader,
+  TableWrapper,
+} from "@/components/Table";
+import { useWindowContext } from "@/context/WindowContext";
+import { useExchange } from "@/hooks/useExchange";
+import { ChainType } from "@/model/financial";
+import { SiteWalletInfoType } from "@/model/site";
+import { formatUnits } from "@/utils/bigNumberConvert";
+import { css, useTheme } from "@emotion/react";
+import {
+  ColumnDef,
+  ColumnFiltersState,
+  ColumnResizeMode,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getSortedRowModel,
+  SortingState,
+  useReactTable,
+} from "@tanstack/react-table";
+import { DateTime } from "luxon";
+import { useMemo, useState } from "react";
+
+export function SiteWalletInfoList(props: {
+  siteWalletInfoList: SiteWalletInfoType[];
+}) {
+  const { siteWalletInfoList } = props;
+  const theme = useTheme();
+  const { windowWidth } = useWindowContext();
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
+
+  const [columnResizeMode] = useState<ColumnResizeMode>("onChange");
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: "insertDateTime", desc: true },
+  ]);
+
+  const now = DateTime.now().setZone("Asia/Seoul").toISO();
+
+  const utilType = (chainType: ChainType) => {
+    switch (chainType) {
+      case "BTC":
+        return "BlockCypher";
+      case "ETH":
+        return "Alchemy";
+      case "TRON":
+        return "TronGrid";
+    }
+  };
+
+  const decimal = (chainType: ChainType) => {
+    switch (chainType) {
+      case "BTC":
+        return 1e8;
+      case "ETH":
+        return 1e18;
+      case "TRON":
+        return 6;
+    }
+  };
+
+  const cryptoType = (chainType: ChainType) => {
+    switch (chainType) {
+      case "BTC":
+        return "BTC";
+      case "ETH":
+        return "ETH";
+      case "TRON":
+        return "USDT";
+    }
+  };
+
+  const { todayDepositAmount, chainType, weeksDepositAmount } =
+    siteWalletInfoList[selectedIndex as number];
+
+  const { cryptoAmount, krwAmount } = useExchange(
+    todayDepositAmount,
+    chainType,
+    decimal(chainType),
+  );
+  const { cryptoAmount: weeksCryptoAmount, krwAmount: weeksKrwAmount } =
+    useExchange(weeksDepositAmount, chainType, decimal(chainType));
+
+  const columns = useMemo<ColumnDef<SiteWalletInfoType>[]>(
+    () => [
+      {
+        id: "No.",
+        header: "번호",
+        size: 50,
+        accessorKey: "id",
+      },
+      { id: "chainType", header: "체인", accessorKey: "chainType", size: 50 },
+      {
+        id: "cryptoWallet",
+        header: "지갑",
+        accessorKey: "cryptoWallet",
+        cell: ({ row }) => (
+          <span
+            onClick={() => {
+              setSelectedIndex(row.index);
+            }}
+          >
+            {row.getValue("cryptoWallet")}
+          </span>
+        ),
+      },
+      {
+        id: "balance",
+        header: "잔액",
+        accessorKey: "balance",
+        enableColumnFilter: false,
+        cell: ({ row }) => (
+          <span
+            onClick={() => {
+              setSelectedIndex(row.index);
+            }}
+          >
+            {formatUnits(row.original.balance, decimal(row.original.chainType))}{" "}
+            {cryptoType(row.original.chainType)}
+          </span>
+        ),
+      },
+      {
+        id: "insertDateTime",
+        header: "생성일자",
+        accessorKey: "insertDateTime",
+        cell: ({ row }) => (
+          <span>
+            {row.getValue("insertDateTime")
+              ? iso8601ToYYMMDDHHMM(row.getValue("insertDateTime"))
+              : ""}
+          </span>
+        ),
+      },
+      {
+        id: "updateDateTime",
+        header: "수정일자",
+        accessorKey: "updateDateTime",
+        cell: ({ row }) => (
+          <span>
+            {row.getValue("updateDateTime")
+              ? iso8601ToYYMMDDHHMM(row.getValue("updateDateTime"))
+              : ""}
+          </span>
+        ),
+      },
+    ],
+    [],
+  );
+
+  const table = useReactTable<SiteWalletInfoType>({
+    data: siteWalletInfoList,
+    columns,
+    state: {
+      sorting,
+      columnFilters,
+    },
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(), //client side filtering
+    getSortedRowModel: getSortedRowModel(),
+    columnResizeMode,
+    debugTable: true,
+    debugHeaders: true,
+    debugColumns: true,
+  });
+
+  return (
+    <>
+      <StyledContainer theme={theme}>
+        <TableWrapper width={(windowWidth / 100) * 92} theme={theme}>
+          <TableContainer>
+            <TableHeader
+              table={table}
+              headerBorder="none"
+              columnResizeMode={columnResizeMode}
+            />
+            <TableBody table={table} />
+          </TableContainer>
+        </TableWrapper>
+      </StyledContainer>
+      <div
+        css={css`
+          display: grid;
+          width: 100%;
+          grid-template-columns: 1fr 1fr 1fr 1fr;
+          grid-gap: 0.75rem;
+        `}
+      >
+        <StatisticsCard
+          title="지갑 잔액"
+          statistics={formatUnits(
+            siteWalletInfoList[selectedIndex as number].balance,
+            decimal(siteWalletInfoList[0].chainType)!,
+          )}
+          unit={cryptoType(siteWalletInfoList[0].chainType)}
+          description={`${iso8601ToYYMMDDHHMM(now!)} 부 최신화된 결과입니다.`}
+          postscript={`${cryptoType(
+            siteWalletInfoList[0].chainType,
+          )}는 ${utilType(siteWalletInfoList[0].chainType)} 기준입니다.`}
+        />
+        <StatisticsCard
+          title="사이트 입금 내역"
+          statistics={siteWalletInfoList[
+            selectedIndex as number
+          ].depositHistoryLength.toString()}
+          description="Icoins의 모든 입금내역이 포함됩니다."
+          postscript="Icoins 이외의 내역은 아래의 테이블을 확인해주세요."
+        />
+        <StatisticsCard
+          title="금일 입금 금액"
+          statistics={cryptoAmount.toString()}
+          unit={cryptoType(chainType)}
+          description={`${krwAmount} 원`}
+          postscript={`${iso8601ToYYMMDDHHMM(now!)} 부 최신화된 결과입니다.`}
+        />
+        <StatisticsCard
+          title="최근 입금 금액"
+          statistics={weeksCryptoAmount.toString()}
+          unit={cryptoType(chainType)}
+          description={`${weeksKrwAmount} 원`}
+          postscript={`${iso8601ToYYMMDDHHMM(now!)} 부 최신화된 결과입니다.`}
+        />
+      </div>
+    </>
+  );
+}
