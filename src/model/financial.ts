@@ -51,6 +51,7 @@ export interface CryptoDepositType {
   toAddress: string;
   amount: string;
   krwAmount: string;
+  realAmount: string;
   accepted: boolean;
   acceptedAt: string;
   requestedAt: string;
