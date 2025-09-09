@@ -23,6 +23,10 @@ export function GlobalStyled() {
         z-index: -1;
         background-color: ${theme.mode.bodyBackground};
 
+        html {
+          background-color: ${theme.mode.bodyBackground};
+        }
+
         #root {
           color: ${theme.mode.textPrimary};
           background-color: ${theme.mode.bodyBackground};

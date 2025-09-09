@@ -61,9 +61,8 @@ export function CryptoDepositList(props: { employee: EmployeeInfoType }) {
   });
   const [isSend, setIsSend] = useState<boolean>(false);
 
-  const lastWeekStart = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000); // 현재로부터 정확히 7일 전
   const [dateRange, setDateRange] = useState<ValueType>([
-    lastWeekStart,
+    new Date(),
     new Date(),
   ]);
 
@@ -207,13 +206,14 @@ export function CryptoDepositList(props: { employee: EmployeeInfoType }) {
   return (
     <>
       <div className="w-full flex flex-col gap-2">
-        <div className="flex flex-row w-full justify-end gap-2">
+        <div className="flex flex-row w-full justify-end gap-2 h-full">
           <DateRangePicker
             css={css`
               width: 240px;
 
               .rs-picker-input-group {
                 background-color: ${theme.mode.cardBackground} !important;
+                height: 100%;
               }
 
               input {
@@ -269,33 +269,6 @@ export function CryptoDepositList(props: { employee: EmployeeInfoType }) {
           </TableContainer>
         </TableWrapper>
         <Pagination table={table} viewSizeBox={true} />
-        {/*<CustomModal*/}
-        {/*  open={open}*/}
-        {/*  close={close}*/}
-        {/*  css={css`*/}
-        {/*    height: 100px;*/}
-        {/*    padding: 0 20px;*/}
-        {/*  `}*/}
-        {/*  children={*/}
-        {/*    <ChangeTetherWallet*/}
-        {/*      close={close}*/}
-        {/*      refetch={refetch}*/}
-        {/*      accountId={selectedAccount.id}*/}
-        {/*    />*/}
-        {/*  }*/}
-        {/*/>*/}
-        {/*<StyledModal*/}
-        {/*  open={writeOpen}*/}
-        {/*  close={() => setWriteOpen(false)}*/}
-        {/*  children={*/}
-        {/*    <WriteTetherMemo*/}
-        {/*      accountId={selectedAccount.id}*/}
-        {/*      close={() => setWriteOpen(false)}*/}
-        {/*      prevContents={selectedAccount.memo}*/}
-        {/*      refetch={refetch}*/}
-        {/*    />*/}
-        {/*  }*/}
-        {/*/>*/}
       </StyledContainer>
     </>
   );
