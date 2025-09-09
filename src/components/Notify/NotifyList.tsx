@@ -87,7 +87,13 @@ function WriteNotify(props: {
 
   return (
     <LexicalModalContainer toolbarSize={width}>
-      <ModalHeaderLine>
+      <ModalHeaderLine
+        css={css`
+          margin-bottom: 0;
+          padding: 10px;
+          box-sizing: border-box;
+        `}
+      >
         <StyledInput
           theme={theme}
           placeholder="제목을 입력해주세요."
