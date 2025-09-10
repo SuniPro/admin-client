@@ -22,9 +22,9 @@ const QUERY_CLIENT = new QueryClient();
 
 function App() {
   const [darkMode, setDarkMode] = useState<boolean>(false);
-  const [open, setOpen] = useState<boolean>(false);
   const [activeMenu, setActiveMenu] = useState<DashboardMenuType>("userManage");
   const { isDarkMode } = useDarkMode();
+  const [open, setOpen] = useState<boolean>(false);
 
   useEffect(() => {
     setDarkMode(isDarkMode);
