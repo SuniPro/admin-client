@@ -58,7 +58,7 @@ const DMButton = styled(Button)<{ theme: Theme }>(
 const ChatContainer = styled(Container)`
   position: fixed;
   bottom: 2%;
-  right: 20px;
+  left: 20px;
   width: 50px;
   height: 50px;
 `;
