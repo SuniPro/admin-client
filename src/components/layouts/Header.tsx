@@ -1,5 +1,5 @@
 import { DashboardMenu, DashboardMenuType } from "../../model/menu";
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { css, Theme, useTheme } from "@emotion/react";
 import styled from "@emotion/styled";
 import { FuncItem } from "../styled/Button";
@@ -23,6 +23,8 @@ export function Header(props: {
   const { activeMenu, setActiveMenu } = props;
   const { employee, isError } = useEmployeeContext();
   const navigate = useNavigate();
+
+  const [calculatorOpen, setCalculatorOpen] = useState(false);
 
   const { data: notifyCount } = useQuery({
     queryKey: ["getCountUnReadAboutNotify"],

@@ -250,6 +250,7 @@ const TableBodyTr = styled.tr`
 
 export const PageNationWrapper = styled.section<{ theme: Theme }>(
   ({ theme }) => css`
+    isolation: isolate;
     margin-top: 1rem;
     width: 100%;
     height: 50px;
