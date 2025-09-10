@@ -25,12 +25,18 @@ export function CalculatorButton(props: {
     <StyledContainer>
       <Box theme={theme}>
         <label onClick={() => props.setOpen((prev) => !prev)}>
-          <CalculateIcon />
+          <StyledIcon />
         </label>
       </Box>
     </StyledContainer>
   );
 }
+
+const StyledIcon = styled(CalculateIcon)(
+  ({ theme }) => css`
+    fill: ${theme.mode.textRevers};
+  `,
+);
 
 const Box = styled(Button)<{ theme: Theme }>(
   ({ theme }) => css`
@@ -49,7 +55,7 @@ const Box = styled(Button)<{ theme: Theme }>(
 
 const StyledContainer = styled(Container)`
   position: fixed;
-  bottom: 10%;
+  bottom: 2%;
   right: 20px;
   width: 50px;
   height: 50px;
