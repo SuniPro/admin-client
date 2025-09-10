@@ -15,11 +15,14 @@ import { WindowContextProvider } from "./context/WindowContext";
 import { Chat } from "./components/Chat/Chat";
 import { GlobalStyled } from "./components/layouts/Frames";
 import { Provider } from "./provider";
+import { Calculator, CalculatorButton } from "./components/Calculator";
+import { DraggableNode } from "./components/Draggable";
 
 const QUERY_CLIENT = new QueryClient();
 
 function App() {
   const [darkMode, setDarkMode] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
   const [activeMenu, setActiveMenu] = useState<DashboardMenuType>("userManage");
   const { isDarkMode } = useDarkMode();
 
@@ -44,9 +47,13 @@ function App() {
                 </Routes>
               </Provider>
               <Chat />
+              <CalculatorButton setOpen={setOpen}></CalculatorButton>
               <GlobalStyled />
               <Toaster />
               <footer style={{ height: "20px" }}></footer>
+              {open && (
+                <DraggableNode children={<Calculator />}></DraggableNode>
+              )}
             </EmployeeContextProvider>
           </BrowserRouter>
         </WindowContextProvider>

@@ -1,19 +1,20 @@
 import { getExchangeInfo } from "@/api/financial";
-import { ChainType } from "@/model/financial";
+import { ChainType, CryptoType } from "@/model/financial";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { BigNumber } from "bignumber.js";
 
 export function useExchange(
   amount: string,
-  chainType: ChainType,
   decimal: 1e8 | 1e18 | 6,
+  chainType?: ChainType,
+  cryptoType?: CryptoType,
 ) {
   const [currentPrice, setCurrentPrice] = useState<BigNumber>(new BigNumber(0));
   const [cryptoAmount, setCryptoAmount] = useState<BigNumber>(new BigNumber(0));
   const [krwAmount, setKrwAmount] = useState<string>("");
 
-  const crypto = () => {
+  const chainToCryptoType = () => {
     switch (chainType) {
       case "TRON":
         return "USDT";
@@ -21,6 +22,18 @@ export function useExchange(
         return "ETH";
       case "BTC":
         return "BTC";
+      default:
+        return "USDT";
+    }
+  };
+
+  const crypto = (): CryptoType => {
+    if (chainType) {
+      return chainToCryptoType();
+    } else if (cryptoType) {
+      return cryptoType;
+    } else {
+      return "USDT";
     }
   };
 

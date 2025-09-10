@@ -81,11 +81,11 @@ export function SiteWalletInfoList(props: {
 
   const { cryptoAmount, krwAmount } = useExchange(
     todayDepositAmount,
-    chainType,
     decimal(chainType),
+    chainType,
   );
   const { cryptoAmount: weeksCryptoAmount, krwAmount: weeksKrwAmount } =
-    useExchange(weeksDepositAmount, chainType, decimal(chainType));
+    useExchange(weeksDepositAmount, decimal(chainType), chainType);
 
   const columns = useMemo<ColumnDef<SiteWalletInfoType>[]>(
     () => [
